@@ -11,6 +11,9 @@ import prr.app.exceptions.DuplicateClientKeyException;
 import prr.clients.Client;
 import prr.exceptions.ImportFileException;
 import prr.exceptions.UnrecognizedEntryException;
+import prr.terminals.Basic;
+import prr.terminals.Fancy;
+import prr.terminals.Terminal;
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -61,11 +64,12 @@ public class Network implements Serializable {
     /*
     *  Registers the entries by delegating to the correct method
     * */
-    void registerEntry(String[] fields) {
+    void registerEntry(String[] fields) throws DuplicateClientKeyException, UnrecognizedEntryException {
         switch (fields[0]) {
             case "CLIENT" -> registerClient(fields);
             case "BASIC", "FANCY" -> registerTerminal(fields);
             case "FRIENDS" -> registerFriends(fields);
+            case default -> throw new UnrecognizedEntryException(fields[0]);
         }
     }
 
@@ -79,13 +83,18 @@ public class Network implements Serializable {
             throw new DuplicateClientKeyException(fields[0]);
 
         Client client = new Client(fields[1], fields[2], Integer.parseInt(fields[3]));
+
+        _clients.put(fields[0], client);
     }
 
     /*
      *  Registers the Terminals
      * */
     private void registerTerminal(String[] fields) {
-
+        Terminal terminal = switch (fields[0]){
+            case "BASIC" -> Basic();
+            case "FANCY" -> Fancy();
+        }
     }
 
     /*

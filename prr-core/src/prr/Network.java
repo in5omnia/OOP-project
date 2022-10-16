@@ -29,21 +29,7 @@ public class Network implements Serializable {
 	 */
 	void importFile(String filename) throws UnrecognizedEntryException, IOException /* FIXME maybe other exceptions */  {
 		//FIXME implement method
-		try (BufferedReader reader = new BufferedReader(new FileReader(name))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] fields = line.split("\\|");
-				try {
-					registerEntry(fields);
-				} catch (UnknownDataException | PublicationExistsException | UnknownAgentException | AgentExistsException
-						 | InvalidIdentifierException e) {
-					// DAVID should not happen
-					e.printStackTrace();
-				}
-			}
-		} catch (IOException e1) {
-			throw new ImportFileException();
-		}
+
 	}
 }
 

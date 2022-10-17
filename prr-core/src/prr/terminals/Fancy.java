@@ -1,6 +1,6 @@
 package prr.terminals;
 
-import prr.app.exceptions.InvalidTerminalKeyException;
+import prr.exceptions.InvalidTerminalIdException;
 import prr.clients.Client;
 import prr.terminals.states.State;
 
@@ -14,13 +14,13 @@ public class Fancy extends Terminal implements Serializable {
         super(key);
     }*/ //why needed??
 
-    public Fancy(Client owner, String key) throws InvalidTerminalKeyException {
+    public Fancy(Client owner, String key) throws InvalidTerminalIdException {
         super(owner, key);
     }
 
 
-    public Fancy(Client owner, String key, State state, Collection<Terminal> friends) throws InvalidTerminalKeyException {
-        super(owner, key, state, friends);
+    public Fancy(Client owner, String key, State state) throws InvalidTerminalIdException {
+        super(owner, key, state);
     }
 
     @Override

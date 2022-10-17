@@ -1,7 +1,10 @@
 package prr.terminals;
 
-import prr.app.exceptions.InvalidTerminalKeyException;
+import prr.exceptions.InvalidTerminalIdException;
 import prr.clients.Client;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.NoSuchFriendException;
+import prr.exceptions.OwnFriendException;
 import prr.notifications.Notification;
 import prr.terminals.communication.Communication;
 import prr.terminals.states.Idle;
@@ -43,10 +46,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     //FIXME we should probably use a treeMap for friends or sth to ease search more expensive but faster?
     // FIXME Do we even need the pointers to the terminal
-    public Terminal(Client owner, String key) throws InvalidTerminalKeyException {
+    public Terminal(Client owner, String key) throws InvalidTerminalIdException {
         _owner = owner;
         if (!validTerminalKey(key)) {
-            throw new InvalidTerminalKeyException(key);
+            throw new InvalidTerminalIdException(key);
         }
         _key = key;
     }
@@ -61,10 +64,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
      */
 
 
-    public Terminal(Client owner, String key, State state) throws InvalidTerminalKeyException {
+    public Terminal(Client owner, String key, State state) throws InvalidTerminalIdException {
        /* _owner = owner;
         if (!validTerminalKey(key)) {
-            throw new InvalidTerminalKeyException(key);
+            throw new InvalidTerminalIdException(key);
         }
         _key = key;*/
         this(owner, key);
@@ -72,24 +75,14 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     }
 
-  //  public Terminal(Client owner, String key, State state, Collection<Terminal> friends) throws InvalidTerminalKeyException {
-        /*_owner = owner;
-        if (!validTerminalKey(key)) {
-            throw new InvalidTerminalKeyException(key);
-        }
-        _key = key;
-        _state = state; */
-  /*      this(owner, key, state);
-        _friends = friends;
-    }*/
 
     private boolean validTerminalKey(String key) {
-        return key.length() == 6 && key.matches("[0-9]+");   //why not "[0-9]+$"? //i added length
+        return key.matches("[0-9]{6}");   //why not "[0-9]+$"? //i added length
     }
 
 
 /*
-    public Terminal(String key) throws InvalidTerminalKeyException{             //do we need this??
+    public Terminal(String key) throws InvalidTerminalIdException{             //do we need this??
         // FIXME - verificar se são 6 digitos?
 
         _key = key;
@@ -97,20 +90,24 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 */
 
 
-    void addFriend(String friendKey){
-        if (!isFriend(friendKey))
-            _friends.add(friendKey);
-        // Can't add itself
+    public void addFriend(String friendKey) throws DuplicateFriendException, OwnFriendException {
+        if (friendKey.equals(_key))
+            throw new OwnFriendException(friendKey);
+        else if (isFriend(friendKey))
+            throw new DuplicateFriendException(friendKey);
+        _friends.add(friendKey);
     }
 
-    void addFriends(List<String> friends){
-        if (_friends.isEmpty())
-                _friends = friends;
-        else {
-            for (String friendKey : friends){
-                addFriend(friendKey);
-            }
+    void addFriends(List<String> friends) throws DuplicateFriendException, OwnFriendException {
+        for (String friendKey : friends) {
+            addFriend(friendKey);
         }
+    }
+
+    void removeFriend(String friendKey) throws NoSuchFriendException {    // should these add/remove functions throw exceptions?
+        if (isFriend(friendKey))
+            _friends.remove(friendKey);
+        // Can't add itself
     }
 
     boolean isFriend(String terminalKey) {
@@ -162,7 +159,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     void endInteractiveCommunication(int duration){}
     void performPayment(int communicationKey){}
-    void removeFriend(String id){}
+
     void showOngoingCommunication(){}
 
     void silenceTerminal(){}

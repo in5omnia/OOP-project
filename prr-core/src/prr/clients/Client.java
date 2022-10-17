@@ -1,6 +1,10 @@
 package prr.clients;
 
+import prr.terminals.Terminal;
+
 import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Client implements Serializable {
 
@@ -11,6 +15,8 @@ public class Client implements Serializable {
     private String _name;
 
     private int _taxId;
+
+    private Map<String, Terminal> _terminals = new TreeMap<>();
 
     public Client(String clientId, String name, int taxId) {
         _clientId = clientId;
@@ -29,5 +35,9 @@ public class Client implements Serializable {
     }
     public boolean twoConsecutiveText(){/*FIXME*/
         return true;
+    }
+
+    public void addTerminal(String terminalKey, Terminal terminal) {
+        _terminals.put(terminalKey, terminal);
     }
 }

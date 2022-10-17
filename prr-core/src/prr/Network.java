@@ -6,12 +6,9 @@ import java.io.Serializable;
 import java.io.IOException;
 import java.util.*;
 
-import prr.app.exceptions.DuplicateClientKeyException;
-import prr.app.exceptions.DuplicateTerminalKeyException;
-import prr.app.exceptions.InvalidTerminalKeyException;
+import prr.exceptions.*;
 import prr.clients.Client;
-import prr.exceptions.ImportFileException;
-import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.DuplicateClientException;
 import prr.terminals.Basic;
 import prr.terminals.Fancy;
 import prr.terminals.Terminal;
@@ -66,7 +63,8 @@ public class Network implements Serializable {
     /*
     *  Registers the entries by delegating to the correct method
     * */
-    void registerEntry(String[] fields) throws DuplicateClientKeyException, UnrecognizedEntryException, DuplicateTerminalKeyException, InvalidTerminalKeyException {
+    void registerEntry(String[] fields) throws DuplicateClientException, UnrecognizedEntryException,
+            DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException, DuplicateFriendException, OwnFriendException {
         switch (fields[0]) {
             case "CLIENT" -> registerClient(fields);
             case "BASIC", "FANCY" -> registerTerminal(fields);
@@ -80,58 +78,72 @@ public class Network implements Serializable {
     /*
      *  Registers the Clients
      * */
-    private void registerClient(String[] fields) throws DuplicateClientKeyException {
+    private void registerClient(String[] fields) throws DuplicateClientException {
         if (_clients.get(fields[1]) != null) // FIXME does this get the ID????
-            throw new DuplicateClientKeyException(fields[0]);
+            throw new DuplicateClientException(fields[1]);
 
         Client client = new Client(fields[1], fields[2], Integer.parseInt(fields[3]));
 
-        _clients.put(fields[0], client);
+        _clients.put(fields[1], client);
     }
 
     /*
      *  Registers the Terminals
      * */
-    private void registerTerminal(String[] fields) throws InvalidTerminalKeyException, DuplicateTerminalKeyException, UnrecognizedEntryException {
+    private void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
         if (_terminals.get(fields[1]) != null)
-            throw new DuplicateTerminalKeyException(fields[1]);
-        /*
-        FIXME We should check if the client exists before creating the terminal
-        if (_clients.get(fields[2]) == null)
-            throw new NoSuchClient(fields[2]);
-         */
-        // FIXME We should sanitize all of this input to be sure friends arent invalid terminals right?
-
-        Collection<Terminal> friends = new LinkedList<>();  //collection is too broad imo->should be List
-        for (String terminalId : fields[3].split(",")) {
-            friends.add(_terminals.get(terminalId));
-        }
+            throw new DuplicateTerminalException(fields[1]);
 
         Client owner = _clients.get(fields[2]);
+        if (owner == null)
+            throw new UnknownClientException(fields[2]);
+
         State state = stateFromString(fields[3]);
         Terminal terminal = switch (fields[0]){
-            case "BASIC" -> new Basic(owner, fields[0], state, friends);
-            case "FANCY" -> new Fancy(owner, fields[0], state, friends);
+            case "BASIC" -> new Basic(owner, fields[1], state);
+            case "FANCY" -> new Fancy(owner, fields[1], state);
             default -> throw new UnrecognizedEntryException(fields[0]);
         };
+
+        addTerminalToNetwork(fields[1], terminal);
+        owner.addTerminal(fields[1], terminal);
+    }
+
+    /*
+     *  Registers the Friends to a Terminal
+     * */
+    private void registerFriends(String[] fields) throws UnknownTerminalException, DuplicateFriendException, OwnFriendException {
+
+        Terminal terminal = _terminals.get(fields[1]);
+        if (terminal == null)
+            throw new UnknownTerminalException(fields[1]);
+
+        for (String terminalId : fields[2].split(",")) {
+            if (_terminals.get(terminalId) == null)
+                throw new UnknownTerminalException(terminalId);   //FIXME
+            //FIXME problema: interrompe o método qd os friends seguintes podem ser válidos ;
+            //FIXME solucao: fazer exception receber lista de invalid keys ?
+
+            terminal.addFriend(terminalId);
+        }
+
+
+
     }
 
     private State stateFromString(String state) throws UnrecognizedEntryException {
         return switch (state) {
             case "ON" -> new Idle();
             case "OFF" -> new Off();
-            case "SILENT" -> new Silent();
+            case "SILENCE" -> new Silent();
             // FIXME does this happen? case "BUSY" -> new Busy();
             default -> throw new UnrecognizedEntryException(state);
         };
     }
 
 
-    /*
-     *  Registers the Friends to a Terminal
-     * */
-    private void registerFriends(String[] fields) {
-
+    public void addTerminalToNetwork(String terminalKey, Terminal terminal) {
+        _terminals.put(terminalKey, terminal);
     }
 
 }

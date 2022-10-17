@@ -1,5 +1,6 @@
 package prr.terminals;
 
+import prr.app.exceptions.InvalidTerminalKeyException;
 import prr.clients.Client;
 import prr.notifications.Notification;
 import prr.terminals.communication.Communication;
@@ -24,6 +25,40 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     private String _key;
 
     private State _state =  new Idle();
+
+
+    //FIXME we should probably use a treeMap for friends or sth to ease search more expensive but faster?
+    // FIXME Do we even need the pointers to the terminal
+    public Terminal(Client owner, String key) throws InvalidTerminalKeyException {
+        _owner = owner;
+        if (!validTerminalKey(key)) {
+            throw new InvalidTerminalKeyException(key);
+        }
+        _key = key;
+    }
+
+    /* FIXME
+    public Terminal(Client owner, String key, Collection<Terminal> friends) {
+        _owner = owner;
+        _key = key;
+        _friends = friends;
+    }
+
+     */
+
+    public Terminal(Client owner, String key, State state, Collection<Terminal> friends) throws InvalidTerminalKeyException {
+        _owner = owner;
+        if (!validTerminalKey(key)) {
+            throw new InvalidTerminalKeyException(key);
+        }
+        _key = key;
+        _state = state;
+        _friends = friends;
+    }
+
+    private boolean validTerminalKey(String key) {
+        return key.matches("[0-9]+");
+    }
 
     private Collection<Terminal> _friends;
 

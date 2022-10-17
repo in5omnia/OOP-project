@@ -71,7 +71,7 @@ public class Network implements Serializable {
             case "CLIENT" -> registerClient(fields);
             case "BASIC", "FANCY" -> registerTerminal(fields);
             case "FRIENDS" -> registerFriends(fields);
-            case default -> throw new UnrecognizedEntryException(fields[0]);
+            default -> throw new UnrecognizedEntryException(fields[0]);
         }
     }
 
@@ -102,7 +102,7 @@ public class Network implements Serializable {
          */
         // FIXME We should sanitize all of this input to be sure friends arent invalid terminals right?
 
-        Collection<Terminal> friends = new LinkedList<>();
+        Collection<Terminal> friends = new LinkedList<>();  //collection is too broad imo->should be List
         for (String terminalId : fields[3].split(",")) {
             friends.add(_terminals.get(terminalId));
         }

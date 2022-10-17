@@ -10,6 +10,9 @@ import prr.terminals.states.State;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -21,10 +24,21 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
     private Client _owner;
-
     private String _key;
-
     private State _state =  new Idle();
+    private List<String> _friends = new LinkedList<>();
+
+    private Collection<Communication> _pastCommunications;
+
+    private Communication _ongoingCommunication = null;
+    // FIXME
+    Collection<Notification> _textNotif;    //instead of clients, we store notifications to send when the terminal
+    Collection<Notification> _interactiveNotif;     //becomes available, which depends if it's text or interactive
+
+    //TODO INFO: When communication fails, a methord checks if origin client has notifs enabled.
+    // If so, a notif is created and stored in one of these collections. When there's a state switch in the terminal,
+    // it checks for notifs to send and sends them if the new state allows them.
+
 
 
     //FIXME we should probably use a treeMap for friends or sth to ease search more expensive but faster?
@@ -46,46 +60,62 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
      */
 
-    public Terminal(Client owner, String key, State state, Collection<Terminal> friends) throws InvalidTerminalKeyException {
-        _owner = owner;
+
+    public Terminal(Client owner, String key, State state) throws InvalidTerminalKeyException {
+       /* _owner = owner;
+        if (!validTerminalKey(key)) {
+            throw new InvalidTerminalKeyException(key);
+        }
+        _key = key;*/
+        this(owner, key);
+        _state = state;
+
+    }
+
+  //  public Terminal(Client owner, String key, State state, Collection<Terminal> friends) throws InvalidTerminalKeyException {
+        /*_owner = owner;
         if (!validTerminalKey(key)) {
             throw new InvalidTerminalKeyException(key);
         }
         _key = key;
-        _state = state;
+        _state = state; */
+  /*      this(owner, key, state);
         _friends = friends;
-    }
+    }*/
 
     private boolean validTerminalKey(String key) {
-        return key.matches("[0-9]+");
+        return key.length() == 6 && key.matches("[0-9]+");   //why not "[0-9]+$"? //i added length
     }
 
-    private Collection<Terminal> _friends;
 
-    private Collection<Communication> _pastCommunications;
-
-    private Communication _ongoingCommunication = null;
-
-    // FIXME
-    Collection<Notification> _textNotif;    //instead of clients, we store notifications to send when the terminal
-    Collection<Notification> _interactiveNotif;     //becomes available, which depends if it's text or interactive
-
-    //TODO INFO: When communication fails, a methord checks if origin client has notifs enabled.
-    // If so, a notif is created and stored in one of these collections. When there's a state switch in the terminal,
-    // it checks for notifs to send and sends them if the new state allows them.
-
-    // Friends List
-
-    // FIXME define attributes
-    // FIXME define contructor(s)
-    // FIXME define methods
-
-    public Terminal(String key) {
+/*
+    public Terminal(String key) throws InvalidTerminalKeyException{             //do we need this??
         // FIXME - verificar se são 6 digitos?
+
         _key = key;
     }
+*/
 
 
+    void addFriend(String friendKey){
+        if (!isFriend(friendKey))
+            _friends.add(friendKey);
+        // Can't add itself
+    }
+
+    void addFriends(List<String> friends){
+        if (_friends.isEmpty())
+                _friends = friends;
+        else {
+            for (String friendKey : friends){
+                addFriend(friendKey);
+            }
+        }
+    }
+
+    boolean isFriend(String terminalKey) {
+        return _friends.contains(terminalKey);
+    }
 
         /**
          * Checks if this terminal can end the current interactive communication.
@@ -129,10 +159,6 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     void turnOnTerminal(){}
     void turnOffTerminal(){}
-    void addFriend(String id){
-        // Can't add itself
-    }
-    boolean isFriend(Terminal terminal ) { return false; }
 
     void endInteractiveCommunication(int duration){}
     void performPayment(int communicationKey){}

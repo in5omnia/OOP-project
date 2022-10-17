@@ -10,9 +10,9 @@ import java.util.Collection;
 public class Fancy extends Terminal implements Serializable {
     private static final long serialVersionUID = 202208091754L;
 
-    public Fancy(String key) {
+    /*public Fancy(String key) {
         super(key);
-    }
+    }*/ //why needed??
 
     public Fancy(Client owner, String key) throws InvalidTerminalKeyException {
         super(owner, key);

@@ -2,7 +2,7 @@ package prr.clients;
 
 import java.io.Serializable;
 
-public class Gold extends Level implements Serializable {
+public class Gold extends Level {
     private static final long serialVersionUID = 202208091754L;
 
     public Gold(Client client){

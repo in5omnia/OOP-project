@@ -19,6 +19,8 @@ public class NetworkManager {
      * The network itself.
      */
     private Network _network = new Network();
+
+    String _filename;
     //FIXME  addmore fields if needed
 
     public Network getNetwork() {
@@ -44,6 +46,9 @@ public class NetworkManager {
      */
     public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
         //FIXME implement serialization method
+        if (_filename == null){
+            throw new MissingFileAssociationException();
+        }
     }
 
     /**
@@ -70,7 +75,7 @@ public class NetworkManager {
             _network.importFile(filename);
         } catch (IOException | UnrecognizedEntryException /* FIXME maybe other exceptions */ e) {
             throw new ImportFileException(filename, e);
-        }
+        }   //FIXME other catches
     }
 
 }

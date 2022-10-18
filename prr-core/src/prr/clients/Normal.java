@@ -2,7 +2,7 @@ package prr.clients;
 
 import java.io.Serializable;
 
-public class Normal extends Level implements Serializable {
+public class Normal extends Level {
     private static final long serialVersionUID = 202208091754L;
 
     public Normal(Client client){

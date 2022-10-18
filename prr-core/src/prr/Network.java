@@ -79,7 +79,7 @@ public class Network implements Serializable {
      *  Registers the Clients
      * */
     private void registerClient(String[] fields) throws DuplicateClientException {
-        if (_clients.get(fields[1]) != null) // FIXME does this get the ID????
+        if (findClient(fields[1]) != null) // FIXME does this get the ID????
             throw new DuplicateClientException(fields[1]);
 
         Client client = new Client(fields[1], fields[2], Integer.parseInt(fields[3]));
@@ -91,10 +91,10 @@ public class Network implements Serializable {
      *  Registers the Terminals
      * */
     private void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
-        if (_terminals.get(fields[1]) != null)
+        if (findTerminal(fields[1]) != null)
             throw new DuplicateTerminalException(fields[1]);
 
-        Client owner = _clients.get(fields[2]);
+        Client owner = findClient(fields[2]);
         if (owner == null)
             throw new UnknownClientException(fields[2]);
 
@@ -114,20 +114,20 @@ public class Network implements Serializable {
      * */
     private void registerFriends(String[] fields) throws UnknownTerminalException, DuplicateFriendException, OwnFriendException {
 
-        Terminal terminal = _terminals.get(fields[1]);
+        Terminal terminal = findTerminal(fields[1]);
         if (terminal == null)
             throw new UnknownTerminalException(fields[1]);
 
         for (String terminalId : fields[2].split(",")) {
-            if (_terminals.get(terminalId) == null)
-                throw new UnknownTerminalException(terminalId);   //FIXME
-            //FIXME problema: interrompe o método qd os friends seguintes podem ser válidos ;
-            //FIXME solucao: fazer exception receber lista de invalid keys ?
+            if (findTerminal(terminalId) == null)
+                throw new UnknownTerminalException(terminalId);
 
             terminal.addFriend(terminalId);
+
+            //FIXME problema: interrompe o método qd os friends seguintes podem ser válidos ;
+            //FIXME solucao: fazer exception receber lista de invalid keys ? - not important bc it wont happen
+
         }
-
-
 
     }
 
@@ -144,6 +144,14 @@ public class Network implements Serializable {
 
     public void addTerminalToNetwork(String terminalKey, Terminal terminal) {
         _terminals.put(terminalKey, terminal);
+    }
+
+    public Terminal findTerminal(String terminalKey){
+        return _terminals.get(terminalKey);
+    }
+
+    public Client findClient(String clientKey){
+        return _clients.get(clientKey);
     }
 
 }

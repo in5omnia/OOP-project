@@ -1,7 +1,13 @@
 package prr;
 
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.ObjectOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import prr.exceptions.ImportFileException;
 import prr.exceptions.MissingFileAssociationException;
@@ -21,7 +27,7 @@ public class NetworkManager {
     private Network _network = new Network();
 
     String _filename;
-    //FIXME  addmore fields if needed
+
 
     public Network getNetwork() {
         return _network;
@@ -35,6 +41,18 @@ public class NetworkManager {
      */
     public void load(String filename) throws UnavailableFileException {
         //FIXME implement serialization method
+
+        try(ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))){
+            _network = (Network) oos.readObject();
+              /*catch (ClassNotFoundException | IOException e) {
+                throw new UnavailableFileException(e);
+            }*/
+        } catch (ClassNotFoundException | IOException e) {
+            throw new UnavailableFileException(filename);
+        }
+        //FIXME should this go before (if load fails, filename is still stored and save wont ask for it) or here?
+        _filename = filename;
+
     }
 
     /**
@@ -45,10 +63,14 @@ public class NetworkManager {
      * @throws IOException                     if there is some error while serializing the state of the network to disk.
      */
     public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
-        //FIXME implement serialization method
-        if (_filename == null){
+        if (_filename == null)
             throw new MissingFileAssociationException();
-        }
+
+        try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)))){
+            //oos.flush();
+            oos.writeObject(_network);
+        }   //FIXME should I catch? bc the method supposedly throws ioexception
+
     }
 
     /**
@@ -61,7 +83,11 @@ public class NetworkManager {
      * @throws IOException                     if there is some error while serializing the state of the network to disk.
      */
     public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-        //FIXME implement serialization method
+        _filename = filename;
+        try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)))){
+            oos.writeObject(_network);
+        }   //FIXME should I catch? bc the method supposedly throws ioexception
+        // podia chamar save() mas estaria a verificar se filename==null outra vez
     }
 
     /**
@@ -75,7 +101,7 @@ public class NetworkManager {
             _network.importFile(filename);
         } catch (IOException | UnrecognizedEntryException /* FIXME maybe other exceptions */ e) {
             throw new ImportFileException(filename, e);
-        }   //FIXME other catches
+        }   //FIXME other catches?
     }
 
 }

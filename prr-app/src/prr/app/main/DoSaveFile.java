@@ -20,10 +20,11 @@ class DoSaveFile extends Command<NetworkManager> {
 
 	@Override
 	protected final void execute() {
-                //FIXME implement command and create a local Form
+
 		try {
 			_receiver.save();
-		} catch (MissingFileAssociationException e){
+		} catch (MissingFileAssociationException e) {
+
 			Form form = new Form();
 			form.addStringField("filename", Prompt.newSaveAs());
 			form.parse();
@@ -32,7 +33,6 @@ class DoSaveFile extends Command<NetworkManager> {
 			try {
 				_receiver.saveAs(filename);
 			} catch (IOException | MissingFileAssociationException ex) {
-				//throw new RuntimeException(e);
 				ex.printStackTrace();
 			}
 		}

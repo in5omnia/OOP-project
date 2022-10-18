@@ -42,21 +42,19 @@ public class Network implements Serializable {
      * @throws UnrecognizedEntryException if some entry is not correct
      * @throws IOException                if there is an IO erro while processing the text file
      */
-    void importFile(String filename) throws UnrecognizedEntryException, IOException, ImportFileException /* FIXME maybe other exceptions */ {
-        //FIXME implement method
+    void importFile(String filename) throws UnrecognizedEntryException, IOException {
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                try {
-                    registerEntry(fields);
-                } catch (Exception e /* FIXME */) {
-                    // DAVID should not happen
-                    e.printStackTrace();
-                }
+                registerEntry(fields);
             }
-        } catch (IOException e1) {
-            throw new ImportFileException(filename);
+        }   //FIXME CATCH HERE OR IN NETWORK MANAGER ALSO IDK IOF THESE ARE SUPPOSED TO BE HERE
+
+        catch (DuplicateClientException | DuplicateTerminalException | InvalidTerminalIdException |
+               UnknownClientException | UnknownTerminalException | DuplicateFriendException | OwnFriendException e1) {
+            throw new UnrecognizedEntryException(filename);
         }
     }
 
@@ -64,7 +62,8 @@ public class Network implements Serializable {
     *  Registers the entries by delegating to the correct method
     * */
     void registerEntry(String[] fields) throws DuplicateClientException, UnrecognizedEntryException,
-            DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException, DuplicateFriendException, OwnFriendException {
+            DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
+            DuplicateFriendException, OwnFriendException {
         switch (fields[0]) {
             case "CLIENT" -> registerClient(fields);
             case "BASIC", "FANCY" -> registerTerminal(fields);
@@ -154,6 +153,9 @@ public class Network implements Serializable {
     public Client findClient(String clientKey){
         return _clients.get(clientKey);
     }
+
+    //CLIENT|key|name|taxId|type|notifications|terminals|payments|debts
+    public String showClient(String clientKey){}
 
 }
 

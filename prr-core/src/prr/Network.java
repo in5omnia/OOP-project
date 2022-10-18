@@ -146,7 +146,8 @@ public class Network implements Serializable {
         _terminals.put(terminalKey, terminal);
     }
 
-    public Terminal findTerminal(String terminalKey){
+    public Terminal findTerminal(String terminalKey) {
+        //FIXME Throw Exception if not found
         return _terminals.get(terminalKey);
     }
 

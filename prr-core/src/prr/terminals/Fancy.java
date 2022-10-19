@@ -40,7 +40,7 @@ public class Fancy extends Terminal implements Serializable {
 
     @Override
     public String toString() {
-        return "Fancy" + super.toString();
+        return "FANCY" + super.toString();
     }
 
 }

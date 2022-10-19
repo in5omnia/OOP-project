@@ -42,7 +42,7 @@ public class Basic extends Terminal implements Serializable {
 
     @Override
     public String toString() {
-        return "Fancy" + super.toString();
+        return "BASIC" + super.toString();
     }
 
 }

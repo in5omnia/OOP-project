@@ -31,7 +31,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     private State _state =  new Idle();
     private List<String> _friends = new LinkedList<>();
 
-    private Collection<Communication> _pastCommunications;
+    private List<Communication> _pastCommunications = new LinkedList<>();
 
     private Communication _ongoingCommunication = null;
     // FIXME

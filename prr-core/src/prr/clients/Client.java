@@ -64,6 +64,8 @@ public class Client implements Serializable {
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
     }
 
-    public List<Notification> getNotifications(){}
+    public List<Notification> getNotifications(){
+        return _notifications;
+    }
 
 }

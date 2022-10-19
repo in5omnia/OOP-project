@@ -75,6 +75,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     }
 
+    public String getKey() {
+        return _key;
+    }
+
 
     private boolean validTerminalKey(String key) {
         return key.matches("[0-9]{6}");   //why not "[0-9]+$"? //i added length
@@ -172,4 +176,20 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     int calculateBalance() {return 0;}
     void showTerminalBalance(){}
 
+    private String listFriends() {
+        String s = "";
+        for (String friend : _friends) {
+            s += ("; ");
+            s += friend;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return  "|" + _key + "|" + _owner. + "|" + _owner.getId() + "|" + calculatePayments() +
+                "|" + calculateDebts() + _friends.isEmpty() ? "" : ("|" + listFriends());
+
+    }
+
 }
+

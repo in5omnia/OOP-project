@@ -73,4 +73,8 @@ public class Client implements Serializable {
         return string;
     }
 
+    public String getId() {
+        return _clientId;
+    }
+
 }

@@ -188,5 +188,15 @@ public class Network implements Serializable {
         }
         return string;*/
 
+    public String showAllTerminals(){
+        String allTerminals = "";
+        for (Terminal terminal : _terminals.values()){
+            allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
+        }
+        return allTerminals;
+    }
+
+
+
 }
 

@@ -3,7 +3,10 @@ package prr.app.terminals;
 import prr.Network;
 import prr.app.exceptions.DuplicateTerminalKeyException;
 import prr.app.exceptions.InvalidTerminalKeyException;
-import prr.exceptions.*;
+import prr.exceptions.DuplicateTerminalException;
+import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.UnknownClientException;
+import prr.exceptions.UnrecognizedEntryException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
@@ -31,7 +34,7 @@ class DoRegisterTerminal extends Command<Network> {
                 terminalType,
                 terminalKey,
                 clientKey
-		};
+        };
 
         try {
             _receiver.registerTerminal(fields);
@@ -39,7 +42,10 @@ class DoRegisterTerminal extends Command<Network> {
             throw new InvalidTerminalKeyException(e.getKey());
         } catch (DuplicateTerminalException e) {
             throw new DuplicateTerminalKeyException(e.getKey());
-        } catch (UnrecognizedEntryException | UnknownClientException e) {
+        } catch (UnknownClientException e) {
+            throw new prr.app.exceptions.UnknownClientKeyException(e.getKey());
+        } catch (
+                UnrecognizedEntryException e) {
             e.printStackTrace(); //FIXME do we leave this here?
         }
     }

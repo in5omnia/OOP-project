@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -167,6 +169,13 @@ public class Network implements Serializable {
         return _terminals.get(terminalKey);
         //FIXME didnt put exception for same reason as findClient
     }
+    public Terminal secureFindTerminal(String terminalKey) throws UnknownTerminalException{  //FIXME invalidTerminalIdException no, right?
+        Terminal terminal = _terminals.get(terminalKey);
+        if (terminal == null)
+            throw new UnknownTerminalException(terminalKey);
+        return terminal;
+        //FIXME didnt put exception for same reason as findClient
+    }
 
     public Client findClient(String clientKey) {
         return _clients.get(clientKey);
@@ -195,12 +204,13 @@ public class Network implements Serializable {
         }
         return string;*/
 
-    public String showAllTerminals() {
-        String allTerminals = "";
+    public Collection<String> showAllTerminals() {
+        Collection<String> allTerminals = new LinkedList<>();
+        // Fixme Collection<Terminal> allTerms = _terminals.values();
         for (Terminal terminal : _terminals.values()) {
-            allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
+            allTerminals.add(terminal.toString()); //FIXME is /n right?
         }
-        return allTerminals.substring(1);   //remove o \n inicial
+        return allTerminals;   //remove o \n inicial
     }
 
     public String showAllUnusedTerminals() {

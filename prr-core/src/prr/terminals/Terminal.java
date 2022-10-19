@@ -129,8 +129,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
          *          it was the originator of this communication.
          **/
     public boolean canEndCurrentCommunication() {
-            // FIXME add implementation code
-        return true;
+        return _ongoingCommunication != null;
     }
 
     /**
@@ -139,8 +138,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
      * @return true if this terminal is neither off neither busy, false otherwise.
      **/
     public boolean canStartCommunication() {
-            // FIXME add implementation code
-        return true;
+        return _ongoingCommunication == null;
     }
 
 

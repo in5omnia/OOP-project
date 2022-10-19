@@ -89,7 +89,7 @@ public class Network implements Serializable {
     /*
      *  Registers the Terminals
      * */
-    private void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
+    public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
         if (findTerminal(fields[1]) != null)
             throw new DuplicateTerminalException(fields[1]);
 
@@ -159,7 +159,7 @@ public class Network implements Serializable {
         Client client = findClient(clientKey);
         if (client == null)
             throw new UnknownClientException(clientKey);
-        return client.toString() + client.;
+        return client.toString() /* FIXME + client.*/;
     }
 
     public String showAllClients(){

@@ -38,4 +38,9 @@ public class Fancy extends Terminal implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Fancy" + super.toString();
+    }
+
 }

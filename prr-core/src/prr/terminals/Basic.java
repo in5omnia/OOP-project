@@ -40,4 +40,9 @@ public class Basic extends Terminal implements Serializable {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Fancy" + super.toString();
+    }
+
 }

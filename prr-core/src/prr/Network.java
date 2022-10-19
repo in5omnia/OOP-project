@@ -102,6 +102,7 @@ public class Network implements Serializable {
      *  Registers the Terminals
      * */
     public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
+
         if (findTerminal(fields[1]) != null)
             throw new DuplicateTerminalException(fields[1]);
 
@@ -109,7 +110,12 @@ public class Network implements Serializable {
         if (owner == null)
             throw new UnknownClientException(fields[2]);
 
-        State state = stateFromString(fields[3]);
+        State state;
+        if (fields.length > 3)
+            state = stateFromString(fields[3]);
+        else
+            state = new Idle();
+
         Terminal terminal = switch (fields[0]) {
             case "BASIC" -> new Basic(owner, fields[1], state);
             case "FANCY" -> new Fancy(owner, fields[1], state);
@@ -179,7 +185,7 @@ public class Network implements Serializable {
         for (Client client : _clients.values()) {
             allClients += "\n" + client.toString(); //FIXME is /n right?
         }
-        return allClients.substring(2);
+        return allClients.substring(1);
     }
 
     /*ArrayList allClients = (ArrayList) _clients.values();

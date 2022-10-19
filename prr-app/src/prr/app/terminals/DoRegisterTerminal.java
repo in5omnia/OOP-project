@@ -24,10 +24,13 @@ class DoRegisterTerminal extends Command<Network> {
     @Override
     protected final void execute() throws CommandException {
         //FIXME Boas Praticas
+        String terminalKey = integerField("terminalKey").toString();
+        String terminalType = stringField("terminalType");
+        String clientKey = stringField("clientKey");
         String fields[] = {
-				integerField("terminalKey").toString(),
-                stringField("terminalType"),
-                stringField("clientKey")
+                terminalType,
+                terminalKey,
+                clientKey
 		};
 
         try {

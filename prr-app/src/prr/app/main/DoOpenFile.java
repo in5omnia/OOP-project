@@ -4,7 +4,6 @@ import prr.NetworkManager;
 import prr.app.exceptions.FileOpenFailedException;
 import prr.exceptions.MissingFileAssociationException;
 import prr.exceptions.UnavailableFileException;
-import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
@@ -19,7 +18,6 @@ class DoOpenFile extends Command<NetworkManager> {
 	DoOpenFile(NetworkManager receiver) {
 		super(Label.OPEN_FILE, receiver);
 		addStringField("filename", Prompt.openFile());
-                //FIXME add command fields
 	}
 
 	@Override

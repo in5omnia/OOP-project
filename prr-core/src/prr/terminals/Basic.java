@@ -10,9 +10,6 @@ import java.util.Collection;
 public class Basic extends Terminal implements Serializable {
     private static final long serialVersionUID = 202208091754L;
 
-    /*public Basic(String key) {
-        super(key);
-    }   */ //why needed??
 
     public Basic(Client owner, String key) throws InvalidTerminalIdException {
         super(owner, key);
@@ -22,8 +19,6 @@ public class Basic extends Terminal implements Serializable {
     public Basic(Client owner, String key, State state) throws InvalidTerminalIdException {
         super(owner, key, state);
     }
-
-
 
     @Override
     public boolean canMessage() {

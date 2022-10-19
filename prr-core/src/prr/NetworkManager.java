@@ -28,10 +28,10 @@ public class NetworkManager {
 
     String _filename;
 
-
     public Network getNetwork() {
         return _network;
     }
+
 
     /**
      * @param filename name of the file containing the serialized application's state
@@ -40,17 +40,13 @@ public class NetworkManager {
      *                                  an error while processing this file.
      */
     public void load(String filename) throws UnavailableFileException {
-        //FIXME implement serialization method
 
         try(ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))){
             _network = (Network) oos.readObject();
-              /*catch (ClassNotFoundException | IOException e) {
-                throw new UnavailableFileException(e);
-            }*/
+
         } catch (ClassNotFoundException | IOException e) {
             throw new UnavailableFileException(filename);
         }
-        //FIXME should this go before (if load fails, filename is still stored and save wont ask for it) or here?
         _filename = filename;
 
     }
@@ -63,13 +59,13 @@ public class NetworkManager {
      * @throws IOException                     if there is some error while serializing the state of the network to disk.
      */
     public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
+
         if (_filename == null)
             throw new MissingFileAssociationException();
 
         try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)))){
-            //oos.flush();
             oos.writeObject(_network);
-        }   //FIXME should I catch? bc the method supposedly throws ioexception
+        }
 
     }
 
@@ -83,11 +79,11 @@ public class NetworkManager {
      * @throws IOException                     if there is some error while serializing the state of the network to disk.
      */
     public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
+
         _filename = filename;
         try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)))){
             oos.writeObject(_network);
-        }   //FIXME should I catch? bc the method supposedly throws ioexception
-        // podia chamar save() mas estaria a verificar se filename==null outra vez
+        }
     }
 
     /**
@@ -99,9 +95,9 @@ public class NetworkManager {
     public void importFile(String filename) throws ImportFileException {
         try {
             _network.importFile(filename);
-        } catch (IOException | UnrecognizedEntryException /* FIXME maybe other exceptions */ e) {
+        } catch (IOException | UnrecognizedEntryException e) {
             throw new ImportFileException(filename, e);
-        }   //FIXME other catches?
+        }
     }
 
 }

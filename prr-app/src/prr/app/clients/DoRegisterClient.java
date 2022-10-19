@@ -22,11 +22,8 @@ class DoRegisterClient extends Command<Network> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		String clientId = stringField("clientId");
-		String name = stringField("name");
-		int taxId = integerField("taxId");
 		try {
-			_receiver.registerClient(clientId, name, taxId);
+			_receiver.registerClient(stringField("clientId"), stringField("name"), integerField("taxId"));
 		} catch (DuplicateClientException e) {
 			throw new DuplicateClientKeyException(e.getKey());
 		}

@@ -26,27 +26,26 @@ class DoRegisterTerminal extends Command<Network> {
 
     @Override
     protected final void execute() throws CommandException {
-        //FIXME Boas Praticas
+
         String terminalKey = integerField("terminalKey").toString();
         String terminalType = stringField("terminalType");
-        String clientKey = stringField("clientKey");
-        String fields[] = {
-                terminalType,
-                terminalKey,
-                clientKey
-        };
+
+        String fields[] = {terminalType, terminalKey, stringField("clientKey")};
 
         try {
             _receiver.registerTerminal(fields);
+
         } catch (InvalidTerminalIdException e) {
             throw new InvalidTerminalKeyException(e.getKey());
+
         } catch (DuplicateTerminalException e) {
             throw new DuplicateTerminalKeyException(e.getKey());
+
         } catch (UnknownClientException e) {
             throw new prr.app.exceptions.UnknownClientKeyException(e.getKey());
-        } catch (
-                UnrecognizedEntryException e) {
-            e.printStackTrace(); //FIXME do we leave this here?
+
+        } catch (UnrecognizedEntryException e) {
+            e.printStackTrace();
         }
     }
 }

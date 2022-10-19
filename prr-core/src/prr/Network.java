@@ -1,25 +1,30 @@
 package prr;
 
 import prr.clients.Client;
-import prr.exceptions.*;
+import prr.terminals.Terminal;
 import prr.terminals.Basic;
 import prr.terminals.Fancy;
-import prr.terminals.Terminal;
+import prr.terminals.states.State;
 import prr.terminals.states.Idle;
 import prr.terminals.states.Off;
 import prr.terminals.states.Silent;
-import prr.terminals.states.State;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.IOException;
+import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.DuplicateClientException;
+import prr.exceptions.UnknownClientException;
+import prr.exceptions.DuplicateTerminalException;
+import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.UnknownTerminalException;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.OwnFriendException;
 
-// FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
 /**
  * Class Store implements a store.
@@ -36,10 +41,6 @@ public class Network implements Serializable {
      */
     private static final long serialVersionUID = 202208091753L;
 
-    // FIXME define attributes
-    // FIXME define contructor(s)
-    // FIXME define methods
-
     /**
      * Read text input file and create corresponding domain entities.
      *
@@ -55,20 +56,29 @@ public class Network implements Serializable {
                 String[] fields = line.split("\\|");
                 registerEntry(fields);
             }
-        }   //FIXME CATCH HERE OR IN NETWORK MANAGER ALSO IDK IOF THESE ARE SUPPOSED TO BE HERE
-
-        catch (DuplicateClientException | DuplicateTerminalException | InvalidTerminalIdException |
+        } catch (DuplicateClientException | DuplicateTerminalException | InvalidTerminalIdException |
                UnknownClientException | UnknownTerminalException | DuplicateFriendException | OwnFriendException e1) {
             throw new UnrecognizedEntryException(filename);
         }
     }
 
-    /*
-     *  Registers the entries by delegating to the correct method
+    /**
+     *  Registers the entries by delegating to the correct method.
+     *
+     * @param fields name of the information to be registered in the network
+     * @throws UnrecognizedEntryException if some entry is not correct
+     * @throws DuplicateClientException if a client that already exists is being registered
+     * @throws DuplicateTerminalException if a terminal that already exists is being registered
+     * @throws InvalidTerminalIdException if the id of a terminal being registered is invalid
+     * @throws UnknownClientException if a terminal is being registered to a client that doesn't exist
+     * @throws UnknownTerminalException if a terminal that doesn't exist is being registered as a friend or if friends are being registered to it
+     * @throws DuplicateFriendException if a terminal's friend is being registered as a friend again
+     * @throws OwnFriendException if a terminal is registering as its own friend
      * */
     void registerEntry(String[] fields) throws DuplicateClientException, UnrecognizedEntryException,
             DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
             DuplicateFriendException, OwnFriendException {
+
         switch (fields[0]) {
             case "CLIENT" -> registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
             case "BASIC", "FANCY" -> registerTerminal(fields);
@@ -78,41 +88,30 @@ public class Network implements Serializable {
     }
 
 
-    /*
+    /**
      *  Registers the Clients
      * */
     public void registerClient(String clientId, String name, int taxId) throws DuplicateClientException {
-        if (findClient(clientId) != null) // FIXME does this get the ID????
+
+        if (clientExists(clientId))
             throw new DuplicateClientException(clientId);
 
         Client client = new Client(clientId, name, taxId);
-
         _clients.put(clientId, client);
     }
 
-    /* private void registerClient(String[] fields) throws DuplicateClientException {
-        if (findClient(fields[1]) != null) // FIXME does this get the ID????
-            throw new DuplicateClientException(fields[1]);
-
-        Client client = new Client(fields[1], fields[2], Integer.parseInt(fields[3]));
-
-        _clients.put(fields[1], client);
-    }*/
-
-
-    /*
+    /**
      *  Registers the Terminals
      * */
-    public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
+    public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException,
+            UnrecognizedEntryException, UnknownClientException {
 
-        if (findTerminal(fields[1]) != null)
+        if (terminalExists(fields[1]))
             throw new DuplicateTerminalException(fields[1]);
 
         Client owner = findClient(fields[2]);
-        if (owner == null)
-            throw new UnknownClientException(fields[2]);
-
         State state;
+
         if (fields.length > 3)
             state = stateFromString(fields[3]);
         else
@@ -128,34 +127,29 @@ public class Network implements Serializable {
         owner.addTerminal(fields[1], terminal);
     }
 
-    /*
+
+    /**
      *  Registers the Friends to a Terminal
      * */
     private void registerFriends(String[] fields) throws UnknownTerminalException, DuplicateFriendException, OwnFriendException {
 
         Terminal terminal = findTerminal(fields[1]);
-        if (terminal == null)
-            throw new UnknownTerminalException(fields[1]);
 
         for (String terminalId : fields[2].split(",")) {
-            if (findTerminal(terminalId) == null)
+            if (!terminalExists(terminalId))
                 throw new UnknownTerminalException(terminalId);
 
             terminal.addFriend(terminalId);
-
-            //FIXME problema: interrompe o método qd os friends seguintes podem ser válidos ;
-            //FIXME solucao: fazer exception receber lista de invalid keys ? - not important bc it wont happen
-
         }
 
     }
 
     private State stateFromString(String state) throws UnrecognizedEntryException {
+
         return switch (state) {
             case "ON" -> new Idle();
             case "OFF" -> new Off();
             case "SILENCE" -> new Silent();
-            // FIXME does this happen? case "BUSY" -> new Busy();
             default -> throw new UnrecognizedEntryException(state);
         };
     }
@@ -165,61 +159,59 @@ public class Network implements Serializable {
         _terminals.put(terminalKey, terminal);
     }
 
-    public Terminal findTerminal(String terminalKey) {  //FIXME invalidTerminalIdException no, right?
-        return _terminals.get(terminalKey);
-        //FIXME didnt put exception for same reason as findClient
+    public boolean terminalExists(String terminalKey) {
+        return _terminals.get(terminalKey) != null;
     }
-    public Terminal secureFindTerminal(String terminalKey) throws UnknownTerminalException{  //FIXME invalidTerminalIdException no, right?
+
+    public Terminal findTerminal(String terminalKey) throws UnknownTerminalException {
         Terminal terminal = _terminals.get(terminalKey);
         if (terminal == null)
             throw new UnknownTerminalException(terminalKey);
         return terminal;
-        //FIXME didnt put exception for same reason as findClient
     }
 
-    public Client findClient(String clientKey) {
-        return _clients.get(clientKey);
-        //FIXME cant throw exception here bc it wouldn't make sense in registerClient - unless i put code in catch and not try
+    public boolean clientExists(String clientKey) {
+        return _clients.get(clientKey) != null;
     }
+
+    public Client findClient(String clientKey) throws UnknownClientException {
+        Client client = _clients.get(clientKey);
+        if (client == null)
+            throw new UnknownClientException(clientKey);
+        return client;
+    }
+
 
     public String showClient(String clientKey) throws UnknownClientException {
         Client client = findClient(clientKey);
-        if (client == null)
-            throw new UnknownClientException(clientKey);
-        return client.toString() + client.showNotifications();   //FIXME is /n right?
+        return client.toString() + client.showNotifications();
     }
+
 
     public String showAllClients() {
         String allClients = "";
         for (Client client : _clients.values()) {
-            allClients += "\n" + client.toString(); //FIXME is /n right?
+            allClients += "\n" + client.toString();
         }
         return allClients.substring(1);
     }
 
-    /*ArrayList allClients = (ArrayList) _clients.values();
-        String string = allClients.get(0).toString();
-        for (int i=1; i < allClients.size(); i++) {
-            string += "\n" + allClients.get(i).toString(); //FIXME is /n right?
-        }
-        return string;*/
 
     public Collection<String> showAllTerminals() {
         Collection<String> allTerminals = new LinkedList<>();
-        // Fixme Collection<Terminal> allTerms = _terminals.values();
         for (Terminal terminal : _terminals.values()) {
-            allTerminals.add(terminal.toString()); //FIXME is /n right?
+            allTerminals.add(terminal.toString());
         }
-        return allTerminals;   //remove o \n inicial
+        return allTerminals;
     }
 
     public String showAllUnusedTerminals() {
         String allTerminals = "";
         for (Terminal terminal : _terminals.values()) {
             if (terminal.isUnused())
-                allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
+                allTerminals += "\n" + terminal.toString();
         }
-        return allTerminals.substring(1);
+        return allTerminals.substring(1);   // removes the extra \n at the start
     }
 
 }

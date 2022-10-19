@@ -23,20 +23,21 @@ class DoSaveFile extends Command<NetworkManager> {
 
 		try {
 			_receiver.save();
+
 		} catch (MissingFileAssociationException e) {
 
 			Form form = new Form();
 			form.addStringField("filename", Prompt.newSaveAs());
 			form.parse();
-			String filename = form.stringField("filename");
 
 			try {
-				_receiver.saveAs(filename);
+				_receiver.saveAs(form.stringField("filename"));
+
 			} catch (IOException | MissingFileAssociationException ex) {
 				ex.printStackTrace();
 			}
-		}
-		catch (/*FileNotFoundException|*/ IOException e){
+
+		} catch (/*FileNotFoundException|*/ IOException e){
 			e.printStackTrace();
 		}
 	}

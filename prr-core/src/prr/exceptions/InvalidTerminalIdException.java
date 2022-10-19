@@ -5,7 +5,6 @@ public class InvalidTerminalIdException extends Exception {
 
     private String _key;
 
-
     public InvalidTerminalIdException(String key) {
         _key = key;
     }

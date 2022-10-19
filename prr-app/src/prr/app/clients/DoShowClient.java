@@ -19,11 +19,13 @@ class DoShowClient extends Command<Network> {
 
 	@Override
 	protected final void execute() throws CommandException {
+
 		String clientKey = stringField("clientKey");
 		try {
 			_display.popup(_receiver.showClient(clientKey));
 		} catch (UnknownClientException e) {
-			throw new UnknownClientKeyException(e.getKey());	//FIXME does this have to be catched?
+			throw new UnknownClientKeyException(e.getKey());
 		}
+
 	}
 }

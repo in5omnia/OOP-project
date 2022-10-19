@@ -1,7 +1,5 @@
 package prr.clients;
 
-import java.io.Serializable;
-
 public class Platinum extends Level  {
     private static final long serialVersionUID = 202208091754L;
 

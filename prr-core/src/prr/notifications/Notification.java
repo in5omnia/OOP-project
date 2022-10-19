@@ -5,8 +5,7 @@ import java.io.Serializable;
 
 public class Notification implements Serializable {
     private static final long serialVersionUID = 202208091754L;
-
-    private String _originTerminalId;   //FIXME review
+    private String _originTerminalId;
     private Terminal _destination;
     private NotificationType _type;
 

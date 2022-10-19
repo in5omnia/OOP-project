@@ -19,11 +19,13 @@ public class Client implements Serializable {
 
     private int _taxId;
 
-    private boolean notificationsEnabled = true;
-
     private int _payments = 0;
 
     private int _debts = 0;
+
+    private boolean notificationsEnabled = true;
+
+    private Level _level = new Normal(this);
 
     private Map<String, Terminal> _terminals = new TreeMap<>();
 
@@ -36,7 +38,9 @@ public class Client implements Serializable {
         _taxId = taxId;
     }
 
-    private Level _level = new Normal(this);
+    public String getId() {
+        return _clientId;
+    }
 
     protected void updateLevel(Level level){        //FIXME PROTECTED
         _level = level;
@@ -45,6 +49,7 @@ public class Client implements Serializable {
     public boolean fiveConsecutiveVideo(){/*FIXME*/
         return true;
     }
+
     public boolean twoConsecutiveText(){/*FIXME*/
         return true;
     }
@@ -57,24 +62,23 @@ public class Client implements Serializable {
         return _payments - _debts;
     }
 
-    @Override
-    public String toString(){
-        String notifications = (notificationsEnabled) ? "YES" : "NO" ;
-        return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
-                "|" + _terminals.size() + "|" + _payments + "|" + _debts;
-    }
-
     public String showNotifications() {
+
         String string = "";
         for (Notification notification : _notifications){
             string += "\n" + notification.toString();
         }
         _notifications.clear();
         return string;
+
     }
 
-    public String getId() {
-        return _clientId;
-    }
+    @Override
+    public String toString(){
 
+        String notifications = (notificationsEnabled) ? "YES" : "NO" ;
+        return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
+                "|" + _terminals.size() + "|" + _payments + "|" + _debts;
+
+    }
 }

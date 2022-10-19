@@ -1,28 +1,24 @@
 package prr.terminals;
 
-import prr.exceptions.InvalidTerminalIdException;
 import prr.clients.Client;
+import prr.notifications.Notification;
+import prr.terminals.communication.Communication;
+import prr.terminals.states.State;
+import prr.terminals.states.Idle;
+import prr.exceptions.InvalidTerminalIdException;
 import prr.exceptions.DuplicateFriendException;
 import prr.exceptions.NoSuchFriendException;
 import prr.exceptions.OwnFriendException;
-import prr.notifications.Notification;
-import prr.terminals.communication.Communication;
-import prr.terminals.states.Idle;
-import prr.terminals.states.State;
-
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 
-// FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
-
 /**
  * Abstract terminal.
  */
-abstract public class Terminal implements Serializable /* FIXME maybe addd more interfaces */{
+abstract public class Terminal implements Serializable {
 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
@@ -34,22 +30,17 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     private List<Communication> _pastCommunications = new LinkedList<>();
 
     private Communication _ongoingCommunication = null;
-    // FIXME
-    Collection<Notification> _textNotif;    //instead of clients, we store notifications to send when the terminal
-    Collection<Notification> _interactiveNotif;     //becomes available, which depends if it's text or interactive
+
+    // these store notifications to send when the terminal becomes available
+    Collection<Notification> _textNotif;
+    Collection<Notification> _interactiveNotif;
 
     private int _payments = 0;
     private int _debts = 0;
 
-
-    //TODO INFO: When communication fails, a methord checks if origin client has notifs enabled.
-    // If so, a notif is created and stored in one of these collections. When there's a state switch in the terminal,
-    // it checks for notifs to send and sends them if the new state allows them.
-
-
-
-    //FIXME we should probably use a treeMap for friends or sth to ease search more expensive but faster?
     // FIXME Do we even need the pointers to the terminal
+
+
     public Terminal(Client owner, String key) throws InvalidTerminalIdException {
         _owner = owner;
         if (!validTerminalKey(key)) {
@@ -58,22 +49,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         _key = key;
     }
 
-    /* FIXME
-    public Terminal(Client owner, String key, Collection<Terminal> friends) {
-        _owner = owner;
-        _key = key;
-        _friends = friends;
-    }
-
-     */
-
 
     public Terminal(Client owner, String key, State state) throws InvalidTerminalIdException {
-       /* _owner = owner;
-        if (!validTerminalKey(key)) {
-            throw new InvalidTerminalIdException(key);
-        }
-        _key = key;*/
         this(owner, key);
         _state = state;
 
@@ -85,24 +62,18 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
 
     private boolean validTerminalKey(String key) {
-        return key.matches("[0-9]{6}");   //why not "[0-9]+$"? //i added length
+        return key.matches("[0-9]{6}");
     }
-
-
-/*
-    public Terminal(String key) throws InvalidTerminalIdException{             //do we need this??
-        // FIXME - verificar se são 6 digitos?
-
-        _key = key;
-    }
-*/
 
 
     public void addFriend(String friendKey) throws DuplicateFriendException, OwnFriendException {
+
         if (friendKey.equals(_key))
             throw new OwnFriendException(friendKey);
+
         else if (isFriend(friendKey))
             throw new DuplicateFriendException(friendKey);
+
         _friends.add(friendKey);
     }
 
@@ -113,8 +84,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     void removeFriend(String friendKey) throws NoSuchFriendException {    // should these add/remove functions throw exceptions?
-        if (isFriend(friendKey))
-            _friends.remove(friendKey);
+        if (!isFriend(friendKey))
+            throw new NoSuchFriendException();
+        _friends.remove(friendKey);
+
         // Can't add itself
     }
 
@@ -144,7 +117,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     public State getState(){    ///hmmmm prob not necessary
         return _state;
-        //FIXME did this for send...Communication
+
     }
 
     public abstract boolean canMessage();
@@ -169,26 +142,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     void showOngoingCommunication(){}
 
     void silenceTerminal(){}
+    private void showTerminalBalance(){}
 
-    void switchState(State state){
-
-        _state = state;
-    }
-
-    int calculateBalance() {return 0;}
-    void showTerminalBalance(){}
-
-    public boolean isUnused() {
-        return _pastCommunications.isEmpty() && _ongoingCommunication == null;
-    }
-
-    private String listFriends() {
-        String listedFriends = "";
-        for (String friend : _friends) {
-            listedFriends += (",") + friend;
-        }
-        return listedFriends.substring(1);  //remove a vírgula inicial
-    }
 
     public int calculatePayments() {
         return _payments;
@@ -196,13 +151,28 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     public int calculateDebts() {
         return _debts;
     }
+    private int calculateBalance() {
+        return _payments - _debts;
+    }
+
+    public boolean isUnused() {
+        return _pastCommunications.isEmpty() && _ongoingCommunication == null;
+    }
+
+    private String listFriends() {
+
+        String listedFriends = "";
+        for (String friend : _friends) {
+            listedFriends += (",") + friend;
+        }
+        return listedFriends.substring(1);  // removes the extra comma at the start
+    }
 
     @Override
     public String toString() {
         String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
-        return  "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() +
-                "|" + calculateDebts() + friends;
-
+        return  "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
+                + calculateDebts() + friends;
     }
 
 }

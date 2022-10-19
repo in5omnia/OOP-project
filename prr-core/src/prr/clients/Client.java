@@ -64,8 +64,13 @@ public class Client implements Serializable {
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
     }
 
-    public List<Notification> getNotifications(){
-        return _notifications;
+    public String showNotifications() {
+        String string = "";
+        for (Notification notification : _notifications){
+            string += "\n" + notification.toString();
+        }
+        _notifications.clear();
+        return string;
     }
 
 }

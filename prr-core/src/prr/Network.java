@@ -65,7 +65,8 @@ public class Network implements Serializable {
             DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
             DuplicateFriendException, OwnFriendException {
         switch (fields[0]) {
-            case "CLIENT" -> registerClient(fields);
+           // case "CLIENT" -> registerClient(fields);
+            case "CLIENT" -> registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
             case "BASIC", "FANCY" -> registerTerminal(fields);
             case "FRIENDS" -> registerFriends(fields);
             default -> throw new UnrecognizedEntryException(fields[0]);
@@ -77,14 +78,25 @@ public class Network implements Serializable {
     /*
      *  Registers the Clients
      * */
-    private void registerClient(String[] fields) throws DuplicateClientException {
+    public void registerClient(String clientId, String name, int taxId) throws DuplicateClientException {
+        if (findClient(clientId) != null) // FIXME does this get the ID????
+            throw new DuplicateClientException(clientId);
+
+        Client client = new Client(clientId, name, taxId);
+
+        _clients.put(clientId, client);
+    }
+
+    /* private void registerClient(String[] fields) throws DuplicateClientException {
         if (findClient(fields[1]) != null) // FIXME does this get the ID????
             throw new DuplicateClientException(fields[1]);
 
         Client client = new Client(fields[1], fields[2], Integer.parseInt(fields[3]));
 
         _clients.put(fields[1], client);
-    }
+    }*/
+
+
 
     /*
      *  Registers the Terminals
@@ -159,16 +171,23 @@ public class Network implements Serializable {
         Client client = findClient(clientKey);
         if (client == null)
             throw new UnknownClientException(clientKey);
-        return client.toString() + client.;
+        return client.toString() + client.showNotifications();   //FIXME is /n right?
     }
 
     public String showAllClients(){
         String allClients = "";
         for (Client client : _clients.values()){
-            allClients += client.toString() + "\n"; //FIXME is /n right?
+            allClients += "\n" + client.toString(); //FIXME is /n right?
         }
-        return allClients;
+        return allClients.substring(2);
     }
+
+    /*ArrayList allClients = (ArrayList) _clients.values();
+        String string = allClients.get(0).toString();
+        for (int i=1; i < allClients.size(); i++) {
+            string += "\n" + allClients.get(i).toString(); //FIXME is /n right?
+        }
+        return string;*/
 
 }
 

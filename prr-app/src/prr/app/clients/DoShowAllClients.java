@@ -18,10 +18,6 @@ class DoShowAllClients extends Command<Network> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		try {
-			_display.popup(_receiver.showAllClients());
-		} //catch (UnknownClientException e) {
-			throw new UnknownClientKeyException(e.getKey());	//FIXME does this have to be catched?
-		}
+		_display.popup(_receiver.showAllClients());
 	}
 }

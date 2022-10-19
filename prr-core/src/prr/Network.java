@@ -65,7 +65,6 @@ public class Network implements Serializable {
             DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
             DuplicateFriendException, OwnFriendException {
         switch (fields[0]) {
-           // case "CLIENT" -> registerClient(fields);
             case "CLIENT" -> registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
             case "BASIC", "FANCY" -> registerTerminal(fields);
             case "FRIENDS" -> registerFriends(fields);
@@ -101,7 +100,7 @@ public class Network implements Serializable {
     /*
      *  Registers the Terminals
      * */
-    private void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
+    public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException, UnrecognizedEntryException, UnknownClientException {
         if (findTerminal(fields[1]) != null)
             throw new DuplicateTerminalException(fields[1]);
 

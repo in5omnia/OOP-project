@@ -1,18 +1,21 @@
 package prr;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Serializable;
-import java.io.IOException;
-import java.util.*;
-
-import prr.exceptions.*;
 import prr.clients.Client;
-import prr.exceptions.DuplicateClientException;
+import prr.exceptions.*;
 import prr.terminals.Basic;
 import prr.terminals.Fancy;
 import prr.terminals.Terminal;
-import prr.terminals.states.*;
+import prr.terminals.states.Idle;
+import prr.terminals.states.Off;
+import prr.terminals.states.Silent;
+import prr.terminals.states.State;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -59,8 +62,8 @@ public class Network implements Serializable {
     }
 
     /*
-    *  Registers the entries by delegating to the correct method
-    * */
+     *  Registers the entries by delegating to the correct method
+     * */
     void registerEntry(String[] fields) throws DuplicateClientException, UnrecognizedEntryException,
             DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
             DuplicateFriendException, OwnFriendException {
@@ -71,7 +74,6 @@ public class Network implements Serializable {
             default -> throw new UnrecognizedEntryException(fields[0]);
         }
     }
-
 
 
     /*
@@ -96,7 +98,6 @@ public class Network implements Serializable {
     }*/
 
 
-
     /*
      *  Registers the Terminals
      * */
@@ -109,7 +110,7 @@ public class Network implements Serializable {
             throw new UnknownClientException(fields[2]);
 
         State state = stateFromString(fields[3]);
-        Terminal terminal = switch (fields[0]){
+        Terminal terminal = switch (fields[0]) {
             case "BASIC" -> new Basic(owner, fields[1], state);
             case "FANCY" -> new Fancy(owner, fields[1], state);
             default -> throw new UnrecognizedEntryException(fields[0]);
@@ -173,9 +174,9 @@ public class Network implements Serializable {
         return client.toString() + client.showNotifications();   //FIXME is /n right?
     }
 
-    public String showAllClients(){
+    public String showAllClients() {
         String allClients = "";
-        for (Client client : _clients.values()){
+        for (Client client : _clients.values()) {
             allClients += "\n" + client.toString(); //FIXME is /n right?
         }
         return allClients.substring(2);
@@ -188,15 +189,22 @@ public class Network implements Serializable {
         }
         return string;*/
 
-    public String showAllTerminals(){
+    public String showAllTerminals() {
         String allTerminals = "";
-        for (Terminal terminal : _terminals.values()){
+        for (Terminal terminal : _terminals.values()) {
             allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
         }
         return allTerminals;
     }
 
-
+    public String showAllUnusedTerminals() {
+        String allTerminals = "";
+        for (Terminal terminal : _terminals.values()) {
+            if (terminal.isUnused())
+                allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
+        }
+        return allTerminals;
+    }
 
 }
 

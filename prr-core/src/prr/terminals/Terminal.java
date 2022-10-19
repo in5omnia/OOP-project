@@ -176,6 +176,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     int calculateBalance() {return 0;}
     void showTerminalBalance(){}
 
+    public boolean isUnused() {
+        return _pastCommunications.isEmpty() && _ongoingCommunication == null;
+    }
+
     private String listFriends() {
         String s = "";
         for (String friend : _friends) {

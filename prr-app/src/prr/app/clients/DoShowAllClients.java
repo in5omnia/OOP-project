@@ -1,6 +1,8 @@
 package prr.app.clients;
 
 import prr.Network;
+import prr.app.exceptions.UnknownClientKeyException;
+import prr.exceptions.UnknownClientException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
@@ -16,6 +18,10 @@ class DoShowAllClients extends Command<Network> {
 
 	@Override
 	protected final void execute() throws CommandException {
-                //FIXME implement command
+		try {
+			_display.popup(_receiver.showAllClients());
+		} //catch (UnknownClientException e) {
+			throw new UnknownClientKeyException(e.getKey());	//FIXME does this have to be catched?
+		}
 	}
 }

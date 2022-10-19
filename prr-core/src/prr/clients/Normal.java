@@ -9,9 +9,13 @@ public class Normal extends Level {
         super(client);
     }
 
-    public void balanceOver500(){
+    /* public void balanceOver500(){
         if (_balance > 500)
            _client.updateLevel(new Gold(_client));
+    }*/
+    @Override
+    public String toString(){
+        return "NORMAL";
     }
 
 }

@@ -145,17 +145,30 @@ public class Network implements Serializable {
         _terminals.put(terminalKey, terminal);
     }
 
-    public Terminal findTerminal(String terminalKey) {
-        //FIXME Throw Exception if not found
+    public Terminal findTerminal(String terminalKey) {  //FIXME invalidTerminalIdException no, right?
         return _terminals.get(terminalKey);
+        //FIXME didnt put exception for same reason as findClient
     }
 
-    public Client findClient(String clientKey){
+    public Client findClient(String clientKey) {
         return _clients.get(clientKey);
+        //FIXME cant throw exception here bc it wouldn't make sense in registerClient - unless i put code in catch and not try
     }
 
-    //CLIENT|key|name|taxId|type|notifications|terminals|payments|debts
-    public String showClient(String clientKey){}
+    public String showClient(String clientKey) throws UnknownClientException {
+        Client client = findClient(clientKey);
+        if (client == null)
+            throw new UnknownClientException(clientKey);
+        return client.toString() + client.;
+    }
+
+    public String showAllClients(){
+        String allClients = "";
+        for (Client client : _clients.values()){
+            allClients += client.toString() + "\n"; //FIXME is /n right?
+        }
+        return allClients;
+    }
 
 }
 

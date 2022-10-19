@@ -9,6 +9,7 @@ public class Platinum extends Level  {
         super(client);
     }
 
+    /*
     public void negativeBalance(){
         if (_balance < 0)
             _client.updateLevel(new Normal(_client));
@@ -18,4 +19,10 @@ public class Platinum extends Level  {
         if (_balance >= 0 && _client.twoConsecutiveText())
             _client.updateLevel(new Platinum(_client));
     }                       //na avaliação feita antes da terceira comunicação
+*/
+    @Override
+    public String toString(){
+        return "PLATINUM";
+    }
+
 }

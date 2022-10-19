@@ -9,7 +9,7 @@ public class Gold extends Level {
         super(client);
     }
 
-
+/*
     public void negativeBalance(){
         if (_balance < 0)
             _client.updateLevel(new Normal(_client));
@@ -19,4 +19,9 @@ public class Gold extends Level {
         if (_balance >= 0 && _client.fiveConsecutiveVideo())
             _client.updateLevel(new Platinum(_client));
     }           //na avaliação feita antes da sexta comunicação
+*/
+    @Override
+    public String toString(){
+        return "GOLD";
+    }
 }

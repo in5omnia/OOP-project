@@ -194,7 +194,7 @@ public class Network implements Serializable {
         for (Terminal terminal : _terminals.values()) {
             allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
         }
-        return allTerminals;
+        return allTerminals.substring(2);   //remove o \n inicial
     }
 
     public String showAllUnusedTerminals() {
@@ -203,7 +203,7 @@ public class Network implements Serializable {
             if (terminal.isUnused())
                 allTerminals += "\n" + terminal.toString(); //FIXME is /n right?
         }
-        return allTerminals;
+        return allTerminals.substring(2);
     }
 
 }

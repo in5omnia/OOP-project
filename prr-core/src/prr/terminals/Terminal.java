@@ -38,6 +38,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     Collection<Notification> _textNotif;    //instead of clients, we store notifications to send when the terminal
     Collection<Notification> _interactiveNotif;     //becomes available, which depends if it's text or interactive
 
+    private int _payments = 0;
+    private int _debts = 0;
+
+
     //TODO INFO: When communication fails, a methord checks if origin client has notifs enabled.
     // If so, a notif is created and stored in one of these collections. When there's a state switch in the terminal,
     // it checks for notifs to send and sends them if the new state allows them.
@@ -183,16 +187,23 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     private String listFriends() {
         String listedFriends = "";
         for (String friend : _friends) {
-            listedFriends += ("; ");
-            listedFriends += friend;
+            listedFriends += (",") + friend;
         }
-        return listedFriends;
+        return listedFriends.substring(1);  //remove a vírgula inicial
+    }
+
+    public int calculatePayments() {
+        return _payments;
+    }
+    public int calculateDebts() {
+        return _debts;
     }
 
     @Override
     public String toString() {
+        String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
         return  "|" + _key + "|" + _owner.getId() + "|" + _owner.getId() + "|" + calculatePayments() +
-                "|" + calculateDebts() + _friends.isEmpty() ? "" : ("|" + listFriends());
+                "|" + calculateDebts() + friends;
 
     }
 

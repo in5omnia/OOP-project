@@ -181,16 +181,17 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     private String listFriends() {
-        String s = "";
+        String listedFriends = "";
         for (String friend : _friends) {
-            s += ("; ");
-            s += friend;
+            listedFriends += ("; ");
+            listedFriends += friend;
         }
+        return listedFriends;
     }
 
     @Override
     public String toString() {
-        return  "|" + _key + "|" + _owner. + "|" + _owner.getId() + "|" + calculatePayments() +
+        return  "|" + _key + "|" + _owner.getId() + "|" + _owner.getId() + "|" + calculatePayments() +
                 "|" + calculateDebts() + _friends.isEmpty() ? "" : ("|" + listFriends());
 
     }

@@ -17,4 +17,9 @@ public class Silent implements State, Serializable {
         return false;
     }
 
+    @Override
+    public String toString(){
+        return "SILENCE";
+    }
+
 }

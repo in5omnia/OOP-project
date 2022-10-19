@@ -16,4 +16,10 @@ public class Idle implements State, Serializable {
     public boolean canReceiveInteractiveCommunication(){
         return true;
     }
+
+    @Override
+    public String toString(){
+        return "IDLE";
+    }
+
 }

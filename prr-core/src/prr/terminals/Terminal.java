@@ -202,7 +202,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     @Override
     public String toString() {
         String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
-        return  "|" + _key + "|" + _owner.getId() + "|" + _owner.getId() + "|" + calculatePayments() +
+        return  "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() +
                 "|" + calculateDebts() + friends;
 
     }

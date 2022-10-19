@@ -16,4 +16,10 @@ public class Busy implements State, Serializable {
     public boolean canReceiveInteractiveCommunication(){
         return false;
     }
+
+    @Override
+    public String toString(){
+        return "BUSY";
+    }
+
 }

@@ -17,4 +17,9 @@ public class Off implements State, Serializable {
         return false;
     }
 
+    @Override
+    public String toString(){
+        return "OFF";
+    }
+
 }

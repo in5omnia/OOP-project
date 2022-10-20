@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.BufferedReader;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 
 /**
@@ -111,7 +108,7 @@ public class Network implements Serializable {
             throw new DuplicateClientException(clientId);
 
         Client client = new Client(clientId, name, taxId);
-        _clients.put(clientId, client);
+        _clients.put(clientId.toLowerCase(), client);
     }
 
     /**
@@ -153,7 +150,7 @@ public class Network implements Serializable {
      * Registers the Friends to a Terminal
      *
      * @param fields information about a terminal and the terminals being registered as its friends
-     * @throws UnknownTerminalException if one of the terminals given deosn't exist
+     * @throws UnknownTerminalException if one of the terminals given doesn't exist
      * @throws DuplicateFriendException if a terminal being registered as friend to another is already friends with it
      * @throws OwnFriendException       if the terminal is being registered as its own friend
      */
@@ -173,7 +170,7 @@ public class Network implements Serializable {
     /**
      * Receives a string naming a state and returns the corresponding State
      *
-     * @param state
+     * @param state string that represents the state
      * @return the new State that corresponds to the given string
      * @throws UnrecognizedEntryException if the given state is invalid (Busy is invalid here because a terminal
      *                                    can't be created already busy)
@@ -192,7 +189,7 @@ public class Network implements Serializable {
      * Adds a terminal to the network.
      *
      * @param terminalKey the terminal's ID
-     * @param terminal
+     * @param terminal   the terminal to be added
      */
     private void addTerminalToNetwork(String terminalKey, Terminal terminal) {
         _terminals.put(terminalKey, terminal);
@@ -229,18 +226,18 @@ public class Network implements Serializable {
      * @return true if the client exists and false otherwise
      */
     private boolean clientExists(String clientKey) {
-        return _clients.get(clientKey) != null;
+        return _clients.get(clientKey.toLowerCase()) != null;
     }
 
     /**
      * Finds a client with the given ID in the network.
      *
-     * @param clientKey
+     * @param clientKey client's ID
      * @return the client with the given key
      * @throws UnknownClientException if there isn't a client with the given key in the network
      */
     public Client findClient(String clientKey) throws UnknownClientException {
-        Client client = _clients.get(clientKey);
+        Client client = _clients.get(clientKey.toLowerCase());
         if (client == null)
             throw new UnknownClientException(clientKey);
         return client;
@@ -249,7 +246,7 @@ public class Network implements Serializable {
     /**
      * Shows the client with the given ID.
      *
-     * @param clientKey
+     * @param clientKey client's ID
      * @return a String that represents the client and his/her notifications.
      * @throws UnknownClientException if there isn't a client with the given key in the network
      */

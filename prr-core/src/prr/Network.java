@@ -159,10 +159,7 @@ public class Network implements Serializable {
         Terminal terminal = findTerminal(fields[1]);
 
         for (String terminalId : fields[2].split(",")) {
-            if (!terminalExists(terminalId))
-                throw new UnknownTerminalException(terminalId);
-
-            terminal.addFriend(terminalId);
+            terminal.addFriend(terminalId, findTerminal(terminalId));
         }
 
     }

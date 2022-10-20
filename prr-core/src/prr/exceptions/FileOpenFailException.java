@@ -1,6 +1,5 @@
 package prr.exceptions;
 
-//FIXME not sure if we need or we just use importfileexception
 public class FileOpenFailException extends Exception {
 
     /**

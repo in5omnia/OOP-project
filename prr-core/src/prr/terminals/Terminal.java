@@ -1,19 +1,23 @@
 package prr.terminals;
 
 import prr.clients.Client;
+import prr.exceptions.OwnFriendException;
+import prr.exceptions.NoSuchFriendException;
 import prr.exceptions.DuplicateFriendException;
 import prr.exceptions.InvalidTerminalIdException;
-import prr.exceptions.NoSuchFriendException;
-import prr.exceptions.OwnFriendException;
 
 import prr.notifications.Notification;
-import prr.terminals.communication.Communication;
-import prr.terminals.states.Idle;
 import prr.terminals.states.State;
+import prr.terminals.states.Idle;
+import prr.terminals.communication.Communication;
 
 import java.io.Serializable;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Collection;
 
 
 /**
@@ -32,7 +36,7 @@ abstract public class Terminal implements Serializable {
 
     private State _state = new Idle();
 
-    private Map<String, Terminal> _friends = new HashMap<>();
+    private Map<String, Terminal> _friends = new TreeMap<>();
 
     private List<Communication> _pastCommunications = new LinkedList<>();
 
@@ -110,7 +114,7 @@ abstract public class Terminal implements Serializable {
         return _state.canStartCommunication() && _ongoingCommunication == null;
     }
 
-    public State getState() {    ///hmmmm prob not necessary
+    public State getState() {
         return _state;
     }
 

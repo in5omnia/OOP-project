@@ -1,8 +1,8 @@
 package prr.terminals;
 
-import prr.exceptions.InvalidTerminalIdException;
 import prr.clients.Client;
 import prr.terminals.states.State;
+import prr.exceptions.InvalidTerminalIdException;
 
 import java.io.Serializable;
 

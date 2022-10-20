@@ -1,7 +1,7 @@
 package prr.notifications;
 
-import prr.terminals.Terminal;
 import java.io.Serializable;
+import prr.terminals.Terminal;
 
 public class Notification implements Serializable {
 

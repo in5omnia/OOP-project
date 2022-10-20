@@ -5,10 +5,10 @@ import prr.notifications.Notification;
 
 import java.io.Serializable;
 
-import java.util.List;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.LinkedList;
 
 public class Client implements Serializable {
 

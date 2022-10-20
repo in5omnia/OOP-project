@@ -1,4 +1,5 @@
 package prr.terminals.communication;
+
 import java.io.Serializable;
 
 public class Video extends InteractiveCommunication implements Serializable{

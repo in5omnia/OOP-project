@@ -1,7 +1,5 @@
 package prr.exceptions;
 
-import java.io.Serial;
-
 public class UnknownTerminalException extends Exception{
 
     /**

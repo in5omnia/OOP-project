@@ -13,10 +13,7 @@ import prr.terminals.states.State;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -35,7 +32,7 @@ abstract public class Terminal implements Serializable {
 
     private State _state = new Idle();
 
-    private List<String> _friends = new LinkedList<>(); //FIXME should be a map or sth
+    private Map<String, Terminal> _friends = new HashMap<>();
 
     private List<Communication> _pastCommunications = new LinkedList<>();
 
@@ -73,7 +70,7 @@ abstract public class Terminal implements Serializable {
         return key.matches("[0-9]{6}");
     }
 
-    public void addFriend(String friendKey) throws DuplicateFriendException, OwnFriendException {
+    public void addFriend(String friendKey, Terminal friend) throws DuplicateFriendException, OwnFriendException {
 
         if (friendKey.equals(_key))
             throw new OwnFriendException(friendKey);
@@ -81,7 +78,7 @@ abstract public class Terminal implements Serializable {
         else if (isFriend(friendKey))
             throw new DuplicateFriendException(friendKey);
 
-        _friends.add(friendKey);
+        _friends.put(friendKey, friend);
     }
 
     void removeFriend(String friendKey) throws NoSuchFriendException {
@@ -91,7 +88,7 @@ abstract public class Terminal implements Serializable {
     }
 
     boolean isFriend(String terminalKey) {
-        return _friends.contains(terminalKey);
+        return _friends.containsKey(terminalKey);
     }
 
     /**
@@ -167,7 +164,7 @@ abstract public class Terminal implements Serializable {
     }
 
     private String listFriends() {
-        return String.join(",", _friends);
+        return String.join(",", _friends.keySet());
     }
 
     @Override

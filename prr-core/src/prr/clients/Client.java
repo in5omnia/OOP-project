@@ -1,16 +1,20 @@
 package prr.clients;
 
-import prr.notifications.Notification;
 import prr.terminals.Terminal;
+import prr.notifications.Notification;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class Client implements Serializable {
 
+    /**
+     * Serial number for serialization.
+     */
     private static final long serialVersionUID = 202208091754L;
 
     private String _clientId;
@@ -42,41 +46,32 @@ public class Client implements Serializable {
         return _clientId;
     }
 
-    protected void updateLevel(Level level){        //FIXME PROTECTED
+    protected void updateLevel(Level level) {
         _level = level;
-    }
-
-    public boolean fiveConsecutiveVideo(){/*FIXME*/
-        return true;
-    }
-
-    public boolean twoConsecutiveText(){/*FIXME*/
-        return true;
     }
 
     public void addTerminal(String terminalKey, Terminal terminal) {
         _terminals.put(terminalKey, terminal);
     }
 
-    public int calculateBalance(){
+    public int calculateBalance() {
         return _payments - _debts;
     }
 
     public String showNotifications() {
 
         String string = "";
-        for (Notification notification : _notifications){
+        for (Notification notification : _notifications) {
             string += "\n" + notification.toString();
         }
         _notifications.clear();
         return string;
-
     }
 
     @Override
-    public String toString(){
+    public String toString() {
 
-        String notifications = (notificationsEnabled) ? "YES" : "NO" ;
+        String notifications = (notificationsEnabled) ? "YES" : "NO";
         return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
 

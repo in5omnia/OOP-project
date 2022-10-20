@@ -5,9 +5,12 @@ import prr.clients.Client;
 import prr.terminals.states.State;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 public class Basic extends Terminal implements Serializable {
+
+    /**
+     * Serial number for serialization.
+     */
     private static final long serialVersionUID = 202208091754L;
 
 
@@ -15,10 +18,10 @@ public class Basic extends Terminal implements Serializable {
         super(owner, key);
     }
 
-    // Does this need to throw exception? it calls super, isnt it enough that super throws? - same for fancy (im probably wrong)
     public Basic(Client owner, String key, State state) throws InvalidTerminalIdException {
         super(owner, key, state);
     }
+
 
     @Override
     public boolean canMessage() {

@@ -1,17 +1,18 @@
 package prr;
 
-import java.io.FileNotFoundException;
-import java.io.ObjectOutputStream;
-import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+
 import prr.exceptions.ImportFileException;
-import prr.exceptions.MissingFileAssociationException;
 import prr.exceptions.UnavailableFileException;
 import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.MissingFileAssociationException;
 
 
 /**
@@ -24,7 +25,7 @@ public class NetworkManager {
      */
     private Network _network = new Network();
 
-    String _filename;
+    private String _filename;
 
     public Network getNetwork() {
         return _network;

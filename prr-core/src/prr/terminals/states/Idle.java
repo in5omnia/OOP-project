@@ -3,7 +3,12 @@ package prr.terminals.states;
 import java.io.Serializable;
 
 public class Idle implements State, Serializable {
+
+    /**
+     * Serial number for serialization.
+     */
     private static final long serialVersionUID = 202208091754L;
+
     public boolean canReceiveTextCommunication(){
         return true;
     }

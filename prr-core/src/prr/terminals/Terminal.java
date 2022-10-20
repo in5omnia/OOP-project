@@ -1,15 +1,19 @@
 package prr.terminals;
 
 import prr.clients.Client;
-import prr.notifications.Notification;
-import prr.terminals.communication.Communication;
-import prr.terminals.states.State;
-import prr.terminals.states.Idle;
-import prr.exceptions.InvalidTerminalIdException;
 import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.InvalidTerminalIdException;
 import prr.exceptions.NoSuchFriendException;
 import prr.exceptions.OwnFriendException;
+
+import prr.notifications.Notification;
+import prr.terminals.communication.Communication;
+import prr.terminals.states.Idle;
+import prr.terminals.states.State;
+
 import java.io.Serializable;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,25 +24,31 @@ import java.util.List;
  */
 abstract public class Terminal implements Serializable {
 
-	/** Serial number for serialization. */
-	private static final long serialVersionUID = 202208091753L;
+    /**
+     * Serial number for serialization.
+     */
+    private static final long serialVersionUID = 202208091753L;
+
     private Client _owner;
+
     private String _key;
-    private State _state =  new Idle();
-    private List<String> _friends = new LinkedList<>();
+
+    private State _state = new Idle();
+
+    private List<String> _friends = new LinkedList<>(); //FIXME should be a map or sth
 
     private List<Communication> _pastCommunications = new LinkedList<>();
 
     private Communication _ongoingCommunication = null;
 
     // these store notifications to send when the terminal becomes available
-    Collection<Notification> _textNotif;
-    Collection<Notification> _interactiveNotif;
+    Collection<Notification> _textNotifications;
+
+    Collection<Notification> _interactiveNotifications;
 
     private int _payments = 0;
-    private int _debts = 0;
 
-    // FIXME Do we even need the pointers to the terminal
+    private int _debts = 0;
 
 
     public Terminal(Client owner, String key) throws InvalidTerminalIdException {
@@ -49,22 +59,19 @@ abstract public class Terminal implements Serializable {
         _key = key;
     }
 
-
     public Terminal(Client owner, String key, State state) throws InvalidTerminalIdException {
         this(owner, key);
         _state = state;
-
     }
+
 
     public String getKey() {
         return _key;
     }
 
-
     private boolean validTerminalKey(String key) {
         return key.matches("[0-9]{6}");
     }
-
 
     public void addFriend(String friendKey) throws DuplicateFriendException, OwnFriendException {
 
@@ -77,32 +84,24 @@ abstract public class Terminal implements Serializable {
         _friends.add(friendKey);
     }
 
-    void addFriends(List<String> friends) throws DuplicateFriendException, OwnFriendException {
-        for (String friendKey : friends) {
-            addFriend(friendKey);
-        }
-    }
-
-    void removeFriend(String friendKey) throws NoSuchFriendException {    // should these add/remove functions throw exceptions?
+    void removeFriend(String friendKey) throws NoSuchFriendException {
         if (!isFriend(friendKey))
             throw new NoSuchFriendException();
         _friends.remove(friendKey);
-
-        // Can't add itself
     }
 
     boolean isFriend(String terminalKey) {
         return _friends.contains(terminalKey);
     }
 
-        /**
-         * Checks if this terminal can end the current interactive communication.
-         *
-         * @return true if this terminal is busy (i.e., it has an active interactive communication) and
-         *          it was the originator of this communication.
-         **/
+    /**
+     * Checks if this terminal can end the current interactive communication.
+     *
+     * @return true if this terminal is busy (i.e., it has an active interactive communication) and
+     * it was the originator of this communication.
+     **/
     public boolean canEndCurrentCommunication() {
-        return _ongoingCommunication != null;
+        return  _ongoingCommunication != null;
     }
 
     /**
@@ -111,46 +110,54 @@ abstract public class Terminal implements Serializable {
      * @return true if this terminal is neither off neither busy, false otherwise.
      **/
     public boolean canStartCommunication() {
-        return _ongoingCommunication == null;
+        return _state.canStartCommunication() && _ongoingCommunication == null;
     }
 
-
-    public State getState(){    ///hmmmm prob not necessary
+    public State getState() {    ///hmmmm prob not necessary
         return _state;
-
     }
 
     public abstract boolean canMessage();
+
     public abstract boolean canVoiceCommunicate();
+
     public abstract boolean canVideoCommunicate();
 
-
-
-    //FIXME - ALL:
-
-    void sendTextCommunication(Terminal destination){
-        //if (destination.getState().canReceiveTextCommunication())
+    public void sendTextCommunication(Terminal destination) {
     }
-    void startInteractiveCommunication(Terminal destination){}
 
-    void turnOnTerminal(){}
-    void turnOffTerminal(){}
+    public void startInteractiveCommunication(Terminal destination) {
+    }
 
-    void endInteractiveCommunication(int duration){}
-    void performPayment(int communicationKey){}
+    public void turnOnTerminal() {
+    }
 
-    void showOngoingCommunication(){}
+    public void turnOffTerminal() {
+    }
 
-    void silenceTerminal(){}
-    private void showTerminalBalance(){}
+    public void endInteractiveCommunication(int duration) {
+    }
 
+    public void performPayment(int communicationKey) {
+    }
+
+    public void showOngoingCommunication() {
+    }
+
+    public void silenceTerminal() {
+    }
+
+    private void showTerminalBalance() {
+    }
 
     public int calculatePayments() {
         return _payments;
     }
+
     public int calculateDebts() {
         return _debts;
     }
+
     private int calculateBalance() {
         return _payments - _debts;
     }
@@ -160,18 +167,13 @@ abstract public class Terminal implements Serializable {
     }
 
     private String listFriends() {
-
-        String listedFriends = "";
-        for (String friend : _friends) {
-            listedFriends += (",") + friend;
-        }
-        return listedFriends.substring(1);  // removes the extra comma at the start
+        return String.join(",", _friends);
     }
 
     @Override
     public String toString() {
         String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
-        return  "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
+        return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
                 + calculateDebts() + friends;
     }
 

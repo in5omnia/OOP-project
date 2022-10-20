@@ -1,29 +1,33 @@
 package prr;
 
 import prr.clients.Client;
+import prr.exceptions.OwnFriendException;
+import prr.exceptions.UnknownClientException;
+import prr.exceptions.DuplicateClientException;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.UnknownTerminalException;
+import prr.exceptions.DuplicateTerminalException;
+import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.InvalidTerminalIdException;
+
 import prr.terminals.Terminal;
 import prr.terminals.Basic;
 import prr.terminals.Fancy;
+
 import prr.terminals.states.State;
-import prr.terminals.states.Idle;
 import prr.terminals.states.Off;
+import prr.terminals.states.Idle;
 import prr.terminals.states.Silent;
-import java.io.BufferedReader;
+
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.io.BufferedReader;
+
 import java.util.Map;
 import java.util.TreeMap;
-import java.io.IOException;
-import prr.exceptions.UnrecognizedEntryException;
-import prr.exceptions.DuplicateClientException;
-import prr.exceptions.UnknownClientException;
-import prr.exceptions.DuplicateTerminalException;
-import prr.exceptions.InvalidTerminalIdException;
-import prr.exceptions.UnknownTerminalException;
-import prr.exceptions.DuplicateFriendException;
-import prr.exceptions.OwnFriendException;
+import java.util.Collection;
+import java.util.LinkedList;
 
 
 /**
@@ -40,13 +44,11 @@ public class Network implements Serializable {
      * Treemap that stores clients using their ID's as keys
      */
     private Map<String, Client> _clients = new TreeMap<>();
-    /* We should probably do this with ClientID class or sth FIXME  */
 
     /**
      * Treemap that stores terminals using their ID's as keys
      */
     private Map<String, Terminal> _terminals = new TreeMap<>();
-    /* We should probably do this with TerminalID class or sth FIXME  */
 
     /**
      * Read text input file and create corresponding domain entities.
@@ -64,24 +66,24 @@ public class Network implements Serializable {
                 registerEntry(fields);
             }
         } catch (DuplicateClientException | DuplicateTerminalException | InvalidTerminalIdException |
-               UnknownClientException | UnknownTerminalException | DuplicateFriendException | OwnFriendException e1) {
+                 UnknownClientException | UnknownTerminalException | DuplicateFriendException | OwnFriendException e) {
             throw new UnrecognizedEntryException(filename);
         }
     }
 
     /**
-     *  Registers the entries by delegating to the correct method.
+     * Registers the entries by delegating to the correct method.
      *
      * @param fields name of the information to be registered in the network
      * @throws UnrecognizedEntryException if some entry is not correct
-     * @throws DuplicateClientException if a client that already exists is being registered
+     * @throws DuplicateClientException   if a client that already exists is being registered
      * @throws DuplicateTerminalException if a terminal that already exists is being registered
      * @throws InvalidTerminalIdException if the id of a terminal being registered is invalid
-     * @throws UnknownClientException if a terminal is being registered to a client that doesn't exist
-     * @throws UnknownTerminalException if a terminal that doesn't exist is being registered as a friend or if friends are being registered to it
-     * @throws DuplicateFriendException if a terminal's friend is being registered as a friend again
-     * @throws OwnFriendException if a terminal is registering as its own friend
-     * */
+     * @throws UnknownClientException     if a terminal is being registered to a client that doesn't exist
+     * @throws UnknownTerminalException   if a terminal that doesn't exist is being registered as a friend or if friends are being registered to it
+     * @throws DuplicateFriendException   if a terminal's friend is being registered as a friend again
+     * @throws OwnFriendException         if a terminal is registering as its own friend
+     */
     void registerEntry(String[] fields) throws DuplicateClientException, UnrecognizedEntryException,
             DuplicateTerminalException, InvalidTerminalIdException, UnknownClientException, UnknownTerminalException,
             DuplicateFriendException, OwnFriendException {
@@ -96,12 +98,13 @@ public class Network implements Serializable {
 
 
     /**
-     *  Registers the Clients
+     * Registers the Clients
+     *
      * @param clientId - the ID the client will be registered with
-     * @param name - the name the client will be registered with
-     * @param taxId  - the taxId the client will be registered with
+     * @param name     - the name the client will be registered with
+     * @param taxId    - the taxId the client will be registered with
      * @throws DuplicateClientException - if the clientId being registered already exists
-     * */
+     */
     public void registerClient(String clientId, String name, int taxId) throws DuplicateClientException {
 
         if (clientExists(clientId))
@@ -112,14 +115,15 @@ public class Network implements Serializable {
     }
 
     /**
-     *  Registers the Terminals
+     * Registers the Terminals
+     *
      * @param fields - information about the terminal being registered (type, terminalID, clientID and state[optional,
      *               when registry happens through the Terminal Management Menu])
      * @throws InvalidTerminalIdException - if the given terminalID is invalid
      * @throws DuplicateTerminalException - if the given terminalID already exists
-     * @throws UnknownClientException - if the terminal is being registered to a client that doesn't exist
+     * @throws UnknownClientException     - if the terminal is being registered to a client that doesn't exist
      * @throws UnrecognizedEntryException - if the state or type of terminal given is invalid
-     * */
+     */
     public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException,
             UnrecognizedEntryException, UnknownClientException {
 
@@ -146,13 +150,14 @@ public class Network implements Serializable {
 
 
     /**
-     *  Registers the Friends to a Terminal
+     * Registers the Friends to a Terminal
+     *
      * @param fields information about a terminal and the terminals being registered as its friends
      * @throws UnknownTerminalException if one of the terminals given deosn't exist
      * @throws DuplicateFriendException if a terminal being registered as friend to another is already friends with it
-     * @throws OwnFriendException if the terminal is being registered as its own friend
-     * */
-    private void registerFriends(String[] fields) throws UnknownTerminalException, DuplicateFriendException, OwnFriendException {
+     * @throws OwnFriendException       if the terminal is being registered as its own friend
+     */
+    public void registerFriends(String[] fields) throws UnknownTerminalException, DuplicateFriendException, OwnFriendException {
 
         Terminal terminal = findTerminal(fields[1]);
 
@@ -167,10 +172,11 @@ public class Network implements Serializable {
 
     /**
      * Receives a string naming a state and returns the corresponding State
+     *
      * @param state
      * @return the new State that corresponds to the given string
      * @throws UnrecognizedEntryException if the given state is invalid (Busy is invalid here because a terminal
-     * can't be created already busy)
+     *                                    can't be created already busy)
      */
     private State stateFromString(String state) throws UnrecognizedEntryException {
 
@@ -184,24 +190,27 @@ public class Network implements Serializable {
 
     /**
      * Adds a terminal to the network.
+     *
      * @param terminalKey the terminal's ID
      * @param terminal
      */
-    public void addTerminalToNetwork(String terminalKey, Terminal terminal) {
+    private void addTerminalToNetwork(String terminalKey, Terminal terminal) {
         _terminals.put(terminalKey, terminal);
     }
 
     /**
      * Checks if a terminal with the given ID exists in the network.
+     *
      * @param terminalKey the terminal's ID
      * @return true is the terminal exists and false otherwise
      */
-    public boolean terminalExists(String terminalKey) {
+    private boolean terminalExists(String terminalKey) {
         return _terminals.get(terminalKey) != null;
     }
 
     /**
      * Finds a terminal with the given ID in the network.
+     *
      * @param terminalKey the terminal's ID
      * @return the terminal with the given key
      * @throws UnknownTerminalException if there isn't a terminal with the given key in the network
@@ -215,15 +224,17 @@ public class Network implements Serializable {
 
     /**
      * Checks if a client with the given ID exists in network.
+     *
      * @param clientKey client's ID
      * @return true if the client exists and false otherwise
      */
-    public boolean clientExists(String clientKey) {
+    private boolean clientExists(String clientKey) {
         return _clients.get(clientKey) != null;
     }
 
     /**
      * Finds a client with the given ID in the network.
+     *
      * @param clientKey
      * @return the client with the given key
      * @throws UnknownClientException if there isn't a client with the given key in the network
@@ -237,6 +248,7 @@ public class Network implements Serializable {
 
     /**
      * Shows the client with the given ID.
+     *
      * @param clientKey
      * @return a String that represents the client and his/her notifications.
      * @throws UnknownClientException if there isn't a client with the given key in the network
@@ -248,18 +260,20 @@ public class Network implements Serializable {
 
     /**
      * Shows all the clients in the network.
+     *
      * @return a String that represents all the clients.
      */
-    public String showAllClients() {
-        String allClients = "";
+    public Collection<String> showAllClients() {
+        Collection<String> allClients = new LinkedList<>();
         for (Client client : _clients.values()) {
-            allClients += "\n" + client.toString();
+            allClients.add(client.toString());
         }
-        return allClients.substring(1);
+        return allClients;
     }
 
     /**
      * Shows all the terminals in the network.
+     *
      * @return a collection of String that represent each terminal.
      */
     public Collection<String> showAllTerminals() {
@@ -272,15 +286,16 @@ public class Network implements Serializable {
 
     /**
      * Shows all the terminals that haven't had communications.
+     *
      * @return a String that represents all the unused terminals
      */
-    public String showAllUnusedTerminals() {
-        String allTerminals = "";
+    public Collection<String> showAllUnusedTerminals() {
+        Collection<String> allTerminals = new LinkedList<>();
         for (Terminal terminal : _terminals.values()) {
             if (terminal.isUnused())
-                allTerminals += "\n" + terminal;
+                allTerminals.add(terminal.toString());
         }
-        return allTerminals.substring(1);   // removes the extra \n at the start
+        return allTerminals;
     }
 
 }

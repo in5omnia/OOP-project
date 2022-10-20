@@ -1,6 +1,12 @@
 package prr.exceptions;
 
+import java.io.Serial;
+
 public class UnknownTerminalException extends Exception{
+
+    /**
+     * Serial number for serialization.
+     */
     private static final long serialVersionUID = 202210171749L;
 
     private String _key;

@@ -60,6 +60,10 @@ abstract public class Terminal implements Serializable {
         return _key;
     }
 
+    public Client getOwner(){
+        return _owner;
+    }
+
 
     private boolean validTerminalKey(String key) {
         return key.matches("[0-9]{6}");
@@ -111,7 +115,8 @@ abstract public class Terminal implements Serializable {
      * @return true if this terminal is neither off neither busy, false otherwise.
      **/
     public boolean canStartCommunication() {
-        return _ongoingCommunication == null;
+        return _state.canStartCommunication();
+        //return _ongoingCommunication == null;
     }
 
 
@@ -129,15 +134,23 @@ abstract public class Terminal implements Serializable {
     //FIXME - ALL:
 
     void sendTextCommunication(Terminal destination){
-        //if (destination.getState().canReceiveTextCommunication())
+        //TODO send text
+        canStartCommunication();
+        _owner.textCommunication();
+        _owner.checkForLevelUpdates_Text();
     }
-    void startInteractiveCommunication(Terminal destination){}
 
     void turnOnTerminal(){}
     void turnOffTerminal(){}
 
-    void endInteractiveCommunication(int duration){}
-    void performPayment(int communicationKey){}
+    public void endInteractiveCommunication(int duration){
+        //TODO end communication
+        _owner.checkForLevelUpdates_Video();    //may want to do this only for videos in the future
+    }
+    void performPayment(int communicationKey){
+        //perform payment TODO
+        _owner.balanceOver500();
+    }
 
     void showOngoingCommunication(){}
 

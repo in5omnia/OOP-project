@@ -22,17 +22,22 @@ public class Fancy extends Terminal implements Serializable {
 
     @Override
     public boolean canMessage() {
-        return true;
+        return getState().canReceiveTextCommunication();
     }
 
     @Override
     public boolean canVoiceCommunicate() {
-        return true;
+        return getState().canReceiveInteractiveCommunication();
     }
 
     @Override
     public boolean canVideoCommunicate() {
-        return true;
+        return getState().canReceiveInteractiveCommunication();
+    }
+
+    public void startVideoCommunication(Terminal destination){
+        //TODO
+        getOwner().videoCommunication();
     }
 
     @Override

@@ -4,17 +4,21 @@ import java.io.Serializable;
 
 public abstract class Level implements Serializable {
     private static final long serialVersionUID = 202208091754L;
-    protected Client _client;   //FIXME PROTECTED
+    //TODO
+    private Client _client;
     public Level(Client client){
-        _client = client;
+        _client=client;
     }
 
-    public void balanceOver500(){}
+    protected Client getClient(){
+        return _client;
+    }
+    public void balanceOver500(int balance){}
 
-    public void negativeBalance(){}
+    public void negativeBalance(boolean balanceIsNegative){}
 
-    public void fiveConsecutiveVideoAndNotNegative(){} //na avaliação feita antes da sexta comunicação
+    public void fiveConsecutiveVideoAndNotNegative(boolean balanceIsNegative, boolean fiveConsecutiveVideo){} //na avaliação feita antes da sexta comunicação
 
-    public void twoConsecutiveTextAndNotNegative(){} //na avaliação feita antes da terceira comunicação
+    public void twoConsecutiveTextAndNotNegative(boolean balanceIsNegative, boolean twoConsecutiveText){} //na avaliação feita antes da terceira comunicação
 
 }

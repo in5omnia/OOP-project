@@ -22,12 +22,12 @@ public class Basic extends Terminal implements Serializable {
 
     @Override
     public boolean canMessage() {
-        return true;
+        return getState().canReceiveTextCommunication();
     }
 
     @Override
     public boolean canVoiceCommunicate() {
-        return true;
+        return getState().canReceiveInteractiveCommunication();
     }
 
     @Override

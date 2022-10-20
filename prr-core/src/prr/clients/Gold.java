@@ -4,22 +4,22 @@ import java.io.Serializable;
 
 public class Gold extends Level {
     private static final long serialVersionUID = 202208091754L;
-
+    //TODO
     public Gold(Client client){
         super(client);
     }
 
-/*
-    public void negativeBalance(){
-        if (_balance < 0)
-            _client.updateLevel(new Normal(_client));
+
+    public void negativeBalance(boolean balanceIsNegative){
+        if (balanceIsNegative)
+            getClient().updateLevel(new Normal(getClient()));
     }
 
-    public void fiveConsecutiveVideoAndNotNegative(){
-        if (_balance >= 0 && _client.fiveConsecutiveVideo())
-            _client.updateLevel(new Platinum(_client));
+    public void fiveConsecutiveVideoAndNotNegative(boolean balanceIsNegative, boolean fiveConsecutiveVideo){
+        if (!balanceIsNegative && fiveConsecutiveVideo)
+            getClient().updateLevel(new Platinum(getClient()));
     }           //na avaliação feita antes da sexta comunicação
-*/
+
     @Override
     public String toString(){
         return "GOLD";

@@ -1,6 +1,5 @@
 package prr.clients;
 
-import java.io.Serializable;
 
 public class Normal extends Level {
 

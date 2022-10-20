@@ -1,7 +1,5 @@
 package prr.clients;
 
-import java.io.Serializable;
-
 public class Gold extends Level {
 
     /**

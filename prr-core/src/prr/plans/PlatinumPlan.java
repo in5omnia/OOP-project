@@ -1,7 +1,5 @@
 package prr.plans;
 
-import java.io.Serializable;
-
 public class PlatinumPlan implements Plan {
 
     /**

@@ -1,6 +1,5 @@
 package prr.plans;
 
-import java.io.Serializable;
 
 public class GoldPlan implements Plan {
 

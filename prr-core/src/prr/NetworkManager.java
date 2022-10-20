@@ -8,13 +8,11 @@ import java.io.ObjectInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import prr.exceptions.ImportFileException;
 import prr.exceptions.MissingFileAssociationException;
 import prr.exceptions.UnavailableFileException;
 import prr.exceptions.UnrecognizedEntryException;
 
-//FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
 /**
  * Manage access to network and implement load/save operations.
@@ -34,6 +32,7 @@ public class NetworkManager {
 
 
     /**
+     * Loads the network from a file.
      * @param filename name of the file containing the serialized application's state
      *                 to load.
      * @throws UnavailableFileException if the specified file does not exist or there is
@@ -90,7 +89,7 @@ public class NetworkManager {
      * Read text input file and create domain entities..
      *
      * @param filename name of the text input file
-     * @throws ImportFileException
+     * @throws ImportFileException if an entry of the file is incorrect or there is an IO error while processing the file
      */
     public void importFile(String filename) throws ImportFileException {
         try {

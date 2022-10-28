@@ -43,7 +43,7 @@ public class Network implements Serializable {
     /**
      * Treemap that stores clients using their ID's as keys
      */
-    private Map<String, Client> _clients = new TreeMap<>();
+    private Map<String, Client> _clients = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Treemap that stores terminals using their ID's as keys
@@ -111,7 +111,7 @@ public class Network implements Serializable {
             throw new DuplicateClientException(clientId);
 
         Client client = new Client(clientId, name, taxId);
-        _clients.put(clientId.toLowerCase(), client);
+        _clients.put(clientId, client);
     }
 
     /**
@@ -226,7 +226,7 @@ public class Network implements Serializable {
      * @return true if the client exists and false otherwise
      */
     private boolean clientExists(String clientKey) {
-        return _clients.get(clientKey.toLowerCase()) != null;
+        return _clients.get(clientKey) != null;
     }
 
     /**
@@ -237,7 +237,7 @@ public class Network implements Serializable {
      * @throws UnknownClientException if there isn't a client with the given key in the network
      */
     public Client findClient(String clientKey) throws UnknownClientException {
-        Client client = _clients.get(clientKey.toLowerCase());
+        Client client = _clients.get(clientKey);
         if (client == null)
             throw new UnknownClientException(clientKey);
         return client;

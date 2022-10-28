@@ -8,12 +8,12 @@ public class Normal extends Level {
      */
     private static final long serialVersionUID = 202208091754L;
 
-    public Normal(Client client){
+    public Normal(Client client) {
         super(client);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "NORMAL";
     }
 

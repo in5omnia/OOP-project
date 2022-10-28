@@ -7,13 +7,13 @@ public class Gold extends Level {
      */
     private static final long serialVersionUID = 202208091754L;
 
-    public Gold(Client client){
+    public Gold(Client client) {
         super(client);
     }
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return "GOLD";
     }
 }

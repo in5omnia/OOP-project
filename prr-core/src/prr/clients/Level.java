@@ -11,11 +11,11 @@ public abstract class Level implements Serializable {
 
     private Client _client;
 
-    public Level(Client client){
+    public Level(Client client) {
         _client = client;
     }
 
-    protected Client getClient(){
+    protected Client getClient() {
         return _client;
     }
 }

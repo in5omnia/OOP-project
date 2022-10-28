@@ -35,7 +35,6 @@ public class Client implements Serializable {
 
     private List<Notification> _notifications = new LinkedList<>();
 
-
     public Client(String clientId, String name, int taxId) {
         _clientId = clientId;
         _name = name;
@@ -66,6 +65,19 @@ public class Client implements Serializable {
         }
         _notifications.clear();
         return string;
+    }
+
+    public void enableNotifications() /* throws  AlreadyOnNotificationException */ {
+        if (!notificationsEnabled) {
+            //throw new AlreadyOnNotificationException();
+        }
+        notificationsEnabled = true;
+    }
+
+    public String showPaymentsAndDebts() {
+        //FIXME
+        //return [_payments, _debts];
+        return "temp";
     }
 
     @Override

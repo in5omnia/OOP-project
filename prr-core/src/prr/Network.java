@@ -295,5 +295,17 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
+    //FIXME needs to be a different return should probably be a long(payments/debts) array
+    public String showClientPaymentsAndDebts(String clientKey) throws UnknownClientException {
+        Client client = findClient(clientKey);
+        return client.showPaymentsAndDebts();
+    }
+
+    // TODO: Exception and Documentation
+    public void enableClientNotifications(String clientKey) throws UnknownClientException /* , AlreadyOnNotificationException */ {
+        Client client = findClient(clientKey);
+        client.enableNotifications();
+    }
+
 }
 

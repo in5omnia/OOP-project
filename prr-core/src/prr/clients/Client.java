@@ -83,10 +83,11 @@ public class Client implements Serializable {
         notificationsEnabled = false;
     }
 
-    public String showPaymentsAndDebts() {
-        //FIXME
-        //return [_payments, _debts];
-        return "temp";
+    public long getPayments() {
+        return _payments;
+    }
+    public long getDebts() {
+        return _debts;
     }
 
     @Override

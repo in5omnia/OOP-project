@@ -288,10 +288,19 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
-    //FIXME needs to be a different return should probably be a long(payments/debts) array
-    public String showClientPaymentsAndDebts(String clientKey) throws UnknownClientException {
-        Client client = findClient(clientKey);
-        return client.showPaymentsAndDebts();
+    // UNSAFE FIXME
+    private long getClientPayments(Client client) {
+        return client.getPayments();
+    }
+
+    // UNSAFE FIXME
+    private long getClientDebts(Client client) {
+        return client.getDebts();
+    }
+
+    public long[] retrievePaymentsAndDebts(String key) throws UnknownClientException {
+        Client client = findClient(key);
+        return new long[]{client.getPayments(), client.getDebts()};
     }
 
     // TODO: Exception and Documentation

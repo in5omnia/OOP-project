@@ -20,10 +20,10 @@ class DoShowClientPaymentsAndDebts extends Command<Network> {
 	@Override
 	protected final void execute() throws CommandException {
 		try {
-			//FIXME needs to be a different return
-			_receiver.showClientPaymentsAndDebts(stringField("clientId"));
-			// TODO get the data here
-			//  Message.clientPaymentsAndDebts();
+			String key = stringField("clientId");
+			long data[] = _receiver.retrievePaymentsAndDebts(key);
+
+			_display.popup(Message.clientPaymentsAndDebts(key, data[0], data[1]));
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
 		}

@@ -41,8 +41,8 @@ public class NetworkManager {
      */
     public void load(String filename) throws UnavailableFileException {
 
-        try(ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))){
-            _network = (Network) oos.readObject();
+        try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))){
+            _network = (Network) ois.readObject();
 
         } catch (ClassNotFoundException | IOException e) {
             throw new UnavailableFileException(filename);

@@ -30,9 +30,11 @@ class DoRegisterTerminal extends Command<Network> {
         String terminalKey = stringField("terminalKey");
         String terminalType = stringField("terminalType");
 
-        String fields[] = {stringField("terminalType"),
-                          stringField("terminalKey"),
-                          stringField("clientKey")};
+        String fields[] = {
+                stringField("terminalType"),
+                stringField("terminalKey"),
+                stringField("clientKey")
+        };
 
         try {
             _receiver.registerTerminal(fields);

@@ -7,6 +7,7 @@ import prr.terminals.Terminal;
 import prr.terminals.Basic;
 import prr.terminals.Fancy;
 
+import prr.terminals.communication.Communication;
 import prr.terminals.states.State;
 import prr.terminals.states.Off;
 import prr.terminals.states.Idle;
@@ -42,6 +43,9 @@ public class Network implements Serializable {
      * Treemap that stores terminals using their ID's as keys
      */
     private Map<String, Terminal> _terminals = new TreeMap<>();
+
+    /* List of communications */
+    private Collection<Communication> _communications = new LinkedList<>();
 
     /**
      * Read text input file and create corresponding domain entities.
@@ -88,6 +92,7 @@ public class Network implements Serializable {
             default -> throw new UnrecognizedEntryException(fields[0]);
         }
     }
+
 
 
     /**
@@ -178,6 +183,7 @@ public class Network implements Serializable {
         };
     }
 
+
     /**
      * Adds a terminal to the network.
      *
@@ -248,6 +254,8 @@ public class Network implements Serializable {
         return client.toString() + client.showNotifications();
     }
 
+
+
     /**
      * Shows all the clients in the network.
      *
@@ -259,6 +267,21 @@ public class Network implements Serializable {
             allClients.add(client.toString());
         }
         return allClients;
+    }
+
+    /**
+     * Shows all the Communications on the network.
+     *
+     * @return a String that represents all the Communications.
+     */
+    public Collection<String> showAllCommunications() {
+        Collection<String> allCommunications = new LinkedList<>();
+
+        for (Communication communication : _communications) {
+            allCommunications.add(communication.toString());
+        }
+
+        return allCommunications;
     }
 
     /**

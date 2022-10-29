@@ -2,6 +2,7 @@ package prr.app.clients;
 
 import prr.Network;
 import prr.app.exceptions.UnknownClientKeyException;
+import prr.exceptions.AlreadyOnNotificationException;
 import prr.exceptions.UnknownClientException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
@@ -23,9 +24,8 @@ class DoEnableClientNotifications extends Command<Network> {
 			_receiver.enableClientNotifications(stringField("clientId"));
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
-		} /* catch (AlreadyOnNotificationException e) {
-		//FIXME
+		}  catch (AlreadyOnNotificationException e) {
 			_display.popup(Message.clientNotificationsAlreadyEnabled());
-		} */
+		}
 	}
 }

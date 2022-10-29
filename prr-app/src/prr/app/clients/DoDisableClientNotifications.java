@@ -2,6 +2,7 @@ package prr.app.clients;
 
 import prr.Network;
 import prr.app.exceptions.UnknownClientKeyException;
+import prr.exceptions.AlreadyOffNotificationException;
 import prr.exceptions.UnknownClientException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
@@ -20,12 +21,12 @@ class DoDisableClientNotifications extends Command<Network> {
 	@Override
 	protected final void execute() throws CommandException {
 		try {
-			_receiver.enableClientNotifications(stringField("clientId"));
+			_receiver.disableClientNotifications(stringField("clientId"));
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
-		} /* catch (AlreadyOnNotificationException e) {
+		}  catch (AlreadyOffNotificationException e) {
 		//FIXME verify this code
-			_display.popup(Message.clientNotificationsAlreadyEnabled());
-		} */
+			_display.popup(Message.clientNotificationsAlreadyDisabled());
+		}
 	}
 }

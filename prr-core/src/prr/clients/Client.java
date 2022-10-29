@@ -1,5 +1,7 @@
 package prr.clients;
 
+import prr.exceptions.AlreadyOffNotificationException;
+import prr.exceptions.AlreadyOnNotificationException;
 import prr.terminals.Terminal;
 import prr.notifications.Notification;
 
@@ -67,11 +69,18 @@ public class Client implements Serializable {
         return string;
     }
 
-    public void enableNotifications() /* throws  AlreadyOnNotificationException */ {
-        if (!notificationsEnabled) {
-            //throw new AlreadyOnNotificationException();
+    public void enableNotifications()  throws  AlreadyOnNotificationException {
+        if (notificationsEnabled) {
+            throw new AlreadyOnNotificationException();
         }
         notificationsEnabled = true;
+    }
+
+    public void disableNotifications()  throws  AlreadyOffNotificationException {
+        if (!notificationsEnabled) {
+            throw new AlreadyOffNotificationException();
+        }
+        notificationsEnabled = false;
     }
 
     public String showPaymentsAndDebts() {

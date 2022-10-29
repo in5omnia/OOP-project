@@ -1,14 +1,7 @@
 package prr;
 
 import prr.clients.Client;
-import prr.exceptions.OwnFriendException;
-import prr.exceptions.UnknownClientException;
-import prr.exceptions.DuplicateClientException;
-import prr.exceptions.DuplicateFriendException;
-import prr.exceptions.UnknownTerminalException;
-import prr.exceptions.DuplicateTerminalException;
-import prr.exceptions.UnrecognizedEntryException;
-import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.*;
 
 import prr.terminals.Terminal;
 import prr.terminals.Basic;
@@ -302,9 +295,15 @@ public class Network implements Serializable {
     }
 
     // TODO: Exception and Documentation
-    public void enableClientNotifications(String clientKey) throws UnknownClientException /* , AlreadyOnNotificationException */ {
+    public void enableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOnNotificationException {
         Client client = findClient(clientKey);
         client.enableNotifications();
+    }
+
+    // TODO: Exception and Documentation
+    public void disableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOffNotificationException {
+        Client client = findClient(clientKey);
+        client.disableNotifications();
     }
 
 }

@@ -33,7 +33,7 @@ abstract public class Terminal implements Serializable {
 
     private String _key;
 
-    private State _state = new Idle();
+    private State _state = new Idle(this);
 
     private Map<String, Terminal> _friends = new TreeMap<>();
 
@@ -58,12 +58,6 @@ abstract public class Terminal implements Serializable {
         }
         _key = key;
     }
-
-    public Terminal(Client owner, String key, State state) throws InvalidTerminalIdException {
-        this(owner, key);
-        _state = state;
-    }
-
 
     public String getKey() {
         return _key;
@@ -155,7 +149,7 @@ abstract public class Terminal implements Serializable {
         return _debts;
     }
 
-    private int calculateBalance() {
+    public long calculateBalance() {
         return _payments - _debts;
     }
 
@@ -198,6 +192,22 @@ abstract public class Terminal implements Serializable {
         if (_ongoingCommunication == null)
             throw new NoOngoingCommunicationException();
         return _ongoingCommunication.toString();
+    }
+
+    public void setState(State state) {
+        _state = state;
+    }
+
+    public void turnOn() throws AlreadyOnTerminalException {
+        _state.turnOn();
+    }
+
+    public void turnOff() throws AlreadyOffTerminalException {
+        _state.turnOff();
+    }
+
+    public void toSilent() throws AlreadySilentTerminalException {
+        _state.toSilent();
     }
 
 

@@ -131,18 +131,17 @@ public class Network implements Serializable {
             throw new DuplicateTerminalException(fields[1]);
 
         Client owner = findClient(fields[2]);
-        State state;
-
-        if (fields.length > 3)
-            state = stateFromString(fields[3]);
-        else
-            state = new Idle();
 
         Terminal terminal = switch (fields[0]) {
-            case "BASIC" -> new Basic(owner, fields[1], state);
-            case "FANCY" -> new Fancy(owner, fields[1], state);
+            case "BASIC" -> new Basic(owner, fields[1]);
+            case "FANCY" -> new Fancy(owner, fields[1]);
             default -> throw new UnrecognizedEntryException(fields[0]);
         };
+
+        if (fields.length > 3)
+            terminal.setState(stateFromString(fields[3], terminal));
+        else
+            terminal.setState(new Idle(terminal));
 
         addTerminalToNetwork(fields[1], terminal);
         owner.addTerminal(fields[1], terminal);
@@ -171,16 +170,17 @@ public class Network implements Serializable {
      * Receives a string naming a state and returns the corresponding State
      *
      * @param state string that represents the state
+     * @param terminal terminal that the state will be associated with
      * @return the new State that corresponds to the given string
      * @throws UnrecognizedEntryException if the given state is invalid (Busy is invalid here because a terminal
      *                                    can't be created already busy)
      */
-    private State stateFromString(String state) throws UnrecognizedEntryException {
+    private State stateFromString(String state,Terminal terminal) throws UnrecognizedEntryException {
 
         return switch (state) {
-            case "ON" -> new Idle();
-            case "OFF" -> new Off();
-            case "SILENCE" -> new Silent();
+            case "ON" -> new Idle(terminal);
+            case "OFF" -> new Off(terminal);
+            case "SILENCE" -> new Silent(terminal);
             default -> throw new UnrecognizedEntryException(state);
         };
     }

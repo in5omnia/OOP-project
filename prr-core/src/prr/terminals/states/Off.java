@@ -1,13 +1,20 @@
 package prr.terminals.states;
 
+import prr.exceptions.AlreadyOffTerminalException;
+import prr.terminals.Terminal;
+
 import java.io.Serializable;
 
-public class Off implements State, Serializable {
+public class Off extends State implements Serializable {
 
     /**
      * Serial number for serialization.
      */
     private static final long serialVersionUID = 202208091754L;
+
+    public Off(Terminal terminal) {
+        super(terminal);
+    }
 
     public boolean canReceiveTextCommunication(){
         return false;
@@ -19,6 +26,20 @@ public class Off implements State, Serializable {
 
     public boolean canReceiveInteractiveCommunication(){
         return false;
+    }
+
+    public void turnOff() throws AlreadyOffTerminalException {
+        throw new AlreadyOffTerminalException();
+    }
+
+    public void turnOn() {
+        Terminal terminal = getTerminal();
+        terminal.setState(new Idle(terminal));
+    }
+
+    public void toSilent() {
+        Terminal terminal = getTerminal();
+        terminal.setState(new Silent(terminal));
     }
 
     @Override

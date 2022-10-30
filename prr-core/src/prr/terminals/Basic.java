@@ -18,10 +18,6 @@ public class Basic extends Terminal implements Serializable {
         super(owner, key);
     }
 
-    public Basic(Client owner, String key, State state) throws InvalidTerminalIdException {
-        super(owner, key, state);
-    }
-
 
     @Override
     public boolean canMessage() {

@@ -1,13 +1,19 @@
 package prr.terminals.states;
 
+import prr.terminals.Terminal;
+
 import java.io.Serializable;
 
-public class Busy implements State, Serializable {
+public class Busy extends State implements Serializable {
 
     /**
      * Serial number for serialization.
      */
     private static final long serialVersionUID = 202208091754L;
+
+    public Busy(Terminal terminal) {
+        super(terminal);
+    }
 
     public boolean canReceiveTextCommunication(){
         return true;

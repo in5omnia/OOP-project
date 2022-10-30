@@ -18,10 +18,6 @@ public class Fancy extends Terminal implements Serializable {
         super(owner, key);
     }
 
-    public Fancy(Client owner, String key, State state) throws InvalidTerminalIdException {
-        super(owner, key, state);
-    }
-
 
     @Override
     public boolean canMessage() {

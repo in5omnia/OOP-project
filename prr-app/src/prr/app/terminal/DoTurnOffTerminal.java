@@ -1,6 +1,7 @@
 package prr.app.terminal;
 
 import prr.Network;
+import prr.exceptions.AlreadyOffTerminalException;
 import prr.terminals.Terminal;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
@@ -10,12 +11,16 @@ import pt.tecnico.uilib.menus.CommandException;
  */
 class DoTurnOffTerminal extends TerminalCommand {
 
-	DoTurnOffTerminal(Network context, Terminal terminal) {
-		super(Label.POWER_OFF, context, terminal);
-	}
+    DoTurnOffTerminal(Network context, Terminal terminal) {
+        super(Label.POWER_OFF, context, terminal);
+    }
 
-	@Override
-	protected final void execute() throws CommandException {
-                //FIXME implement command
-	}
+    @Override
+    protected final void execute() throws CommandException {
+        try {
+            _receiver.turnOff();
+        } catch (AlreadyOffTerminalException e) {
+            _display.popup(Message.alreadyOff());
+        }
+    }
 }

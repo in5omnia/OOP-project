@@ -29,7 +29,7 @@ public class Client implements Serializable {
 
     private int _debts = 0;
 
-    private boolean notificationsEnabled = true;
+    private boolean _notificationsEnabled = true;
 
     private Level _level = new Normal(this);
 
@@ -70,17 +70,21 @@ public class Client implements Serializable {
     }
 
     public void enableNotifications()  throws  AlreadyOnNotificationException {
-        if (notificationsEnabled) {
+        if (_notificationsEnabled) {
             throw new AlreadyOnNotificationException();
         }
-        notificationsEnabled = true;
+        _notificationsEnabled = true;
     }
 
     public void disableNotifications()  throws  AlreadyOffNotificationException {
-        if (!notificationsEnabled) {
+        if (!_notificationsEnabled) {
             throw new AlreadyOffNotificationException();
         }
-        notificationsEnabled = false;
+        _notificationsEnabled = false;
+    }
+
+    public boolean notificationsEnabled(){  //FIXME replace in disable/enable?
+        return _notificationsEnabled;
     }
 
     public long getPayments() {
@@ -93,7 +97,7 @@ public class Client implements Serializable {
     @Override
     public String toString() {
 
-        String notifications = (notificationsEnabled) ? "YES" : "NO";
+        String notifications = (_notificationsEnabled) ? "YES" : "NO";
         return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
 

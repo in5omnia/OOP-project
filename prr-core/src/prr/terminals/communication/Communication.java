@@ -12,9 +12,10 @@ public abstract class Communication implements Serializable {
     private static final long serialVersionUID = 202208091754L;
 
     private Terminal _source;
+
     private Terminal _destination;
 
-    private boolean _ongoing = true;
+    private boolean _ongoing;
 
     // FIXME I will leave this here, however we might have to put it in the subclasses
     // I was thinking of using the strategy pattern to display it on toString
@@ -24,8 +25,22 @@ public abstract class Communication implements Serializable {
 
     private long _cost = 0;
 
-    private String _communicationId;
+    private int _communicationId;
 
+    public Communication(Terminal source, Terminal destination, int communicationId, boolean ongoing, int units) {
+        _source = source;
+        _destination = destination;
+        _communicationId = communicationId;
+        _ongoing = ongoing;
+        _units = units;
+    }
+
+    public int getCost(){
+
+        //TODO IMPLEMENTATION
+        //must call level and plan intertwined
+        return 10;
+    }
 
     @Override
     public String toString() {

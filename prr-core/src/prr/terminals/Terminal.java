@@ -1,12 +1,11 @@
 package prr.terminals;
 
+import prr.Network;
 import prr.clients.Client;
-import prr.exceptions.OwnFriendException;
-import prr.exceptions.NoSuchFriendException;
-import prr.exceptions.DuplicateFriendException;
-import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.*;
 
 import prr.notifications.Notification;
+import prr.terminals.communication.Text;
 import prr.terminals.states.State;
 import prr.terminals.states.Idle;
 import prr.terminals.communication.Communication;
@@ -124,32 +123,29 @@ abstract public class Terminal implements Serializable {
 
     public abstract boolean canVideoCommunicate();
 
-    public void sendTextCommunication(Terminal destination) {
+    private boolean canReceiveTextCommunication(){
+        return _state.canReceiveTextCommunication();
     }
 
-    public void startInteractiveCommunication(Terminal destination) {
+    public void sendTextCommunication(Network network, String destinationTerminal, String message)
+            throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
+
+        if (!canStartCommunication())
+            throw new CannotCommunicateException();
+
+        Terminal destination = network.findTerminal(destinationTerminal);
+        if (!(destination.canReceiveTextCommunication())){
+            if (_owner.notificationsEnabled())
+                _textNotifications.add(new Notification(_key, destination));
+            throw new DestinationTerminalOffException();
+        }
+
+        Communication communication = new Text(this, destination, network.retrieveCommunicationId(), message);
+        _pastCommunications.add(communication);
+        _debts += communication.getCost();  //FIXME
+
     }
 
-    public void turnOnTerminal() {
-    }
-
-    public void turnOffTerminal() {
-    }
-
-    public void endInteractiveCommunication(int duration) {
-    }
-
-    public void performPayment(int communicationKey) {
-    }
-
-    public void showOngoingCommunication() {
-    }
-
-    public void silenceTerminal() {
-    }
-
-    private void showTerminalBalance() {
-    }
 
     public int calculatePayments() {
         return _payments;
@@ -177,6 +173,27 @@ abstract public class Terminal implements Serializable {
         return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
                 + calculateDebts() + friends;
     }
+
+
+    public void addFriendToTerminal(Network network, String friendKey) throws UnknownTerminalException {
+        Terminal friend = network.findTerminal(friendKey);
+        try {
+            addFriend(friendKey, friend);
+        } catch (DuplicateFriendException | OwnFriendException e){
+            //do nothing
+        }
+    }
+
+    public void removeFriendFromTerminal(Network network, String friendKey) throws UnknownTerminalException {
+        if (!network.terminalExists(friendKey))
+            throw new UnknownTerminalException(friendKey);
+        try {
+            removeFriend(friendKey);
+        } catch (NoSuchFriendException e){
+            //do nothing
+        }
+    }
+
 
 }
 

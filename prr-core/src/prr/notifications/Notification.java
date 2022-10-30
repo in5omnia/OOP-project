@@ -17,11 +17,15 @@ public class Notification implements Serializable {
     private NotificationType _type;
 
 
-    public Notification(String originTerminalId, Terminal destination, NotificationType type) {
+    public Notification(String originTerminalId, Terminal destination) {
         _originTerminalId = originTerminalId;
         _destination = destination;
-        _type = type;
     }
+
+    /*public Notification(String originTerminalId, Terminal destination, NotificationType type) {
+        this(originTerminalId, destination);
+        _type = type;
+    }*/
 
 
     @Override

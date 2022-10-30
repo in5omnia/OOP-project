@@ -47,6 +47,8 @@ public class Network implements Serializable {
     /* List of communications */
     private Collection<Communication> _communications = new LinkedList<>();
 
+    private int _communicationId = 0;
+
     /**
      * Read text input file and create corresponding domain entities.
      *
@@ -321,6 +323,7 @@ public class Network implements Serializable {
         return client.getDebts();
     }
 
+
     public long[] retrievePaymentsAndDebts(String key) throws UnknownClientException {
         Client client = findClient(key);
         return new long[]{client.getPayments(), client.getDebts()};
@@ -336,6 +339,11 @@ public class Network implements Serializable {
     public void disableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOffNotificationException {
         Client client = findClient(clientKey);
         client.disableNotifications();
+    }
+
+    // TODO: Documentation
+    public int retrieveCommunicationId(){  //FIXME not sure this should be public
+        return _communicationId++;
     }
 
 }

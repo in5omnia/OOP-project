@@ -5,6 +5,7 @@ import prr.clients.Client;
 import prr.exceptions.*;
 
 import prr.notifications.Notification;
+import prr.terminals.communication.Text;
 import prr.terminals.states.State;
 import prr.terminals.states.Idle;
 import prr.terminals.communication.Communication;
@@ -122,6 +123,28 @@ abstract public class Terminal implements Serializable {
 
     public abstract boolean canVideoCommunicate();
 
+    private boolean canReceiveTextCommunication(){
+        return _state.canReceiveTextCommunication();
+    }
+
+    public void sendTextCommunication(Network network, String destinationTerminal, String message)
+            throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
+
+        if (!canStartCommunication())
+            throw new CannotCommunicateException();
+
+        Terminal destination = network.findTerminal(destinationTerminal);
+        if (!(destination.canReceiveTextCommunication())){
+            if (_owner.notificationsEnabled())
+                _textNotifications.add(new Notification(_key, destination));
+            throw new DestinationTerminalOffException();
+        }
+
+        Communication communication = new Text(this, destination, network.retrieveCommunicationId(), message);
+        _pastCommunications.add(communication);
+        _debts += communication.getCost();  //FIXME
+
+    }
 
 
     public int calculatePayments() {

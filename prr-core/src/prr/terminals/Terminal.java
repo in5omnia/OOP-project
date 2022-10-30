@@ -194,6 +194,12 @@ abstract public class Terminal implements Serializable {
         }
     }
 
+    public String showOngoingCommunication() throws NoOngoingCommunicationException {
+        if (_ongoingCommunication == null)
+            throw new NoOngoingCommunicationException();
+        return _ongoingCommunication.toString();
+    }
+
 
 }
 

@@ -1,10 +1,8 @@
 package prr.terminals;
 
+import prr.Network;
 import prr.clients.Client;
-import prr.exceptions.OwnFriendException;
-import prr.exceptions.NoSuchFriendException;
-import prr.exceptions.DuplicateFriendException;
-import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.*;
 
 import prr.notifications.Notification;
 import prr.terminals.states.State;
@@ -124,32 +122,7 @@ abstract public class Terminal implements Serializable {
 
     public abstract boolean canVideoCommunicate();
 
-    public void sendTextCommunication(Terminal destination) {
-    }
 
-    public void startInteractiveCommunication(Terminal destination) {
-    }
-
-    public void turnOnTerminal() {
-    }
-
-    public void turnOffTerminal() {
-    }
-
-    public void endInteractiveCommunication(int duration) {
-    }
-
-    public void performPayment(int communicationKey) {
-    }
-
-    public void showOngoingCommunication() {
-    }
-
-    public void silenceTerminal() {
-    }
-
-    private void showTerminalBalance() {
-    }
 
     public int calculatePayments() {
         return _payments;
@@ -177,6 +150,27 @@ abstract public class Terminal implements Serializable {
         return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
                 + calculateDebts() + friends;
     }
+
+
+    public void addFriendToTerminal(Network network, String friendKey) throws UnknownTerminalException {
+        Terminal friend = network.findTerminal(friendKey);
+        try {
+            addFriend(friendKey, friend);
+        } catch (DuplicateFriendException | OwnFriendException e){
+            //do nothing
+        }
+    }
+
+    public void removeFriendFromTerminal(Network network, String friendKey) throws UnknownTerminalException {
+        if (!network.terminalExists(friendKey))
+            throw new UnknownTerminalException(friendKey);
+        try {
+            removeFriend(friendKey);
+        } catch (NoSuchFriendException e){
+            //do nothing
+        }
+    }
+
 
 }
 

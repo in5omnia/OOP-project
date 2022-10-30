@@ -200,7 +200,7 @@ public class Network implements Serializable {
      * @param terminalKey the terminal's ID
      * @return true is the terminal exists and false otherwise
      */
-    private boolean terminalExists(String terminalKey) {
+    public boolean terminalExists(String terminalKey) {
         return _terminals.get(terminalKey) != null;
     }
 

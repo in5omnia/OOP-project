@@ -1,5 +1,7 @@
 package prr.clients;
 
+import prr.plans.PlatinumPlan;
+
 public class Platinum extends Level {
 
     /**
@@ -8,7 +10,12 @@ public class Platinum extends Level {
     private static final long serialVersionUID = 202208091754L;
 
     public Platinum(Client client) {
-        super(client);
+        super(client, new PlatinumPlan());
+    }
+
+    @Override
+    public void positiveBalanceAnd2Text(){
+
     }
 
     @Override

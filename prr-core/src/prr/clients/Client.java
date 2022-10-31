@@ -4,6 +4,7 @@ import prr.deliveryMethods.AppDelivery;
 import prr.deliveryMethods.DeliveryMethod;
 import prr.exceptions.AlreadyOffNotificationException;
 import prr.exceptions.AlreadyOnNotificationException;
+import prr.plans.Plan;
 import prr.terminals.Terminal;
 import prr.notifications.Notification;
 
@@ -55,7 +56,15 @@ public class Client implements Serializable {
         return _deliveryMethod;
     }
 
-    protected void updateLevel(Level level) {
+    public Plan getPlan(){  //FIXME
+        return _level.getPlan();
+    }
+
+    public Level getLevel(){  //FIXME
+        return _level;
+    }
+
+    protected void setLevel(Level level) {
         _level = level;
     }
 
@@ -98,6 +107,7 @@ public class Client implements Serializable {
     public long getPayments() {
         return _payments;
     }
+
     public long getDebts() {
         return _debts;
     }
@@ -110,7 +120,6 @@ public class Client implements Serializable {
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
 
     }
-
 
     public void receiveNotification(Notification notification){
         _notifications.add(notification);

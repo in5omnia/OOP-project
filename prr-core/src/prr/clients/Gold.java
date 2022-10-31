@@ -1,5 +1,7 @@
 package prr.clients;
 
+import prr.plans.GoldPlan;
+
 public class Gold extends Level {
 
     /**
@@ -8,9 +10,13 @@ public class Gold extends Level {
     private static final long serialVersionUID = 202208091754L;
 
     public Gold(Client client) {
-        super(client);
+        super(client, new GoldPlan());
     }
 
+    @Override
+    public void positiveBalanceAnd5Video(){
+
+    }
 
     @Override
     public String toString() {

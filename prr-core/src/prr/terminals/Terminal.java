@@ -37,7 +37,7 @@ abstract public class Terminal implements Serializable {
 
     private Map<String, Terminal> _friends = new TreeMap<>();
 
-    private List<Communication> _pastCommunications = new LinkedList<>();
+    private Map<Integer, Communication> _pastCommunications = new TreeMap<>();
 
     private Communication _ongoingCommunication = null;
 
@@ -46,9 +46,9 @@ abstract public class Terminal implements Serializable {
 
     private List<Notification> _interactiveNotifications = new ArrayList<>();
 
-    private int _payments = 0;
+    private long _payments = 0;
 
-    private int _debts = 0;
+    private long _debts = 0;
 
     public Terminal(Client owner, String key) throws InvalidTerminalIdException {
         _owner = owner;
@@ -82,8 +82,6 @@ abstract public class Terminal implements Serializable {
         _friends.put(friendKey, friend);
     }
 
-
-
     void removeFriend(String friendKey) throws NoSuchFriendException {
         if (!isFriend(friendKey))
             throw new NoSuchFriendException();
@@ -91,7 +89,7 @@ abstract public class Terminal implements Serializable {
     }
 
     //FIXME
-    boolean isFriend(String terminalKey) {
+    public boolean isFriend(String terminalKey) {
         return _friends.containsKey(terminalKey);
     }
 
@@ -148,9 +146,11 @@ abstract public class Terminal implements Serializable {
             throw new DestinationTerminalOffException();
         }
 
-        Communication communication = new Text(this, destination, network.retrieveCommunicationId(), message);
-        _pastCommunications.add(communication);
+        int communicationId = network.retrieveCommunicationId();
+        Communication communication = new Text(this, destination, communicationId, message);
+        _pastCommunications.put(communicationId, communication);
         _debts += communication.getCost();  //FIXME
+        _owner.getLevel().negativeBalance();
     }
 
 
@@ -207,7 +207,11 @@ abstract public class Terminal implements Serializable {
         _ongoingCommunication.setUnits(duration);
         long cost = _ongoingCommunication.getCost();
         _state.endInteractiveCommunication();
-        _pastCommunications.add(_ongoingCommunication);
+        _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
+        _debts += cost;
+        _owner.getLevel().negativeBalance();
+        _owner.getLevel().positiveBalanceAnd5Video();
+        _owner.getLevel().positiveBalanceAnd2Text();
         _ongoingCommunication = null;
         return cost;
     }
@@ -235,11 +239,11 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public int calculatePayments() {
+    public long getPayments() {
         return _payments;
     }
 
-    public int calculateDebts() {
+    public long getDebts() {
         return _debts;
     }
 
@@ -258,8 +262,8 @@ abstract public class Terminal implements Serializable {
     @Override
     public String toString() {
         String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
-        return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + calculatePayments() + "|"
-                + calculateDebts() + friends;
+        return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + getPayments() + "|"
+                + getDebts() + friends;
     }
 
 
@@ -317,6 +321,24 @@ abstract public class Terminal implements Serializable {
             _owner.getDeliveryMethod().deliver(notification);
         }
     }
+
+    public Communication findCommunication(int communicationKey) throws CommunicationNotFoundTerminalException {
+        Communication communication = _pastCommunications.get(communicationKey);
+        if (communication == null)
+            throw new CommunicationNotFoundTerminalException();
+        return communication;
+    }
+
+    public void performPayment(int communicationKey) throws CommunicationNotFoundTerminalException {
+        Communication communication = findCommunication(communicationKey);
+        if (!communication.hasBeenPaid() || _ongoingCommunication.getId()==communicationKey)
+            throw new CommunicationNotFoundTerminalException();
+        long cost = communication.getCost();
+        _payments += cost;
+        _debts -= cost;
+        communication.pay();
+    }
+
 
 }
 

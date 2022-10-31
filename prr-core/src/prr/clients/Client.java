@@ -28,9 +28,9 @@ public class Client implements Serializable {
 
     private int _taxId;
 
-    private int _payments = 0;
+    private long _payments = 0;
 
-    private int _debts = 0;
+    private long _debts = 0;
 
     private boolean _notificationsEnabled = true;
 
@@ -72,7 +72,7 @@ public class Client implements Serializable {
         _terminals.put(terminalKey, terminal);
     }
 
-    public int calculateBalance() {
+    public long calculateBalance() {
         return _payments - _debts;
     }
 
@@ -124,4 +124,15 @@ public class Client implements Serializable {
     public void receiveNotification(Notification notification){
         _notifications.add(notification);
     }
+
+    public void addClientPayment(long cost){
+        _payments += cost;
+        _debts -= cost;
+    }
+
+    public void addClientDebt(long cost){
+        _payments -= cost;
+        _debts += cost;
+    }
+
 }

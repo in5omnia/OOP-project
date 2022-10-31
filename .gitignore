@@ -1,3 +1,5 @@
 .DS_Store
 CVS
 /classpath.txt
+tests
+runtests.sh

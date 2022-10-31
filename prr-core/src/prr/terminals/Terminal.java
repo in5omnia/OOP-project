@@ -149,7 +149,9 @@ abstract public class Terminal implements Serializable {
         int communicationId = network.retrieveCommunicationId();
         Communication communication = new Text(this, destination, communicationId, message);
         _pastCommunications.put(communicationId, communication);
-        _debts += communication.getCost();  //FIXME
+        long cost = communication.getCost();
+        _debts += cost;  //FIXME
+        _owner.addClientDebt(cost);
         _owner.getLevel().negativeBalance();
     }
 
@@ -209,6 +211,7 @@ abstract public class Terminal implements Serializable {
         _state.endInteractiveCommunication();
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
         _debts += cost;
+        _owner.addClientDebt(cost);
         _owner.getLevel().negativeBalance();
         _owner.getLevel().positiveBalanceAnd5Video();
         _owner.getLevel().positiveBalanceAnd2Text();
@@ -221,13 +224,6 @@ abstract public class Terminal implements Serializable {
             DestinationTerminalOffException {
             _state.accept(new StateExceptionVisitor());
     }
-
-    //provisorio
-   /* public void handleNotifications(Terminal destination){
-        //this & owner=origin
-        if (_owner.notificationsEnabled())
-            destination.registerTextNotificationToSend(_key);
-    }*/
 
 
     public void registerTextNotificationToSend(Terminal origin){
@@ -336,6 +332,7 @@ abstract public class Terminal implements Serializable {
         long cost = communication.getCost();
         _payments += cost;
         _debts -= cost;
+        _owner.addClientPayment(cost);
         communication.pay();
     }
 

@@ -1,0 +1,30 @@
+*** tests/A-14-05-M-ok.out	Fri Oct 21 18:08:16 2022
+--- tests/A-14-05-M-ok.outhyp	Mon Oct 31 22:25:10 2022
+***************
+*** 46,52 ****
+  BASIC|969008|cli003|SILENCE|0|0
+  FANCY|969011|cli001|IDLE|0|0
+  FANCY|969013|cli001|BUSY|0|0
+! FANCY|969014|cli002|BUSY|0|0
+  FANCY|969015|cli003|IDLE|0|0
+  GESTÃO DE TERMINAIS
+  1 - Mostrar todos os terminais
+--- 46,52 ----
+  BASIC|969008|cli003|SILENCE|0|0
+  FANCY|969011|cli001|IDLE|0|0
+  FANCY|969013|cli001|BUSY|0|0
+! FANCY|969014|cli002|IDLE|0|0
+  FANCY|969015|cli003|IDLE|0|0
+  GESTÃO DE TERMINAIS
+  1 - Mostrar todos os terminais
+***************
+*** 61,66 ****
+--- 61,68 ----
+  5 - Retirar amigo
+  6 - Pagamento
+  7 - Consultar saldo
++ 8 - Enviar comunicação de texto
++ 9 - Iniciar comunicação
+  11 - Mostrar comunicação em curso
+  0 - Sair
+  Escolha uma opção: GESTÃO DE TERMINAIS

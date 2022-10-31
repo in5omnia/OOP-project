@@ -1,0 +1,19 @@
+*** tests/A-12-12-M-ok.out	Fri Oct 14 18:00:26 2022
+--- tests/A-12-12-M-ok.outhyp	Mon Oct 31 22:25:09 2022
+***************
+*** 34,40 ****
+  10 - Terminar comunicação activa
+  11 - Mostrar comunicação em curso
+  0 - Sair
+! Escolha uma opção: VIDEO|1|969013|969011|0|0|ONGOING
+  OPERAÇÕES DO TERMINAL
+  1 - Ligar
+  2 - Colocar no silêncio
+--- 34,40 ----
+  10 - Terminar comunicação activa
+  11 - Mostrar comunicação em curso
+  0 - Sair
+! Escolha uma opção: VIDEO|0|FANCY|969013|cli001|BUSY|0|0|FANCY|969011|cli001|IDLE|0|0|0|0|ONGOING
+  OPERAÇÕES DO TERMINAL
+  1 - Ligar
+  2 - Colocar no silêncio

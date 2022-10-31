@@ -1,0 +1,21 @@
+*** tests/A-15-02-M-ok.out	Mon Oct 24 16:40:14 2022
+--- tests/A-15-02-M-ok.outhyp	Mon Oct 31 22:25:10 2022
+***************
+*** 86,94 ****
+  6 - Mostrar terminais sem actividade
+  7 - Mostrar terminais com saldo positivo
+  0 - Sair
+! Escolha uma opção: TEXT|1|969001|969007|50|16|FINISHED
+! TEXT|2|969011|969014|99|16|FINISHED
+! CONSULTAS
+  1 - Mostrar todas as comunicações
+  2 - Mostrar comunicações feitas por um cliente
+  3 - Mostrar comunicações recebidas por um cliente
+--- 86,92 ----
+  6 - Mostrar terminais sem actividade
+  7 - Mostrar terminais com saldo positivo
+  0 - Sair
+! Escolha uma opção: CONSULTAS
+  1 - Mostrar todas as comunicações
+  2 - Mostrar comunicações feitas por um cliente
+  3 - Mostrar comunicações recebidas por um cliente

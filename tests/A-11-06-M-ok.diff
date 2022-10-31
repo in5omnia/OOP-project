@@ -1,0 +1,19 @@
+*** tests/A-11-06-M-ok.out	Fri Oct 14 11:50:40 2022
+--- tests/A-11-06-M-ok.outhyp	Mon Oct 31 22:25:08 2022
+***************
+*** 63,69 ****
+  9 - Iniciar comunicação
+  11 - Mostrar comunicação em curso
+  0 - Sair
+! Escolha uma opção: Valores para o terminal '969007':0 (pagamentos),  10 (dívidas).
+  OPERAÇÕES DO TERMINAL
+  1 - Ligar
+  2 - Colocar no silêncio
+--- 63,69 ----
+  9 - Iniciar comunicação
+  11 - Mostrar comunicação em curso
+  0 - Sair
+! Escolha uma opção: Valores para o terminal '" + key + "':0 (pagamentos),  10 (dívidas).
+  OPERAÇÕES DO TERMINAL
+  1 - Ligar
+  2 - Colocar no silêncio

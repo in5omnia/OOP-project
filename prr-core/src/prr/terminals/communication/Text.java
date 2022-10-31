@@ -18,6 +18,10 @@ public class Text extends Communication implements Serializable {
         _message = message;
     }
 
+    protected long calculateCost(int units){
+        return getSource().getOwner().getPlan().calculateMessageCost(units);
+    }
+
     @Override
     public String toString() {
         return "TEXT" + super.toString();

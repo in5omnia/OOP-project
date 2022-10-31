@@ -25,6 +25,8 @@ public abstract class Communication implements Serializable {
 
     private long _cost = 0;
 
+    private boolean _paid = false;
+
     private int _communicationId;
 
     public Communication(Terminal source, Terminal destination, int communicationId, boolean ongoing) {
@@ -41,17 +43,33 @@ public abstract class Communication implements Serializable {
 
     public void setUnits(int units){    //could be protected and called by a "setDuration" in interactiveCom
         _units = units;
-        _cost = calculateCost();
+        _cost = calculateCost(units);
     }
 
-    public long calculateCost(){
-        //TODO IMPLEMENTATION
-        //must call level and plan intertwined
-        return 30L;
+    protected abstract long calculateCost(int units);
+
+    protected Terminal getSource(){
+        return _source;
+    }
+
+    protected Terminal getDestination(){
+        return _destination;
+    }
+
+    public int getId(){
+        return _communicationId;
+    }
+
+    public boolean hasBeenPaid(){
+        return _paid;
     }
 
     public long getCost(){
         return _cost;
+    }
+
+    public void pay() {
+        _paid = true;
     }
 
     @Override

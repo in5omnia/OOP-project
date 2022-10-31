@@ -1,6 +1,8 @@
 package prr.clients;
 
 
+import prr.plans.NormalPlan;
+
 public class Normal extends Level {
 
     /**
@@ -9,8 +11,11 @@ public class Normal extends Level {
     private static final long serialVersionUID = 202208091754L;
 
     public Normal(Client client) {
-        super(client);
+        super(client, new NormalPlan());
     }
+
+    @Override
+    public void negativeBalance(){}
 
     @Override
     public String toString() {

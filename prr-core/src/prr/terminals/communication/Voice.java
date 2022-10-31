@@ -14,6 +14,12 @@ public class Voice extends InteractiveCommunication implements Serializable {
         super(source, destination, communicationId);
     }
 
+    protected long calculateCost(int units){
+        Terminal source = getSource();
+        boolean isFriend = source.isFriend(getDestination().getKey());
+        return source.getOwner().getPlan().calculateVoiceCommunicationCost(units, isFriend);
+    }
+
     @Override
     public String toString() {
         return "VOICE" + super.toString();

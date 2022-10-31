@@ -2,6 +2,8 @@ package prr.terminals.states;
 
 import prr.exceptions.AlreadyOffTerminalException;
 import prr.exceptions.DestinationTerminalOffException;
+import prr.notifications.O2I;
+import prr.notifications.O2S;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -36,11 +38,14 @@ public class Off extends State implements Serializable {
     public void turnOn() {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
+        terminal.sendTextNotifications(new O2I());
+        terminal.sendInteractiveNotifications(new O2I());
     }
 
     public void toSilent() {
         Terminal terminal = getTerminal();
         terminal.setState(new Silent(terminal));
+        terminal.sendTextNotifications(new O2S());
     }
 
     //FIXME

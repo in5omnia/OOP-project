@@ -24,9 +24,7 @@ abstract public class State implements Serializable {
         return _terminal;
     }
 
-    public void startInteractiveCommunication(){
-        getTerminal().setState(new Busy(getTerminal(), this));
-    }
+    public void startInteractiveCommunication(){}
 
     public void endInteractiveCommunication(){}
 

@@ -1,5 +1,7 @@
 package prr.deliveryMethods;
 
-public class DeliveryMethod {
+import prr.notifications.Notification;
 
+public interface DeliveryMethod {
+    void deliver(Notification notification);
 }

@@ -1,3 +1,5 @@
+
+//-------
 package prr.app.terminal;
 
 import prr.Network;
@@ -30,10 +32,8 @@ class DoStartInteractiveCommunication extends TerminalCommand {
 	@Override
 	protected final void execute() throws CommandException {
 		String destinationTerminalKey = stringField("destinationTerminal");
-
+		String communicationType = stringField("communicationType");
 		try {
-			//stuff
-			String communicationType = stringField("communicationType");
 			_receiver.startInteractiveCommunication(_network, destinationTerminalKey, communicationType);
 
 		} catch(UnsupportedAtOriginException e){
@@ -54,7 +54,7 @@ class DoStartInteractiveCommunication extends TerminalCommand {
 		} catch (UnknownTerminalException e) {
 			throw new UnknownTerminalKeyException(destinationTerminalKey);
 
-		} catch (CannotCommunicateException e){
+		} catch (CannotCommunicateException e) {
 			//do nothing FIXME
 		}
 

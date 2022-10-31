@@ -1,6 +1,8 @@
 package prr.terminals.states;
 
 import prr.exceptions.*;
+import prr.notifications.O2I;
+import prr.notifications.S2I;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -14,7 +16,6 @@ public class Silent extends State implements Serializable {
 
     public Silent(Terminal terminal) {
         super(terminal);
-        terminal.sendTextNotifications(this);
     }
 
     public boolean canReceiveTextCommunication(){
@@ -30,6 +31,11 @@ public class Silent extends State implements Serializable {
     }
 
     @Override
+    public void startInteractiveCommunication(){
+        getTerminal().setState(new Busy(getTerminal(), this));
+    }
+
+    @Override
     public void turnOff() {
         Terminal terminal = getTerminal();
         terminal.setState(new Off(terminal));
@@ -39,6 +45,7 @@ public class Silent extends State implements Serializable {
     public void turnOn() throws AlreadyOnTerminalException {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
+        terminal.sendInteractiveNotifications(new S2I());
     }
 
     public void toSilent() throws AlreadySilentTerminalException {

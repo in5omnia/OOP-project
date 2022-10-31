@@ -15,8 +15,6 @@ public class Idle extends State implements Serializable {
 
     public Idle(Terminal terminal) {
         super(terminal);
-        terminal.sendTextNotifications(this);
-        terminal.sendInteractiveNotifications(this);
     }
 
     public boolean canReceiveTextCommunication(){
@@ -29,6 +27,11 @@ public class Idle extends State implements Serializable {
 
     public boolean canReceiveInteractiveCommunication() {
         return true;
+    }
+
+    @Override
+    public void startInteractiveCommunication(){
+        getTerminal().setState(new Busy(getTerminal(), this));
     }
 
     @Override

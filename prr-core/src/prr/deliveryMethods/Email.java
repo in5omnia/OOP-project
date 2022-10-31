@@ -1,4 +1,7 @@
 package prr.deliveryMethods;
 
-public class Email extends DeliveryMethod {
+import prr.notifications.Notification;
+
+public class Email implements DeliveryMethod {
+    public void deliver(Notification notification){}
 }

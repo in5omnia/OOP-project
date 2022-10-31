@@ -1,4 +1,7 @@
 package prr.deliveryMethods;
 
-public class SMS extends DeliveryMethod {
+import prr.notifications.Notification;
+
+public class SMS implements DeliveryMethod {
+    public void deliver(Notification notification){}
 }

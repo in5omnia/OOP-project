@@ -1,6 +1,6 @@
 package prr.clients;
 
-import prr.deliveryMethods.AppRegistry;
+import prr.deliveryMethods.AppDelivery;
 import prr.deliveryMethods.DeliveryMethod;
 import prr.exceptions.AlreadyOffNotificationException;
 import prr.exceptions.AlreadyOnNotificationException;
@@ -39,7 +39,7 @@ public class Client implements Serializable {
 
     private List<Notification> _notifications = new LinkedList<>();
 
-    private DeliveryMethod _deliveryMethod = new AppRegistry();
+    private DeliveryMethod _deliveryMethod = new AppDelivery();
 
     public Client(String clientId, String name, int taxId) {
         _clientId = clientId;

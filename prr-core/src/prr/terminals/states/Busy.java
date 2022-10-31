@@ -1,6 +1,8 @@
 package prr.terminals.states;
 
 import prr.exceptions.DestinationTerminalBusyException;
+import prr.notifications.B2I;
+import prr.notifications.O2I;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -12,16 +14,20 @@ public class Busy extends State implements Serializable {
      */
     private static final long serialVersionUID = 202208091754L;
 
-    private State _previousState;
+    private boolean _previousStateSilenced;
 
     /*public Busy(Terminal terminal) {
         super(terminal);
     }*/
 
-    public Busy(Terminal terminal, State previousState) {
+    public Busy(Terminal terminal, Idle previousState) {
         super(terminal);
-        _previousState = previousState;
-        //terminal.sendTextNotifications(this);
+        _previousStateSilenced = false;
+    }
+
+    public Busy(Terminal terminal, Silent previousState) {
+        super(terminal);
+        _previousStateSilenced = true;
     }
 
     public boolean canReceiveTextCommunication(){
@@ -38,8 +44,15 @@ public class Busy extends State implements Serializable {
 
     @Override
     public void endInteractiveCommunication() {
-        getTerminal().setState(_previousState);
+        Terminal terminal = getTerminal();
+        if (_previousStateSilenced)
+            terminal.setState(new Silent(terminal));
+        else {
+            terminal.setState(new Idle(terminal));
+            terminal.sendInteractiveNotifications(new B2I());
+        }
     }
+
 
     //FIXME
     public void accept(StateExceptionVisitor s) throws DestinationTerminalBusyException {

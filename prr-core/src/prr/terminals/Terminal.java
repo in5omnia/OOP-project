@@ -4,9 +4,8 @@ import prr.Network;
 import prr.clients.Client;
 import prr.exceptions.*;
 
-import prr.notifications.InteractiveNotification;
 import prr.notifications.Notification;
-import prr.notifications.TextNotification;
+import prr.notifications.NotificationType;
 import prr.terminals.communication.Text;
 import prr.terminals.communication.Video;
 import prr.terminals.communication.Voice;
@@ -17,11 +16,7 @@ import prr.terminals.states.StateExceptionVisitor;
 
 import java.io.Serializable;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Collection;
+import java.util.*;
 
 
 /**
@@ -47,14 +42,13 @@ abstract public class Terminal implements Serializable {
     private Communication _ongoingCommunication = null;
 
     // these store notifications to send when the terminal becomes available
-    Collection<TextNotification> _textNotifications;
+    private List<Notification> _textNotifications = new ArrayList<>();
 
-    Collection<InteractiveNotification> _interactiveNotifications;
+    private List<Notification> _interactiveNotifications = new ArrayList<>();
 
     private int _payments = 0;
 
     private int _debts = 0;
-
 
     public Terminal(Client owner, String key) throws InvalidTerminalIdException {
         _owner = owner;
@@ -66,6 +60,11 @@ abstract public class Terminal implements Serializable {
 
     public String getKey() {
         return _key;
+    }
+
+    //FIXME
+    public Client getOwner(){
+        return _owner;
     }
 
     private boolean validTerminalKey(String key) {
@@ -83,12 +82,15 @@ abstract public class Terminal implements Serializable {
         _friends.put(friendKey, friend);
     }
 
+
+
     void removeFriend(String friendKey) throws NoSuchFriendException {
         if (!isFriend(friendKey))
             throw new NoSuchFriendException();
         _friends.remove(friendKey);
     }
 
+    //FIXME
     boolean isFriend(String terminalKey) {
         return _friends.containsKey(terminalKey);
     }
@@ -225,13 +227,11 @@ abstract public class Terminal implements Serializable {
 
 
     public void registerTextNotificationToSend(Terminal origin){
-        TextNotification notification = new TextNotification(origin,this);
-        _textNotifications.add(notification);
+        _textNotifications.add(new Notification(origin,this));
     }
 
     public void registerInteractiveNotificationToSend(Terminal origin){
-        InteractiveNotification notification = new InteractiveNotification(origin, this);
-        _interactiveNotifications.add(notification);
+        _interactiveNotifications.add(new Notification(origin,this));
     }
 
 
@@ -304,15 +304,17 @@ abstract public class Terminal implements Serializable {
         _state.toSilent();
     }
 
-    public void sendTextNotifications(State currentState) {
-        for (TextNotification notification : _textNotifications) {
-            notification.chooseNotificationType(currentState);
+    public void sendTextNotifications(NotificationType type) {
+        for (Notification notification : _textNotifications) {
+            notification.setNotificationType(type);
+            _owner.getDeliveryMethod().deliver(notification);
         }
     }
 
-    public void sendInteractiveNotifications(State currentState) {
-        for (InteractiveNotification notification : _interactiveNotifications) {
-            notification.chooseNotificationType(currentState);
+    public void sendInteractiveNotifications(NotificationType type) {
+        for (Notification notification : _interactiveNotifications) {
+            notification.setNotificationType(type);
+            _owner.getDeliveryMethod().deliver(notification);
         }
     }
 

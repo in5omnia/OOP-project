@@ -7,7 +7,7 @@ import prr.terminals.states.Idle;
 import prr.terminals.states.Off;
 import prr.terminals.states.Silent;
 
-public abstract class Notification implements Serializable {
+public class Notification implements Serializable {
 
     /**
      * Serial number for serialization.
@@ -25,28 +25,19 @@ public abstract class Notification implements Serializable {
     private NotificationType _type;
 
 
-    /*public Notification(String originTerminalId, Terminal destination) {
-        _originTerminalId = originTerminalId;
-        _destination = destination;
-    }*/
-
     public Notification(Terminal origin, Terminal destination) {
         _origin = origin;
         _destination = destination;
     }
 
-    /*public Notification(String originTerminalId, Terminal destination, NotificationType type) {
-        this(originTerminalId, destination);
-        _type = type;
-    }*/
 
-
+    public Terminal getOrigin() {
+        return _origin;
+    }
 
     public void setNotificationType(NotificationType type){
         _type = type;
     }
-
-
 
     //FIXME should busy have this?
 

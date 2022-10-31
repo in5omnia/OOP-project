@@ -4,11 +4,16 @@ import prr.Network;
 import prr.clients.Client;
 import prr.exceptions.*;
 
+import prr.notifications.InteractiveNotification;
 import prr.notifications.Notification;
+import prr.notifications.TextNotification;
 import prr.terminals.communication.Text;
+import prr.terminals.communication.Video;
+import prr.terminals.communication.Voice;
 import prr.terminals.states.State;
 import prr.terminals.states.Idle;
 import prr.terminals.communication.Communication;
+import prr.terminals.states.StateExceptionVisitor;
 
 import java.io.Serializable;
 
@@ -42,9 +47,9 @@ abstract public class Terminal implements Serializable {
     private Communication _ongoingCommunication = null;
 
     // these store notifications to send when the terminal becomes available
-    Collection<Notification> _textNotifications;
+    Collection<TextNotification> _textNotifications;
 
-    Collection<Notification> _interactiveNotifications;
+    Collection<InteractiveNotification> _interactiveNotifications;
 
     private int _payments = 0;
 
@@ -121,6 +126,10 @@ abstract public class Terminal implements Serializable {
         return _state.canReceiveTextCommunication();
     }
 
+    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {
+        return _state.canReceiveInteractiveCommunication();
+    }
+
     public void sendTextCommunication(Network network, String destinationTerminal, String message)
             throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
 
@@ -128,16 +137,101 @@ abstract public class Terminal implements Serializable {
             throw new CannotCommunicateException();
 
         Terminal destination = network.findTerminal(destinationTerminal);
+
         if (!(destination.canReceiveTextCommunication())){
+            //method for this? FIXME
             if (_owner.notificationsEnabled())
-                _textNotifications.add(new Notification(_key, destination));
+                destination.registerTextNotificationToSend(this);
+
             throw new DestinationTerminalOffException();
         }
 
         Communication communication = new Text(this, destination, network.retrieveCommunicationId(), message);
         _pastCommunications.add(communication);
         _debts += communication.getCost();  //FIXME
+    }
 
+
+
+    public void startInteractiveCommunication(Network network, String destinationTerminalKey, String communicationType)
+            throws CannotCommunicateException, UnknownTerminalException,
+            UnsupportedAtOriginException, UnsupportedAtDestinationException, DestinationTerminalOffException,
+            DestinationTerminalBusyException, DestinationTerminalSilentException {
+
+        Terminal destination = network.findTerminal(destinationTerminalKey);
+        Communication communication = null; //FIXME
+
+        switch (communicationType) {
+            case "VOICE" -> {
+                destination = network.findTerminal(destinationTerminalKey);
+                if (!canVoiceCommunicate())
+                    throw new UnsupportedAtOriginException(_key, communicationType);
+                if (!destination.canVoiceCommunicate())
+                    throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
+                communication = new Voice(this, destination, network.retrieveCommunicationId());
+            }
+            case "VIDEO" -> {
+                destination = network.findTerminal(destinationTerminalKey);
+                if (!canVideoCommunicate())
+                    throw new UnsupportedAtOriginException(_key, communicationType);
+                if (!destination.canVideoCommunicate())
+                    throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
+                communication = new Video(this, destination, network.retrieveCommunicationId());
+            }
+        }
+
+        if (!canStartCommunication())
+            throw new CannotCommunicateException();
+
+        if (destinationTerminalKey.equals(_key)) {
+            throw new DestinationTerminalBusyException();   //Presents the same message as a busy terminal
+        }
+
+        if (!(destination.canReceiveInteractiveCommunication())){
+            //method for this? FIXME
+            if (_owner.notificationsEnabled())
+                destination.registerInteractiveNotificationToSend(this);
+            //throws DestinationTerminalOffException, DestinationTerminalBusyException, DestinationTerminalSilentException
+            //with Visitor
+            destination.getStateException();
+        }
+        _state.startInteractiveCommunication();
+        _ongoingCommunication = communication;
+    }
+
+
+    public long endInteractiveCommunication(int duration) {
+        //FIXME do i have to check if its ongoing -> exceptions?
+        _ongoingCommunication.setUnits(duration);
+        long cost = _ongoingCommunication.getCost();
+        _state.endInteractiveCommunication();
+        _pastCommunications.add(_ongoingCommunication);
+        _ongoingCommunication = null;
+        return cost;
+    }
+
+
+    public void getStateException() throws DestinationTerminalSilentException, DestinationTerminalBusyException,
+            DestinationTerminalOffException {
+            _state.accept(new StateExceptionVisitor());
+    }
+
+    //provisorio
+   /* public void handleNotifications(Terminal destination){
+        //this & owner=origin
+        if (_owner.notificationsEnabled())
+            destination.registerTextNotificationToSend(_key);
+    }*/
+
+
+    public void registerTextNotificationToSend(Terminal origin){
+        TextNotification notification = new TextNotification(origin,this);
+        _textNotifications.add(notification);
+    }
+
+    public void registerInteractiveNotificationToSend(Terminal origin){
+        InteractiveNotification notification = new InteractiveNotification(origin, this);
+        _interactiveNotifications.add(notification);
     }
 
 
@@ -210,6 +304,17 @@ abstract public class Terminal implements Serializable {
         _state.toSilent();
     }
 
+    public void sendTextNotifications(State currentState) {
+        for (TextNotification notification : _textNotifications) {
+            notification.chooseNotificationType(currentState);
+        }
+    }
+
+    public void sendInteractiveNotifications(State currentState) {
+        for (InteractiveNotification notification : _interactiveNotifications) {
+            notification.chooseNotificationType(currentState);
+        }
+    }
 
 }
 

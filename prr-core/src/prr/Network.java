@@ -204,7 +204,7 @@ public class Network implements Serializable {
      */
     public boolean terminalExists(String terminalKey) {
         return _terminals.get(terminalKey) != null;
-    }
+    }   //FIXME public?
 
     /**
      * Finds a terminal with the given ID in the network.

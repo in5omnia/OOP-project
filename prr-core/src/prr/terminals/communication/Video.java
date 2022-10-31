@@ -11,8 +11,8 @@ public class Video extends InteractiveCommunication implements Serializable{
      */
     private static final long serialVersionUID = 202208091754L;
 
-    public Video(Terminal source, Terminal destination, int communicationId, int duration) {
-        super(source, destination, communicationId, duration);
+    public Video(Terminal source, Terminal destination, int communicationId) {
+        super(source, destination, communicationId);
     }
 
     @Override

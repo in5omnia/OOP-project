@@ -1,8 +1,6 @@
 package prr.terminals.states;
 
-import prr.clients.Client;
-import prr.exceptions.AlreadyOnTerminalException;
-import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.*;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -14,8 +12,9 @@ public class Silent extends State implements Serializable {
      */
     private static final long serialVersionUID = 202208091754L;
 
-    public Silent(Terminal Terminal) {
-        super(Terminal);
+    public Silent(Terminal terminal) {
+        super(terminal);
+        terminal.sendTextNotifications(this);
     }
 
     public boolean canReceiveTextCommunication(){
@@ -26,7 +25,7 @@ public class Silent extends State implements Serializable {
         return true;
     }
 
-    public boolean canReceiveInteractiveCommunication(){
+    public boolean canReceiveInteractiveCommunication() {
         return false;
     }
 
@@ -44,6 +43,11 @@ public class Silent extends State implements Serializable {
 
     public void toSilent() throws AlreadySilentTerminalException {
         throw new AlreadySilentTerminalException();
+    }
+
+    //FIXME
+    public void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException {
+        s.visit(this);
     }
 
     @Override

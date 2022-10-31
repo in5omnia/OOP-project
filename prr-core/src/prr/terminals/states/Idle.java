@@ -1,6 +1,7 @@
 package prr.terminals.states;
 
 import prr.exceptions.AlreadyOnTerminalException;
+import prr.exceptions.DestinationTerminalSilentException;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -14,6 +15,8 @@ public class Idle extends State implements Serializable {
 
     public Idle(Terminal terminal) {
         super(terminal);
+        terminal.sendTextNotifications(this);
+        terminal.sendInteractiveNotifications(this);
     }
 
     public boolean canReceiveTextCommunication(){
@@ -24,7 +27,7 @@ public class Idle extends State implements Serializable {
         return true;
     }
 
-    public boolean canReceiveInteractiveCommunication(){
+    public boolean canReceiveInteractiveCommunication() {
         return true;
     }
 
@@ -44,6 +47,9 @@ public class Idle extends State implements Serializable {
         Terminal terminal = getTerminal();
         terminal.setState(new Silent(terminal));
     }
+
+    //FIXME
+    public void accept(StateExceptionVisitor s) {}
 
     @Override
     public String toString(){

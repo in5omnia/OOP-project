@@ -1,9 +1,8 @@
 package prr.terminals.states;
 
-import prr.exceptions.AlreadyOffTerminalException;
-import prr.exceptions.AlreadyOnTerminalException;
-import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.*;
 import prr.terminals.Terminal;
+import prr.terminals.communication.Communication;
 
 import java.io.Serializable;
 
@@ -15,15 +14,21 @@ abstract public class State implements Serializable {
      */
     private static final long serialVersionUID = 202210301733L;
 
-    protected Terminal getTerminal() {
-        return _terminal;
-    }
-
     private Terminal _terminal;
 
     public State(Terminal terminal) {
         _terminal = terminal;
     }
+
+    protected Terminal getTerminal() {
+        return _terminal;
+    }
+
+    public void startInteractiveCommunication(){
+        getTerminal().setState(new Busy(getTerminal(), this));
+    }
+
+    public void endInteractiveCommunication(){}
 
     public abstract boolean canReceiveTextCommunication();
 
@@ -37,5 +42,6 @@ abstract public class State implements Serializable {
 
     public  void toSilent() throws AlreadySilentTerminalException {}
 
+    public abstract void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException, DestinationTerminalBusyException, DestinationTerminalOffException;
 
 }

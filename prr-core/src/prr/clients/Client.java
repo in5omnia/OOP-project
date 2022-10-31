@@ -1,5 +1,7 @@
 package prr.clients;
 
+import prr.deliveryMethods.AppRegistry;
+import prr.deliveryMethods.DeliveryMethod;
 import prr.exceptions.AlreadyOffNotificationException;
 import prr.exceptions.AlreadyOnNotificationException;
 import prr.terminals.Terminal;
@@ -37,6 +39,8 @@ public class Client implements Serializable {
 
     private List<Notification> _notifications = new LinkedList<>();
 
+    private DeliveryMethod _deliveryMethod = new AppRegistry();
+
     public Client(String clientId, String name, int taxId) {
         _clientId = clientId;
         _name = name;
@@ -45,6 +49,10 @@ public class Client implements Serializable {
 
     public String getId() {
         return _clientId;
+    }
+
+    public DeliveryMethod getDeliveryMethod() {
+        return _deliveryMethod;
     }
 
     protected void updateLevel(Level level) {
@@ -101,5 +109,10 @@ public class Client implements Serializable {
         return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
                 "|" + _terminals.size() + "|" + _payments + "|" + _debts;
 
+    }
+
+
+    public void receiveNotification(Notification notification){
+        _notifications.add(notification);
     }
 }

@@ -11,8 +11,8 @@ public abstract class InteractiveCommunication extends Communication implements 
      */
     private static final long serialVersionUID = 202208091754L;
 
-    public InteractiveCommunication(Terminal source, Terminal destination, int communicationId, int duration) {
-        super(source, destination, communicationId, true, duration);
+    public InteractiveCommunication(Terminal source, Terminal destination, int communicationId) {
+        super(source, destination, communicationId, true);
 
     }
 }

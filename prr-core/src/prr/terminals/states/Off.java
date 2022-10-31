@@ -1,6 +1,7 @@
 package prr.terminals.states;
 
 import prr.exceptions.AlreadyOffTerminalException;
+import prr.exceptions.DestinationTerminalOffException;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class Off extends State implements Serializable {
         return false;
     }
 
-    public boolean canReceiveInteractiveCommunication(){
+    public boolean canReceiveInteractiveCommunication() {
         return false;
     }
 
@@ -40,6 +41,11 @@ public class Off extends State implements Serializable {
     public void toSilent() {
         Terminal terminal = getTerminal();
         terminal.setState(new Silent(terminal));
+    }
+
+    //FIXME
+    public void accept(StateExceptionVisitor s) throws DestinationTerminalOffException {
+        s.visit(this);
     }
 
     @Override

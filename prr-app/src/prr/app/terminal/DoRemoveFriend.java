@@ -25,6 +25,6 @@ class DoRemoveFriend extends TerminalCommand {
 		} catch (UnknownTerminalException e) {
 			throw new UnknownTerminalKeyException(e.getKey());
 		}
-                //FIXME implement command
+                //FIXME
 	}
 }

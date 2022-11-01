@@ -47,7 +47,7 @@ public class Network implements Serializable {
     /* List of communications */
     private Collection<Communication> _communications = new LinkedList<>();
 
-    private int _communicationId = 0;
+    private int _communicationId = 1;
 
     /**
      * Read text input file and create corresponding domain entities.

@@ -1,7 +1,5 @@
 .DS_Store
 CVS
 /classpath.txt
-tests
-runtests.sh
-/tests/*.diff
-/tests/*.outhyp
+/tests
+/runtests.sh

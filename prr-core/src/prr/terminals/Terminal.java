@@ -182,6 +182,7 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
 
                 _state.startInteractiveCommunication();
+                destination.getState().startInteractiveCommunication();
                 _ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///
@@ -199,6 +200,7 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
 
                 _state.startInteractiveCommunication();
+                destination.getState().startInteractiveCommunication();
                 _ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///

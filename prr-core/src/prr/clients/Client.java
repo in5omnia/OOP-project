@@ -10,10 +10,7 @@ import prr.notifications.Notification;
 
 import java.io.Serializable;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Client implements Serializable {
 
@@ -133,6 +130,13 @@ public class Client implements Serializable {
     public void addClientDebt(long cost){
         _payments -= cost;
         _debts += cost;
+    }
+
+    public Collection<String> showClientCommunications() {
+        Collection<String> allCommunications = new LinkedList<>();
+        for (Terminal terminal : _terminals.values())
+            allCommunications.addAll(terminal.showTerminalCommunications());    //FIXME does this work?
+        return allCommunications;
     }
 
 }

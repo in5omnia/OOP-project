@@ -52,7 +52,7 @@ public abstract class Communication implements Serializable {
         return _source;
     }
 
-    protected Terminal getDestination(){
+    public Terminal getDestination(){
         return _destination;
     }
 
@@ -72,10 +72,14 @@ public abstract class Communication implements Serializable {
         _paid = true;
     }
 
+    public void endCommunication(){
+        _ongoing = false;
+    }
+
     @Override
     public String toString() {
         String status = _ongoing ? "ONGOING" : "FINISHED";
 
-        return "|" + _communicationId + "|" + _source + "|" + _destination + "|" + _units + "|" + _cost + "|" + status;
+        return "|" + _communicationId + "|" + _source.getKey() + "|" + _destination.getKey() + "|" + _units + "|" + _cost + "|" + status;
     }
 }

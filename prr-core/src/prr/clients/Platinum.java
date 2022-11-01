@@ -15,7 +15,9 @@ public class Platinum extends Level {
 
     @Override
     public void positiveBalanceAnd2Text(){
-
+        Client client = getClient();
+        if (getTextCommunicationCounter()==2)
+            client.setLevel(new Gold(client));
     }
 
     @Override

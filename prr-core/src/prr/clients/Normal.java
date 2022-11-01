@@ -15,6 +15,12 @@ public class Normal extends Level {
     }
 
     @Override
+    public void clientBalanceOver500() {
+        Client client = getClient();
+        if (client.calculateBalance()>500)
+            client.setLevel(new Gold(client));
+    }
+    @Override
     public void negativeBalance(){}
 
     @Override

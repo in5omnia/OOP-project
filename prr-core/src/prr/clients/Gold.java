@@ -15,7 +15,9 @@ public class Gold extends Level {
 
     @Override
     public void positiveBalanceAnd5Video(){
-
+        Client client = getClient();
+        if (getVideoCommunicationCounter()==5)
+            client.setLevel(new Platinum(client));
     }
 
     @Override

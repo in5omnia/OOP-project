@@ -3,3 +3,5 @@ CVS
 /classpath.txt
 tests
 runtests.sh
+/tests/*.diff
+/tests/*.outhyp

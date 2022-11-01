@@ -2,6 +2,7 @@ package prr.terminals;
 
 import prr.Network;
 import prr.clients.Client;
+import prr.clients.Level;
 import prr.exceptions.*;
 
 import prr.notifications.Notification;
@@ -147,10 +148,16 @@ abstract public class Terminal implements Serializable {
         }
 
         int communicationId = network.retrieveCommunicationId();
-        Communication communication = new Text(this, destination, communicationId, message);
+        Text communication = new Text(this, destination, communicationId, message);
         _pastCommunications.put(communicationId, communication);
-        _debts += communication.getCost();  //FIXME
-        _owner.getLevel().negativeBalance();
+        long cost = communication.getCost();
+        _debts += cost;  //FIXME
+        _owner.addClientDebt(cost);
+        network.addCommunication(communication);
+        Level level = _owner.getLevel();
+        level.negativeBalance();
+        level.detectCommunication(communication);
+        _owner.getLevel().positiveBalanceAnd2Text();
     }
 
 
@@ -161,7 +168,7 @@ abstract public class Terminal implements Serializable {
             DestinationTerminalBusyException, DestinationTerminalSilentException {
 
         Terminal destination = network.findTerminal(destinationTerminalKey);
-        Communication communication = null; //FIXME
+        //Communication communication = null; //FIXME
 
         switch (communicationType) {
             case "VOICE" -> {
@@ -170,7 +177,16 @@ abstract public class Terminal implements Serializable {
                     throw new UnsupportedAtOriginException(_key, communicationType);
                 if (!destination.canVoiceCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
-                communication = new Voice(this, destination, network.retrieveCommunicationId());
+
+                Voice communication = new Voice(this, destination, network.retrieveCommunicationId());
+                validateStartInteractiveCommunication(destinationTerminalKey, destination);
+
+                _state.startInteractiveCommunication();
+                _ongoingCommunication = communication;
+                network.addCommunication(communication);
+                ///
+                _owner.getLevel().detectCommunication(communication);
+
             }
             case "VIDEO" -> {
                 destination = network.findTerminal(destinationTerminalKey);
@@ -178,9 +194,48 @@ abstract public class Terminal implements Serializable {
                     throw new UnsupportedAtOriginException(_key, communicationType);
                 if (!destination.canVideoCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
-                communication = new Video(this, destination, network.retrieveCommunicationId());
+
+                Video communication = new Video(this, destination, network.retrieveCommunicationId());
+                validateStartInteractiveCommunication(destinationTerminalKey, destination);
+
+                _state.startInteractiveCommunication();
+                _ongoingCommunication = communication;
+                network.addCommunication(communication);
+                ///
+                _owner.getLevel().detectCommunication(communication);
             }
         }
+        ////
+
+
+       /* if (!canStartCommunication())
+            throw new CannotCommunicateException();
+
+        if (destinationTerminalKey.equals(_key)) {
+            throw new DestinationTerminalBusyException();   //Presents the same message as a busy terminal
+        }
+
+        if (!(destination.canReceiveInteractiveCommunication())){
+            //method for this? FIXME
+            if (_owner.notificationsEnabled())
+                destination.registerInteractiveNotificationToSend(this);
+            //throws DestinationTerminalOffException, DestinationTerminalBusyException, DestinationTerminalSilentException
+            //with Visitor
+            destination.getStateException();
+        }*/
+        /*_state.startInteractiveCommunication();
+        _ongoingCommunication = communication;
+        network.addCommunication(communication);
+
+        ///
+        Level level = _owner.getLevel();
+        level.detectCommunication(communication);*/
+    }
+
+
+    private void validateStartInteractiveCommunication(String destinationTerminalKey, Terminal destination)
+            throws CannotCommunicateException, DestinationTerminalBusyException, DestinationTerminalOffException,
+            DestinationTerminalSilentException {
 
         if (!canStartCommunication())
             throw new CannotCommunicateException();
@@ -197,37 +252,33 @@ abstract public class Terminal implements Serializable {
             //with Visitor
             destination.getStateException();
         }
-        _state.startInteractiveCommunication();
-        _ongoingCommunication = communication;
     }
+
 
 
     public long endInteractiveCommunication(int duration) {
         //FIXME do i have to check if its ongoing -> exceptions?
         _ongoingCommunication.setUnits(duration);
+        _ongoingCommunication.endCommunication();
         long cost = _ongoingCommunication.getCost();
         _state.endInteractiveCommunication();
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
         _debts += cost;
+        _owner.addClientDebt(cost);
         _owner.getLevel().negativeBalance();
         _owner.getLevel().positiveBalanceAnd5Video();
         _owner.getLevel().positiveBalanceAnd2Text();
         _ongoingCommunication = null;
+        //what if it was voice? does this affect?
+        _owner.getLevel().positiveBalanceAnd5Video();
         return cost;
     }
 
 
     public void getStateException() throws DestinationTerminalSilentException, DestinationTerminalBusyException,
             DestinationTerminalOffException {
-            _state.accept(new StateExceptionVisitor());
+        _state.accept(new StateExceptionVisitor());
     }
-
-    //provisorio
-   /* public void handleNotifications(Terminal destination){
-        //this & owner=origin
-        if (_owner.notificationsEnabled())
-            destination.registerTextNotificationToSend(_key);
-    }*/
 
 
     public void registerTextNotificationToSend(Terminal origin){
@@ -336,9 +387,19 @@ abstract public class Terminal implements Serializable {
         long cost = communication.getCost();
         _payments += cost;
         _debts -= cost;
+        _owner.addClientPayment(cost);
         communication.pay();
+        _owner.getLevel().clientBalanceOver500();
     }
 
+    public Collection<String> showTerminalCommunications(){
+        Collection<String> allCommunications = new LinkedList<>();
+        if (_ongoingCommunication != null)
+            allCommunications.add(_ongoingCommunication.toString());
+
+        for (Communication communication : _pastCommunications.values())
+            allCommunications.add(communication.toString());
+        return allCommunications;
+    }
 
 }
-

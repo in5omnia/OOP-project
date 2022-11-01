@@ -324,10 +324,11 @@ public class Network implements Serializable {
     }
 
 
-    public long[] retrievePaymentsAndDebts(String key) throws UnknownClientException {
-        Client client = findClient(key);
+    public long[] retrievePaymentsAndDebts(String clientKey) throws UnknownClientException {
+        Client client = findClient(clientKey);
         return new long[]{client.getPayments(), client.getDebts()};
     }
+
 
     // TODO: Exception and Documentation
     public void enableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOnNotificationException {
@@ -344,6 +345,93 @@ public class Network implements Serializable {
     // TODO: Documentation
     public int retrieveCommunicationId(){  //FIXME not sure this should be public
         return _communicationId++;
+    }
+
+
+    /**
+     * Shows all the clients that have debts.
+     *
+     * @return a String that represents all the clients with debts
+     */
+    public Collection<String> showClientsWithDebts() {
+        Collection<String> allClients = new LinkedList<>();
+        for (Client client : _clients.values()) {
+            if (client.getDebts() > 0)
+                allClients.add(client.toString());
+        }
+        return allClients;
+    }
+
+
+    /**
+     * Shows all the clients that don't have debts.
+     *
+     * @return a String that represents all the clients without debts
+     */
+    public Collection<String> showClientsWithoutDebts() {
+        Collection<String> allClients = new LinkedList<>();
+        for (Client client : _clients.values()) {
+            if (client.getDebts() <= 0) //FIXME ==?
+                allClients.add(client.toString());
+        }
+        return allClients;
+    }
+
+    /**
+     * Shows all the terminals with a positive balance.
+     *
+     * @return a String that represents all the terminals with a positive balance
+     */
+    public Collection<String> showTerminalsWithPositiveBalance() {
+        Collection<String> allTerminals = new LinkedList<>();
+        for (Terminal terminal : _terminals.values()) {
+            if (terminal.calculateBalance() > 0)
+                allTerminals.add(terminal.toString());
+        }
+        return allTerminals;
+    }
+
+    //FIXME - do we want communications inside network?
+    public void addCommunication(Communication communication){
+        _communications.add(communication);
+    }
+
+    /*
+    public Collection<String> showAllCommunications() {
+        Collection<String> allCommunications = new LinkedList<>();
+        for (Terminal terminal : _terminals.values()) {
+            allCommunications.add(terminal.showAllTerminalCommunications());
+        }
+        return allCommunications;
+    }
+*/
+
+    public Collection<String> showCommunicationsFromClient(String clientKey) throws UnknownClientException {
+        return findClient(clientKey).showClientCommunications();
+    }
+
+    public Collection<String> showCommunicationsToClient(String clientKey) throws UnknownClientException {
+        if (!clientExists(clientKey))
+            throw new UnknownClientException(clientKey);
+        Collection<String> allCommunications = new LinkedList<>();
+
+        for (Communication communication : _communications){
+            Client destinationClient = communication.getDestination().getOwner();
+            if (destinationClient.getId().equals(clientKey)){
+                allCommunications.add(communication.toString());
+            }
+        }
+        return allCommunications;
+    }
+
+
+    public long[] retrieveGlobalPaymentsAndDebts() {
+        long globalPayments=0, globalDebts=0;
+        for (Client client : _clients.values()) {
+            globalPayments += client.getPayments();
+            globalDebts += client.getDebts();
+        }
+        return new long[]{globalPayments, globalDebts};
     }
 
 }

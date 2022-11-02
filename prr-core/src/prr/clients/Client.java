@@ -141,9 +141,7 @@ public class Client implements Serializable, Comparable<Client> {
 
     @Override
     public int compareTo(Client o) {
-        Client c = (Client) o;
-
-        return _clientId.compareTo(c._clientId);
+        return _clientId.compareTo(o._clientId);
 
     }
 }

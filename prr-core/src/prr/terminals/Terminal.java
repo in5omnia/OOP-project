@@ -264,6 +264,7 @@ abstract public class Terminal implements Serializable {
         _ongoingCommunication.endCommunication();
         long cost = _ongoingCommunication.getCost();
         _state.endInteractiveCommunication();
+        _ongoingCommunication.getDestination().getState().endInteractiveCommunication();    //FIXME this is horrendous
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
         _debts += cost;
         _owner.addClientDebt(cost);

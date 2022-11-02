@@ -8,6 +8,6 @@ public class AppDelivery implements DeliveryMethod {
      */
     private static final long serialVersionUID = 202208091754L;
     public void deliver(Notification notification) {
-        notification.getOrigin().getOwner().receiveNotification(notification);
+        notification.getCaller().receiveNotification(notification);
     }
 }

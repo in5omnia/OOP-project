@@ -45,7 +45,7 @@ public class Silent extends State implements Serializable {
     public void turnOn() throws AlreadyOnTerminalException {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
-        terminal.sendInteractiveNotifications(new S2I());
+        terminal.sendAllNotifications(new S2I());
     }
 
     public void toSilent() throws AlreadySilentTerminalException {

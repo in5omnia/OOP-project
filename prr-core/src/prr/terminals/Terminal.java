@@ -43,9 +43,9 @@ abstract public class Terminal implements Serializable {
     private Communication _ongoingCommunication = null;
 
     // these store notifications to send when the terminal becomes available
-    private List<Notification> _textNotifications = new ArrayList<>();
+    private List<Client> _textNotificationsToSend = new ArrayList<>();
 
-    private List<Notification> _interactiveNotifications = new ArrayList<>();
+    private List<Client> _interactiveNotificationsToSend = new ArrayList<>();
 
     private long _payments = 0;
 
@@ -131,18 +131,18 @@ abstract public class Terminal implements Serializable {
         return _state.canReceiveInteractiveCommunication();
     }
 
-    public void sendTextCommunication(Network network, String destinationTerminal, String message)
+    public void sendTextCommunication(Network network, String destinationTerminalKey, String message)
             throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
 
         if (!canStartCommunication())
             throw new CannotCommunicateException();
 
-        Terminal destination = network.findTerminal(destinationTerminal);
+        Terminal destination = network.findTerminal(destinationTerminalKey);
 
         if (!(destination.canReceiveTextCommunication())){
             //method for this? FIXME
             if (_owner.notificationsEnabled())
-                destination.registerTextNotificationToSend(this);
+                destination.registerTextNotificationToSend(_owner);
 
             throw new DestinationTerminalOffException();
         }
@@ -249,7 +249,7 @@ abstract public class Terminal implements Serializable {
         if (!(destination.canReceiveInteractiveCommunication())){
             //method for this? FIXME
             if (_owner.notificationsEnabled())
-                destination.registerInteractiveNotificationToSend(this);
+                destination.registerInteractiveNotificationToSend(_owner);
             //throws DestinationTerminalOffException, DestinationTerminalBusyException, DestinationTerminalSilentException
             //with Visitor
             destination.getStateException();
@@ -285,12 +285,12 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public void registerTextNotificationToSend(Terminal origin){
-        _textNotifications.add(new Notification(origin,this));
+    public void registerTextNotificationToSend(Client origin){
+        _textNotificationsToSend.add(origin);
     }
 
-    public void registerInteractiveNotificationToSend(Terminal origin){
-        _interactiveNotifications.add(new Notification(origin,this));
+    public void registerInteractiveNotificationToSend(Client origin){
+        _interactiveNotificationsToSend.add(origin);
     }
 
 
@@ -364,17 +364,30 @@ abstract public class Terminal implements Serializable {
     }
 
     public void sendTextNotifications(NotificationType type) {
-        for (Notification notification : _textNotifications) {
-            notification.setNotificationType(type);
-            _owner.getDeliveryMethod().deliver(notification);
+        for (Client client : _textNotificationsToSend) {
+            Notification notification = new Notification(this, client, type) ;
+            client.getDeliveryMethod().deliver(notification);
         }
+        _textNotificationsToSend = new ArrayList<>();
     }
 
     public void sendInteractiveNotifications(NotificationType type) {
-        for (Notification notification : _interactiveNotifications) {
-            notification.setNotificationType(type);
-            _owner.getDeliveryMethod().deliver(notification);
+        for (Client client : _interactiveNotificationsToSend) {
+            Notification notification = new Notification(this, client, type) ;
+            client.getDeliveryMethod().deliver(notification);
         }
+        _interactiveNotificationsToSend = new ArrayList<>();
+    }
+    public void sendAllNotifications(NotificationType type) {
+        Set<Client> toNotify = new TreeSet<>();
+        toNotify.addAll(_textNotificationsToSend);
+        toNotify.addAll(_interactiveNotificationsToSend);
+        for (Client client : toNotify) {
+            Notification notification = new Notification(this, client, type) ;
+            client.getDeliveryMethod().deliver(notification);
+        }
+        _interactiveNotificationsToSend = new ArrayList<>();
+        _textNotificationsToSend = new ArrayList<>();
     }
 
     public Communication findCommunication(int communicationKey) throws CommunicationNotFoundTerminalException {

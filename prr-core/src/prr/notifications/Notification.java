@@ -1,6 +1,8 @@
 package prr.notifications;
 
 import java.io.Serializable;
+
+import prr.clients.Client;
 import prr.terminals.Terminal;
 import prr.terminals.states.Busy;
 import prr.terminals.states.Idle;
@@ -15,8 +17,7 @@ public class Notification implements Serializable {
     private static final long serialVersionUID = 202208091754L;
 
     //private String _originTerminalId;
-
-    private Terminal _origin;
+    private Client _caller;
 
     //private String _originClientID;
 
@@ -25,14 +26,19 @@ public class Notification implements Serializable {
     private NotificationType _type;
 
 
-    public Notification(Terminal origin, Terminal destination) {
-        _origin = origin;
+    public Notification(Terminal destination, Client caller) {
         _destination = destination;
+        _caller = caller;
+    }
+    public Notification(Terminal destination, Client caller, NotificationType type) {
+        _destination = destination;
+        _caller = caller;
+        _type = type;
     }
 
 
-    public Terminal getOrigin() {
-        return _origin;
+    public Client getCaller() {
+        return _caller;
     }
 
     public void setNotificationType(NotificationType type){
@@ -43,6 +49,6 @@ public class Notification implements Serializable {
 
     @Override
     public String toString(){
-        return _type + "|" + /*_originTerminalId*/ _destination.getKey();
+        return _type + "|" +  _destination.getKey();
     }
 }

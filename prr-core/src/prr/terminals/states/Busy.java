@@ -49,7 +49,7 @@ public class Busy extends State implements Serializable {
             terminal.setState(new Silent(terminal));
         else {
             terminal.setState(new Idle(terminal));
-            terminal.sendInteractiveNotifications(new B2I());
+            terminal.sendAllNotifications(new B2I());
         }
     }
 

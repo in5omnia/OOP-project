@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 import java.util.*;
 
-public class Client implements Serializable {
+public class Client implements Serializable, Comparable<Client> {
 
     /**
      * Serial number for serialization.
@@ -139,4 +139,11 @@ public class Client implements Serializable {
         return allCommunications;
     }
 
+    @Override
+    public int compareTo(Client o) {
+        Client c = (Client) o;
+
+        return _clientId.compareTo(c._clientId);
+
+    }
 }

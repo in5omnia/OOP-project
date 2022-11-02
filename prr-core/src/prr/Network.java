@@ -47,6 +47,9 @@ public class Network implements Serializable {
     /* List of communications */
     private Collection<Communication> _communications = new LinkedList<>();
 
+    /**
+     * CommunicationId number
+     */
     private int _communicationId = 1;
 
     /**
@@ -257,7 +260,6 @@ public class Network implements Serializable {
     }
 
 
-
     /**
      * Shows all the clients in the network.
      *
@@ -323,7 +325,11 @@ public class Network implements Serializable {
         return client.getDebts();
     }
 
-
+    /**
+     * Gets the ammount of payments and debts from a given client.
+     * @param clientKey client's ID
+     * @return a String that represents all the clients with debts
+     */
     public long[] retrievePaymentsAndDebts(String clientKey) throws UnknownClientException {
         Client client = findClient(clientKey);
         return new long[]{client.getPayments(), client.getDebts()};
@@ -331,18 +337,37 @@ public class Network implements Serializable {
 
 
     // TODO: Exception and Documentation
+    /**
+     * Enables Notifications of a given client a given client.
+     * @param clientKey client's ID
+     * @return a String that represents all the clients with debts
+     * @throws UnknownClientException if there isn't a client with the given key in the network
+     * @throws AlreadyOnNotificationException if the client's Notifications were already on
+     */
     public void enableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOnNotificationException {
         Client client = findClient(clientKey);
         client.enableNotifications();
     }
 
     // TODO: Exception and Documentation
+    /**
+     * Enables Notifications of a given client a given client.
+     * @param clientKey client's ID
+     * @return a String that represents all the clients with debts
+     * @throws UnknownClientException if there isn't a client with the given key in the network
+     * @throws AlreadyOffNotificationException if the client's Notifications were already off
+     */
     public void disableClientNotifications(String clientKey) throws UnknownClientException , AlreadyOffNotificationException {
         Client client = findClient(clientKey);
         client.disableNotifications();
     }
 
     // TODO: Documentation
+    /**
+     * Returns a communicationId and generates a new one.
+     *
+     * @return  a communicationId
+     */
     public int retrieveCommunicationId(){  //FIXME not sure this should be public
         return _communicationId++;
     }
@@ -392,19 +417,16 @@ public class Network implements Serializable {
     }
 
     //FIXME - do we want communications inside network?
+
+    /**
+     * Adds a communication to the network.
+     * @param communication communication to be added
+     */
     public void addCommunication(Communication communication){
         _communications.add(communication);
     }
 
-    /*
-    public Collection<String> showAllCommunications() {
-        Collection<String> allCommunications = new LinkedList<>();
-        for (Terminal terminal : _terminals.values()) {
-            allCommunications.add(terminal.showAllTerminalCommunications());
-        }
-        return allCommunications;
-    }
-*/
+
 
     public Collection<String> showCommunicationsFromClient(String clientKey) throws UnknownClientException {
         return findClient(clientKey).showClientCommunications();

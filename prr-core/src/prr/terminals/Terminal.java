@@ -267,12 +267,13 @@ abstract public class Terminal implements Serializable {
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
         _debts += cost;
         _owner.addClientDebt(cost);
-        _owner.getLevel().negativeBalance();
-        _owner.getLevel().positiveBalanceAnd5Video();
-        _owner.getLevel().positiveBalanceAnd2Text();
+        Level level = _owner.getLevel();
+        level.negativeBalance();
+        level.positiveBalanceAnd5Video();
+        level.positiveBalanceAnd2Text();
         _ongoingCommunication = null;
         //what if it was voice? does this affect?
-        _owner.getLevel().positiveBalanceAnd5Video();
+
         return cost;
     }
 

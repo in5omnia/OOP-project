@@ -7,6 +7,8 @@ import prr.terminals.communication.Video;
 import prr.terminals.communication.Voice;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Level implements Serializable {
 
@@ -19,9 +21,13 @@ public abstract class Level implements Serializable {
 
     private Client _client;
 
-    private int _textCommunicationCounter = 0;  //what about different terminals - like doing 5 video but the 5th is
+    //private List<Communication> _consecutiveCommunications = new ArrayList<>();
+    private List<Text> _textCommunications = new ArrayList<>();
+    private List<Video> _videoCommunications = new ArrayList<>();
+
+    //private int _textCommunicationCounter = 0;  //what about different terminals - like doing 5 video but the 5th is
     // ongoing when a voice/text starts and resets the counters, not allowing level to change
-    private int _videoCommunicationCounter = 0;
+    //private int _videoCommunicationCounter = 0;
 
     public Level(Client client, Plan plan) {
         _client = client;
@@ -36,15 +42,55 @@ public abstract class Level implements Serializable {
         return _plan;
     }
 
-    public int getTextCommunicationCounter() {
+
+    protected int getNumberOfConsecutiveTexts(){
+        return _textCommunications.size();
+    }
+
+    protected boolean anyTextOngoing(){
+        boolean ongoing = false;
+        for (Text text : _textCommunications){
+            if (text.isOngoing()){
+                ongoing = false;
+                break;
+            }
+        }
+        return ongoing;
+    }
+
+    protected boolean anyVideoOngoing(){
+        boolean ongoing = false;
+        for (Video video : _videoCommunications){
+            if (video.isOngoing()){
+                ongoing = false;
+                break;
+            }
+        }
+        return ongoing;
+    }
+
+    protected int getNumberOfConsecutiveVideos(){
+        return _videoCommunications.size();
+    }
+
+    protected void resetConsecutiveVideos(){
+        _videoCommunications.subList(0, 4).clear(); //FIXME does this work
+    }
+
+    protected void resetConsecutiveTexts(){
+        _textCommunications.subList(0, 1).clear(); //FIXME does this work
+    }
+
+
+    /*public int getTextCommunicationCounter() {
         return _textCommunicationCounter;
     }
 
     public int getVideoCommunicationCounter(){
         return _videoCommunicationCounter;
-    }
+    }*/
 
-    public void detectCommunication(Text communication){
+   /* public void detectCommunication(Text communication){
         _textCommunicationCounter++;
         _videoCommunicationCounter = 0;
     }
@@ -52,11 +98,27 @@ public abstract class Level implements Serializable {
     public void detectCommunication(Voice communication){
         _textCommunicationCounter = 0;
         _videoCommunicationCounter = 0;
+    }*/
+
+    public void detectCommunication(Text communication){
+        if (getNumberOfConsecutiveVideos() < 5)
+            _videoCommunications.clear();
+        _textCommunications.add(communication);
+
+    }
+
+    public void detectCommunication(Voice communication){
+        if (getNumberOfConsecutiveTexts() < 2)
+            _textCommunications.clear();
+        if (getNumberOfConsecutiveVideos() < 5)
+            _videoCommunications.clear();
+        //addVoice?
     }
 
     public void detectCommunication(Video communication){
-        _videoCommunicationCounter++;
-        _textCommunicationCounter = 0;
+        if (getNumberOfConsecutiveTexts() < 2)
+            _textCommunications.clear();
+        _videoCommunications.add(communication);
     }
 
     public void negativeBalance() {

@@ -16,8 +16,10 @@ public class Platinum extends Level {
     @Override
     public void positiveBalanceAnd2Text(){
         Client client = getClient();
-        if (getTextCommunicationCounter()==2)
+        if (getNumberOfConsecutiveTexts()==2 /*&& !anyTextOngoing()*/){
             client.setLevel(new Gold(client));
+            resetConsecutiveTexts();
+        }
     }
 
     @Override

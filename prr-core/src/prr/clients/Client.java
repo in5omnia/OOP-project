@@ -128,7 +128,6 @@ public class Client implements Serializable, Comparable<Client> {
     }
 
     public void addClientDebt(long cost){
-        _payments -= cost;
         _debts += cost;
     }
 
@@ -140,8 +139,8 @@ public class Client implements Serializable, Comparable<Client> {
     }
 
     @Override
-    public int compareTo(Client o) {
-        return _clientId.compareTo(o._clientId);
-
+    public int compareTo(Client c) {
+        return _clientId.compareTo(c._clientId);
     }
+
 }

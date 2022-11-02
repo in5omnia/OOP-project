@@ -1,7 +1,18 @@
 package prr;
 
 import prr.clients.Client;
-import prr.exceptions.*;
+import prr.clients.ClientDebtsComparator;
+import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.DuplicateClientException;
+import prr.exceptions.DuplicateTerminalException;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.UnknownClientException;
+import prr.exceptions.UnknownTerminalException;
+import prr.exceptions.OwnFriendException;
+import prr.exceptions.AlreadyOffNotificationException;
+import prr.exceptions.AlreadyOnNotificationException;
+
 
 import prr.terminals.Terminal;
 import prr.terminals.Basic;
@@ -22,6 +33,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.util.LinkedList;
+
 
 
 /**
@@ -379,13 +391,15 @@ public class Network implements Serializable {
      * @return a String that represents all the clients with debts
      */
     public Collection<String> showClientsWithDebts() {
-        Collection<String> allClients = new LinkedList<>();
+
+        Map<Client, String> clientswithDebts = new TreeMap<>(new ClientDebtsComparator());
         for (Client client : _clients.values()) {
             if (client.getDebts() > 0)
-                allClients.add(client.toString());
+                clientswithDebts.put(client, client.toString());
         }
-        return allClients;
+        return clientswithDebts.values();
     }
+
 
 
     /**

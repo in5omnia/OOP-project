@@ -207,31 +207,6 @@ abstract public class Terminal implements Serializable {
                 _owner.getLevel().detectCommunication(communication);
             }
         }
-        ////
-
-
-       /* if (!canStartCommunication())
-            throw new CannotCommunicateException();
-
-        if (destinationTerminalKey.equals(_key)) {
-            throw new DestinationTerminalBusyException();   //Presents the same message as a busy terminal
-        }
-
-        if (!(destination.canReceiveInteractiveCommunication())){
-            //method for this? FIXME
-            if (_owner.notificationsEnabled())
-                destination.registerInteractiveNotificationToSend(this);
-            //throws DestinationTerminalOffException, DestinationTerminalBusyException, DestinationTerminalSilentException
-            //with Visitor
-            destination.getStateException();
-        }*/
-        /*_state.startInteractiveCommunication();
-        _ongoingCommunication = communication;
-        network.addCommunication(communication);
-
-        ///
-        Level level = _owner.getLevel();
-        level.detectCommunication(communication);*/
     }
 
 
@@ -371,13 +346,14 @@ abstract public class Terminal implements Serializable {
         _textNotificationsToSend = new ArrayList<>();
     }
 
-    public void sendInteractiveNotifications(NotificationType type) {
+    /*public void sendInteractiveNotifications(NotificationType type) {
         for (Client client : _interactiveNotificationsToSend) {
             Notification notification = new Notification(this, client, type) ;
             client.getDeliveryMethod().deliver(notification);
         }
         _interactiveNotificationsToSend = new ArrayList<>();
-    }
+    }*/
+
     public void sendAllNotifications(NotificationType type) {
         Set<Client> toNotify = new TreeSet<>();
         toNotify.addAll(_textNotificationsToSend);
@@ -402,8 +378,7 @@ abstract public class Terminal implements Serializable {
         if (communication.hasBeenPaid() || communication.ongoing())
             throw new CommunicationNotFoundTerminalException();
         long cost = communication.getCost();
-        _payments += cost;
-        _debts -= cost;
+        addTerminalPayment(cost);
         _owner.addClientPayment(cost);
         communication.pay();
         _owner.getLevel().clientBalanceOver500();
@@ -417,6 +392,12 @@ abstract public class Terminal implements Serializable {
         for (Communication communication : _pastCommunications.values())
             allCommunications.add(communication.toString());
         return allCommunications;
+    }
+
+
+    public void addTerminalPayment(long cost) {
+        _payments += cost;
+        _debts -= cost;
     }
 
 }

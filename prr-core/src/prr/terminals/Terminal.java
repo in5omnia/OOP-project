@@ -385,7 +385,7 @@ abstract public class Terminal implements Serializable {
 
     public void performPayment(int communicationKey) throws CommunicationNotFoundTerminalException {
         Communication communication = findCommunication(communicationKey);
-        if (communication.hasBeenPaid() || _ongoingCommunication.getId()==communicationKey)
+        if (communication.hasBeenPaid() || communication.ongoing())
             throw new CommunicationNotFoundTerminalException();
         long cost = communication.getCost();
         _payments += cost;

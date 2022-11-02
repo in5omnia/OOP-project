@@ -76,6 +76,10 @@ public abstract class Communication implements Serializable {
         _ongoing = false;
     }
 
+    public boolean ongoing(){
+        return _ongoing;
+    }
+
     @Override
     public String toString() {
         String status = _ongoing ? "ONGOING" : "FINISHED";

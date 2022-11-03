@@ -11,7 +11,7 @@ public class Text extends Communication implements Serializable {
      */
     private static final long serialVersionUID = 202208091754L;
 
-    private String _message;
+    private final String _message;
 
     public Text(Terminal source, Terminal destination, int communicationId, String message) {
         super(source, destination, communicationId, false, message.length());

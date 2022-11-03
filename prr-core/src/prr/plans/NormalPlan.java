@@ -7,6 +7,7 @@ public class NormalPlan implements Plan {
      */
     private static final long serialVersionUID = 202208091754L;
 
+    @Override
     public long calculateMessageCost(int units){
         if (units < 50)
             return 10;
@@ -15,6 +16,7 @@ public class NormalPlan implements Plan {
         return (long) 2*units;
     }
 
+    @Override
     public long calculateVoiceCommunicationCost(int units, boolean isFriend){
         long cost = (long) 20*units;
         if (isFriend)
@@ -22,6 +24,7 @@ public class NormalPlan implements Plan {
         return cost;
     }
 
+    @Override
     public long calculateVideoCommunicationCost(int units, boolean isFriend){
         long cost = (long) 30*units;
         if (isFriend)

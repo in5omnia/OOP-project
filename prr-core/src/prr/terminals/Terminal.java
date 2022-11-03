@@ -198,7 +198,6 @@ abstract public class Terminal implements Serializable {
 
         switch (communicationType) {
             case "VOICE" -> {
-                destination = network.findTerminal(destinationTerminalKey);
                 if (!canVoiceCommunicate())
                     throw new UnsupportedAtOriginException(_key, communicationType);
                 if (!destination.canVoiceCommunicate())
@@ -216,7 +215,6 @@ abstract public class Terminal implements Serializable {
 
             }
             case "VIDEO" -> {
-                destination = network.findTerminal(destinationTerminalKey);
                 if (!canVideoCommunicate())
                     throw new UnsupportedAtOriginException(_key, communicationType);
                 if (!destination.canVideoCommunicate())
@@ -377,7 +375,7 @@ abstract public class Terminal implements Serializable {
             Notification notification = new Notification(this, client, type) ;
             client.getDeliveryMethod().deliver(notification);
         }
-        _textNotificationsToSend = new ArrayList<>();
+        _textNotificationsToSend.clear();
     }
 
     /*public void sendInteractiveNotifications(NotificationType type) {
@@ -385,7 +383,7 @@ abstract public class Terminal implements Serializable {
             Notification notification = new Notification(this, client, type) ;
             client.getDeliveryMethod().deliver(notification);
         }
-        _interactiveNotificationsToSend = new ArrayList<>();
+        _interactiveNotificationsToSend.clear();
     }*/
 
     public void sendAllNotifications(NotificationType type) {
@@ -396,8 +394,8 @@ abstract public class Terminal implements Serializable {
             Notification notification = new Notification(this, client, type) ;
             client.getDeliveryMethod().deliver(notification);
         }
-        _interactiveNotificationsToSend = new ArrayList<>();
-        _textNotificationsToSend = new ArrayList<>();
+        _interactiveNotificationsToSend.clear();
+        _textNotificationsToSend.clear();
     }
 
     public Communication findCommunication(int communicationKey) throws CommunicationNotFoundTerminalException {

@@ -135,7 +135,7 @@ abstract public class Terminal implements Serializable {
      * @return true if this terminal is neither off neither busy, false otherwise.
      **/
     public boolean canStartCommunication() {
-        return _state.canStartCommunication() && _ongoingCommunication == null;
+        return _state.canStartCommunication();
     }
 
     public State getState() {
@@ -152,7 +152,7 @@ abstract public class Terminal implements Serializable {
         return _state.canReceiveTextCommunication();
     }
 
-    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {
+    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {    //FIXME tf is this
         return _state.canReceiveInteractiveCommunication();
     }
 

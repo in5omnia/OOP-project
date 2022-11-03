@@ -38,10 +38,10 @@ public abstract class Communication implements Serializable {
 
     public Communication(Terminal source, Terminal destination, int communicationId, boolean ongoing, int units) {
         this(source, destination, communicationId, ongoing);
-        setUnits(units);
+        defineUnitsAndCost(units);
     }
 
-    public void setUnits(int units){    //could be protected and called by a "setDuration" in interactiveCom
+    public void defineUnitsAndCost(int units){    //could be protected and called by a "setDuration" in interactiveCom
         _units = units;
         _cost = calculateCost(units);
     }

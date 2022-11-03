@@ -267,7 +267,7 @@ abstract public class Terminal implements Serializable {
 
     public long endInteractiveCommunication(int duration) {
         //FIXME do i have to check if its ongoing -> exceptions?
-        _ongoingCommunication.setUnits(duration);
+        _ongoingCommunication.defineUnitsAndCost(duration);
         _ongoingCommunication.endCommunication();
         long cost = _ongoingCommunication.getCost();
         _state.endInteractiveCommunication();

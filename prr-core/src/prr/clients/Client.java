@@ -134,8 +134,15 @@ public class Client implements Serializable, Comparable<Client> {
     public Collection<String> showClientCommunications() {
         Collection<String> allCommunications = new LinkedList<>();
         for (Terminal terminal : _terminals.values())
-            allCommunications.addAll(terminal.showTerminalCommunications());    //FIXME does this work?
+            allCommunications.addAll(terminal.showTerminalCommunications());
         return allCommunications;
+    }
+
+    public Collection<String> showCommunicationsReceived() {
+        Collection<String> received = new LinkedList<>();
+        for (Terminal terminal : _terminals.values())
+            received.addAll(terminal.showCommunicationsReceived());
+        return received;
     }
 
     @Override

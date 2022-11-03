@@ -447,17 +447,7 @@ public class Network implements Serializable {
     }
 
     public Collection<String> showCommunicationsToClient(String clientKey) throws UnknownClientException {
-        if (!clientExists(clientKey))
-            throw new UnknownClientException(clientKey);
-        Collection<String> allCommunications = new LinkedList<>();
-
-        for (Communication communication : _communications){
-            Client destinationClient = communication.getDestination().getOwner();
-            if (destinationClient.getId().equals(clientKey)){
-                allCommunications.add(communication.toString());
-            }
-        }
-        return allCommunications;
+        return findClient(clientKey).showCommunicationsReceived();
     }
 
 

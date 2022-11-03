@@ -1,23 +1,46 @@
 package prr.terminals;
 
+import prr.exceptions.OwnFriendException;
+import prr.exceptions.NoSuchFriendException;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.UnknownTerminalException;
+import prr.exceptions.AlreadyOnTerminalException;
+import prr.exceptions.CannotCommunicateException;
+import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.AlreadyOffTerminalException;
+import prr.exceptions.UnsupportedAtOriginException;
+import prr.exceptions.DestinationTerminalOffException;
+import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.NoOngoingCommunicationException;
+import prr.exceptions.DestinationTerminalBusyException;
+import prr.exceptions.UnsupportedAtDestinationException;
+import prr.exceptions.DestinationTerminalSilentException;
+import prr.exceptions.CommunicationNotFoundTerminalException;
+
 import prr.Network;
 import prr.clients.Client;
 import prr.clients.Level;
-import prr.exceptions.*;
-
 import prr.notifications.Notification;
 import prr.notifications.NotificationType;
 import prr.terminals.communication.Text;
 import prr.terminals.communication.Video;
 import prr.terminals.communication.Voice;
+import prr.terminals.communication.Communication;
+import prr.terminals.communication.InteractiveCommunication;
+import prr.terminals.states.StateExceptionVisitor;
 import prr.terminals.states.State;
 import prr.terminals.states.Idle;
-import prr.terminals.communication.Communication;
-import prr.terminals.states.StateExceptionVisitor;
 
 import java.io.Serializable;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 
 /**
@@ -41,6 +64,8 @@ abstract public class Terminal implements Serializable {
     private Map<Integer, Communication> _pastCommunications = new TreeMap<>();
 
     private Communication _ongoingCommunication = null;
+
+    private List<Communication> _communicationsReceived = new ArrayList<>();
 
     // these store notifications to send when the terminal becomes available
     private List<Client> _textNotificationsToSend = new ArrayList<>();
@@ -150,6 +175,7 @@ abstract public class Terminal implements Serializable {
         int communicationId = network.retrieveCommunicationId();
         Text communication = new Text(this, destination, communicationId, message);
         _pastCommunications.put(communicationId, communication);
+        destination.receiveCommunication(communication);    //so that we know if it's unused or not
         long cost = communication.getCost();
         _debts += cost;  //FIXME
         _owner.addClientDebt(cost);
@@ -182,7 +208,7 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
 
                 _state.startInteractiveCommunication();
-                destination.getState().startInteractiveCommunication();
+                destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///
@@ -200,7 +226,7 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
 
                 _state.startInteractiveCommunication();
-                destination.getState().startInteractiveCommunication();
+                destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///
@@ -209,6 +235,14 @@ abstract public class Terminal implements Serializable {
         }
     }
 
+    public void receiveCommunication(Text communication){
+        _communicationsReceived.add(communication);
+    }
+
+    public void receiveCommunication(InteractiveCommunication communication){
+        _communicationsReceived.add(communication);
+        getState().startInteractiveCommunication();
+    }
 
     private void validateStartInteractiveCommunication(String destinationTerminalKey, Terminal destination)
             throws CannotCommunicateException, DestinationTerminalBusyException, DestinationTerminalOffException,
@@ -282,7 +316,7 @@ abstract public class Terminal implements Serializable {
     }
 
     public boolean isUnused() {
-        return _pastCommunications.isEmpty() && _ongoingCommunication == null;
+        return _pastCommunications.isEmpty() && _ongoingCommunication == null && _communicationsReceived.isEmpty();
     }
 
     private String listFriends() {
@@ -392,6 +426,14 @@ abstract public class Terminal implements Serializable {
         for (Communication communication : _pastCommunications.values())
             allCommunications.add(communication.toString());
         return allCommunications;
+    }
+
+
+    public Collection<String> showCommunicationsReceived(){
+        Collection<String> received = new LinkedList<>();
+        for (Communication communication : _communicationsReceived)
+            received.add(communication.toString());
+        return received;
     }
 
 

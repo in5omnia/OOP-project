@@ -38,7 +38,6 @@ public class Off extends State implements Serializable {
     public void turnOn() {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
-        terminal.sendTextNotifications(new O2I());
         terminal.sendAllNotifications(new O2I());
     }
 

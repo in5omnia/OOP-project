@@ -24,15 +24,15 @@ abstract public class State implements Serializable {
         return _terminal;
     }
 
-    public void startInteractiveCommunication(){}
-
-    public void endInteractiveCommunication(){}
-
     public abstract boolean canReceiveTextCommunication();
 
     public abstract boolean canStartCommunication();
 
     public abstract boolean canReceiveInteractiveCommunication();
+
+    public void startInteractiveCommunication(){}
+
+    public void endInteractiveCommunication(){}
 
     public  void turnOff() throws AlreadyOffTerminalException {}
 

@@ -30,12 +30,12 @@ public class Busy extends State implements Serializable {
         _previousStateSilenced = true;
     }
 
-    public boolean canReceiveTextCommunication(){
-        return true;
-    }
-
     public boolean canStartCommunication() {
         return false;
+    }
+
+    public boolean canReceiveTextCommunication(){
+        return true;
     }
 
     public boolean canReceiveInteractiveCommunication() {

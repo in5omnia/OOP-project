@@ -18,14 +18,17 @@ public class Silent extends State implements Serializable {
         super(terminal);
     }
 
+    @Override
     public boolean canReceiveTextCommunication(){
         return true;
     }
 
+    @Override
     public boolean canStartCommunication() {
         return true;
     }
 
+    @Override
     public boolean canReceiveInteractiveCommunication() {
         return false;
     }
@@ -42,17 +45,19 @@ public class Silent extends State implements Serializable {
     }
 
     @Override
-    public void turnOn() throws AlreadyOnTerminalException {
+    public void turnOn() {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
         terminal.sendAllNotifications(new S2I());
     }
 
+    @Override
     public void toSilent() throws AlreadySilentTerminalException {
         throw new AlreadySilentTerminalException();
     }
 
     //FIXME
+    @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException {
         s.visit(this);
     }

@@ -34,11 +34,11 @@ abstract public class State implements Serializable {
 
     public void endInteractiveCommunication(){}
 
-    public  void turnOff() throws AlreadyOffTerminalException {}
+    public void turnOff() throws AlreadyOffTerminalException {}
 
-    public  void turnOn() throws AlreadyOnTerminalException {}
+    public void turnOn() throws AlreadyOnTerminalException {}
 
-    public  void toSilent() throws AlreadySilentTerminalException {}
+    public void toSilent() throws AlreadySilentTerminalException {}
 
     public abstract void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException, DestinationTerminalBusyException, DestinationTerminalOffException;
 

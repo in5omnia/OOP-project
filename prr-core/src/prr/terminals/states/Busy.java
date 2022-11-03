@@ -30,14 +30,17 @@ public class Busy extends State implements Serializable {
         _previousStateSilenced = true;
     }
 
+    @Override
     public boolean canStartCommunication() {
         return false;
     }
 
+    @Override
     public boolean canReceiveTextCommunication(){
         return true;
     }
 
+    @Override
     public boolean canReceiveInteractiveCommunication() {
         return false;
     }
@@ -55,6 +58,7 @@ public class Busy extends State implements Serializable {
 
 
     //FIXME
+    @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalBusyException {
         s.visit(this);
     }

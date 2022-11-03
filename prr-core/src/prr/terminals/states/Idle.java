@@ -17,14 +17,17 @@ public class Idle extends State implements Serializable {
         super(terminal);
     }
 
+    @Override
     public boolean canReceiveTextCommunication(){
         return true;
     }
 
+    @Override
     public boolean canStartCommunication() {
         return true;
     }
 
+    @Override
     public boolean canReceiveInteractiveCommunication() {
         return true;
     }
@@ -45,13 +48,14 @@ public class Idle extends State implements Serializable {
         throw new AlreadyOnTerminalException();
     }
 
-
+    @Override
     public void toSilent() {
         Terminal terminal = getTerminal();
         terminal.setState(new Silent(terminal));
     }
 
     //FIXME
+    @Override
     public void accept(StateExceptionVisitor s) {}
 
     @Override

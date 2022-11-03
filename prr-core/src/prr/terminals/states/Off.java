@@ -19,28 +19,34 @@ public class Off extends State implements Serializable {
         super(terminal);
     }
 
+    @Override
     public boolean canReceiveTextCommunication(){
         return false;
     }
 
+    @Override
     public boolean canStartCommunication() {
         return false;
     }
 
+    @Override
     public boolean canReceiveInteractiveCommunication() {
         return false;
     }
 
+    @Override
     public void turnOff() throws AlreadyOffTerminalException {
         throw new AlreadyOffTerminalException();
     }
 
-    public void turnOn() {
+    @Override
+    public void turnOn() {  //changes a terminal to Idle
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
         terminal.sendAllNotifications(new O2I());
     }
 
+    @Override
     public void toSilent() {
         Terminal terminal = getTerminal();
         terminal.setState(new Silent(terminal));
@@ -48,6 +54,7 @@ public class Off extends State implements Serializable {
     }
 
     //FIXME
+    @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalOffException {
         s.visit(this);
     }

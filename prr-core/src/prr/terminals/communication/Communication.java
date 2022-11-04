@@ -21,9 +21,9 @@ public abstract class Communication implements Serializable {
     // I was thinking of using the strategy pattern to display it on toString
     // that way the code would look cleaner and as DM probably wants
     // This should not be hard but i really need to do communications FIXME
-    private int _units = 0;
+    private double _units = 0;
 
-    private long _cost = 0;
+    private double _cost = 0;
 
     private boolean _paid = false;
 
@@ -41,12 +41,12 @@ public abstract class Communication implements Serializable {
         defineUnitsAndCost(units);
     }
 
-    public void defineUnitsAndCost(int units){    //could be protected and called by a "setDuration" in interactiveCom
+    public void defineUnitsAndCost(double units){    //could be protected and called by a "setDuration" in interactiveCom
         _units = units;
         _cost = calculateCost(units);
     }
 
-    protected abstract long calculateCost(int units);
+    protected abstract double calculateCost(double units);
 
     protected Terminal getSource(){
         return _source;
@@ -64,7 +64,7 @@ public abstract class Communication implements Serializable {
         return _paid;
     }
 
-    public long getCost(){
+    public double getCost(){
         return _cost;
     }
 
@@ -88,6 +88,6 @@ public abstract class Communication implements Serializable {
     public String toString() {
         String status = _ongoing ? "ONGOING" : "FINISHED";
 
-        return "|" + _communicationId + "|" + _source.getKey() + "|" + _destination.getKey() + "|" + _units + "|" + _cost + "|" + status;
+        return "|" + _communicationId + "|" + _source.getKey() + "|" + _destination.getKey() + "|" + Math.round(_units) + "|" + Math.round(_cost) + "|" + status;
     }
 }

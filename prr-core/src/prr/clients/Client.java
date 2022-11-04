@@ -25,9 +25,9 @@ public class Client implements Serializable, Comparable<Client> {
 
     private int _taxId;
 
-    private long _payments = 0;
+    private double _payments = 0;
 
-    private long _debts = 0;
+    private double _debts = 0;
 
     private boolean _notificationsEnabled = true;
 
@@ -69,7 +69,7 @@ public class Client implements Serializable, Comparable<Client> {
         _terminals.put(terminalKey, terminal);
     }
 
-    public long calculateBalance() {
+    public double calculateBalance() {
         return _payments - _debts;
     }
 
@@ -101,11 +101,11 @@ public class Client implements Serializable, Comparable<Client> {
         return _notificationsEnabled;
     }
 
-    public long getPayments() {
+    public double getPayments() {
         return _payments;
     }
 
-    public long getDebts() {
+    public double getDebts() {
         return _debts;
     }
 
@@ -114,7 +114,7 @@ public class Client implements Serializable, Comparable<Client> {
 
         String notifications = (_notificationsEnabled) ? "YES" : "NO";
         return "CLIENT|" + _clientId + "|" + _name + "|" + _taxId + "|" + _level.toString() + "|" + notifications +
-                "|" + _terminals.size() + "|" + _payments + "|" + _debts;
+                "|" + _terminals.size() + "|" + Math.round(_payments) + "|" + Math.round(_debts);
 
     }
 
@@ -122,12 +122,12 @@ public class Client implements Serializable, Comparable<Client> {
         _notifications.add(notification);
     }
 
-    public void addClientPayment(long cost){
+    public void addClientPayment(double cost){
         _payments += cost;
         _debts -= cost;
     }
 
-    public void addClientDebt(long cost){
+    public void addClientDebt(double cost){
         _debts += cost;
     }
 

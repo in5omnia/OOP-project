@@ -8,25 +8,25 @@ public class PlatinumPlan implements Plan {
     private static final long serialVersionUID = 202208091754L;
 
     @Override
-    public long calculateMessageCost(int units){
+    public double calculateMessageCost(double units){
         if (units < 50)
             return 0;
         return 4;
     }
 
     @Override
-    public long calculateVoiceCommunicationCost(int units, boolean isFriend){
-        long cost = (long) 10*units;
+    public double calculateVoiceCommunicationCost(double units, boolean isFriend){
+        double cost = 10*units;
         if (isFriend)
-            return (long) (cost*0.5);
+            return cost*0.5;
         return cost;
     }
 
     @Override
-    public long calculateVideoCommunicationCost(int units, boolean isFriend){
-        long cost = (long) 10*units;
+    public double calculateVideoCommunicationCost(double units, boolean isFriend){
+        double cost = 10*units;
         if (isFriend)
-            return (long) (cost*0.5);
+            return cost*0.5;
         return cost;
     }
 

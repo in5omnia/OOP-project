@@ -17,7 +17,7 @@ class DoShowTerminalBalance extends TerminalCommand {
 	@Override
 	protected final void execute() throws CommandException {
                 _display.popup(Message.terminalPaymentsAndDebts(_receiver.getKey(),
-																_receiver.getPayments(),
-																_receiver.getDebts()));
+																_receiver.retrievePayments(),
+																_receiver.retrieveDebts()));
 	}
 }

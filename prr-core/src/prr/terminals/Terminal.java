@@ -72,9 +72,9 @@ abstract public class Terminal implements Serializable {
 
     private List<Client> _interactiveNotificationsToSend = new ArrayList<>();
 
-    private long _payments = 0;
+    private double _payments = 0;
 
-    private long _debts = 0;
+    private double _debts = 0;
 
     public Terminal(Client owner, String key) throws InvalidTerminalIdException {
         _owner = owner;
@@ -176,7 +176,7 @@ abstract public class Terminal implements Serializable {
         Text communication = new Text(this, destination, communicationId, message);
         _pastCommunications.put(communicationId, communication);
         destination.receiveCommunication(communication);    //so that we know if it's unused or not
-        long cost = communication.getCost();
+        double cost = communication.getCost();
         _debts += cost;  //FIXME
         _owner.addClientDebt(cost);
         network.addCommunication(communication);
@@ -265,11 +265,11 @@ abstract public class Terminal implements Serializable {
 
 
 
-    public long endInteractiveCommunication(int duration) {
+    public long endInteractiveCommunication(double duration) {
         //FIXME do i have to check if its ongoing -> exceptions?
         _ongoingCommunication.defineUnitsAndCost(duration);
         _ongoingCommunication.endCommunication();
-        long cost = _ongoingCommunication.getCost();
+        double cost = _ongoingCommunication.getCost();
         _state.endInteractiveCommunication();
         _ongoingCommunication.getDestination().getState().endInteractiveCommunication();    //FIXME this is horrendous
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
@@ -282,7 +282,7 @@ abstract public class Terminal implements Serializable {
         _ongoingCommunication = null;
         //what if it was voice? does this affect?
 
-        return cost;
+        return Math.round(cost);
     }
 
 
@@ -301,15 +301,15 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public long getPayments() {
+    public double getPayments() {
         return _payments;
     }
 
-    public long getDebts() {
+    public double getDebts() {
         return _debts;
     }
 
-    public long calculateBalance() {
+    public double calculateBalance() {
         return _payments - _debts;
     }
 
@@ -324,8 +324,8 @@ abstract public class Terminal implements Serializable {
     @Override
     public String toString() {
         String friends = _friends.isEmpty() ? "" : ("|" + listFriends());
-        return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + getPayments() + "|"
-                + getDebts() + friends;
+        return "|" + _key + "|" + _owner.getId() + "|" + getState() + "|" + retrievePayments() + "|"
+                + retrieveDebts() + friends;
     }
 
 
@@ -409,7 +409,7 @@ abstract public class Terminal implements Serializable {
         Communication communication = findCommunication(communicationKey);
         if (communication.hasBeenPaid() || communication.ongoing())
             throw new CommunicationNotFoundTerminalException();
-        long cost = communication.getCost();
+        double cost = communication.getCost();
         addTerminalPayment(cost);
         _owner.addClientPayment(cost);
         communication.pay();
@@ -434,10 +434,15 @@ abstract public class Terminal implements Serializable {
         return received;
     }
 
-
-    public void addTerminalPayment(long cost) {
+    public void addTerminalPayment(double cost) {
         _payments += cost;
         _debts -= cost;
     }
 
+    public long retrievePayments(){
+        return Math.round(getPayments());
+    }
+    public long retrieveDebts(){
+        return Math.round(getDebts());
+    }
 }

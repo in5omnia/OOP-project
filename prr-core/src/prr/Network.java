@@ -327,16 +327,6 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
-    // UNSAFE FIXME
-    private long getClientPayments(Client client) {
-        return client.getPayments();
-    }
-
-    // UNSAFE FIXME
-    private long getClientDebts(Client client) {
-        return client.getDebts();
-    }
-
     /**
      * Gets the ammount of payments and debts from a given client.
      * @param clientKey client's ID
@@ -344,7 +334,7 @@ public class Network implements Serializable {
      */
     public long[] retrievePaymentsAndDebts(String clientKey) throws UnknownClientException {
         Client client = findClient(clientKey);
-        return new long[]{client.getPayments(), client.getDebts()};
+        return new long[]{Math.round(client.getPayments()), Math.round(client.getDebts())};
     }
 
 
@@ -430,7 +420,6 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
-    //FIXME - do we want communications inside network?
 
     /**
      * Adds a communication to the network.
@@ -452,12 +441,12 @@ public class Network implements Serializable {
 
 
     public long[] retrieveGlobalPaymentsAndDebts() {
-        long globalPayments=0, globalDebts=0;
+        double globalPayments=0, globalDebts=0;
         for (Client client : _clients.values()) {
             globalPayments += client.getPayments();
             globalDebts += client.getDebts();
         }
-        return new long[]{globalPayments, globalDebts};
+        return new long[]{Math.round(globalPayments), Math.round(globalDebts)};
     }
 
 }

@@ -400,7 +400,7 @@ public class Network implements Serializable {
     public Collection<String> showClientsWithoutDebts() {
         Collection<String> allClients = new LinkedList<>();
         for (Client client : _clients.values()) {
-            if (client.getDebts() <= 0) //FIXME ==?
+            if (client.getDebts() <= 0)
                 allClients.add(client.toString());
         }
         return allClients;

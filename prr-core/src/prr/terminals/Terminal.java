@@ -1,21 +1,6 @@
 package prr.terminals;
 
-import prr.exceptions.OwnFriendException;
-import prr.exceptions.NoSuchFriendException;
-import prr.exceptions.DuplicateFriendException;
-import prr.exceptions.UnknownTerminalException;
-import prr.exceptions.AlreadyOnTerminalException;
-import prr.exceptions.CannotCommunicateException;
-import prr.exceptions.InvalidTerminalIdException;
-import prr.exceptions.AlreadyOffTerminalException;
-import prr.exceptions.UnsupportedAtOriginException;
-import prr.exceptions.InvalidCommunicationException;
-import prr.exceptions.AlreadySilentTerminalException;
-import prr.exceptions.DestinationTerminalOffException;
-import prr.exceptions.NoOngoingCommunicationException;
-import prr.exceptions.DestinationTerminalBusyException;
-import prr.exceptions.UnsupportedAtDestinationException;
-import prr.exceptions.DestinationTerminalSilentException;
+import prr.exceptions.*;
 
 import prr.Network;
 import prr.clients.Client;
@@ -212,7 +197,7 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destination);
                 Voice communication = new Voice(this, destination, network.retrieveCommunicationId());
 
-                initiateCommunication(communication, network);
+                initiateCommunicationAtOrigin(communication, network);
                 destination.receiveCommunication(communication);
                 _owner.getLevel().detectCommunication(communication);
 
@@ -227,14 +212,14 @@ abstract public class Terminal implements Serializable {
                 validateStartInteractiveCommunication(destination);
                 Video communication = new Video(this, destination, network.retrieveCommunicationId());
 
-                initiateCommunication(communication, network);
+                initiateCommunicationAtOrigin(communication, network);
                 destination.receiveCommunication(communication);
                 _owner.getLevel().detectCommunication(communication);
             }
         }
     }
 
-    private void initiateCommunication(Communication communication, Network network) {
+    private void initiateCommunicationAtOrigin(Communication communication, Network network) {
         _state.startInteractiveCommunication();
         _ongoingCommunication = communication;
         network.addCommunication(communication);
@@ -275,21 +260,28 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public long endInteractiveCommunication(double duration) {
+    public long endInteractiveCommunication(double duration) throws InvalidDurationException {
+
+        if (duration < 0)
+            throw new InvalidDurationException();
 
         _ongoingCommunication.defineUnitsAndCost(duration);
         _ongoingCommunication.endCommunication();
+
         double cost = _ongoingCommunication.getCost();
+
+        // update terminal states
         _state.endInteractiveCommunication();
-        _ongoingCommunication.getDestination().getState().endInteractiveCommunication();    //FIXME this is horrendous
+        _ongoingCommunication.getDestination().getState().endInteractiveCommunication();
+
         _pastCommunications.put(_ongoingCommunication.getId(), _ongoingCommunication);
-        _debts += cost;
-        _owner.addClientDebt(cost);
+        updateDebts(cost);
+
         Level level = _owner.getLevel();
         level.negativeBalance();
         level.positiveBalanceAnd5Video();
         level.positiveBalanceAnd2Text();
-        //what if it was voice? does this affect? FIXME
+
         _ongoingCommunication.getDestination().setOngoingCommunication(null);
         setOngoingCommunication(null);
         return Math.round(cost);

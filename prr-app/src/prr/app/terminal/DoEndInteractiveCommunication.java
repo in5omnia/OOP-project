@@ -1,8 +1,8 @@
 package prr.app.terminal;
 
 import prr.Network;
+import prr.exceptions.InvalidDurationException;
 import prr.terminals.Terminal;
-import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
 
@@ -19,6 +19,10 @@ class DoEndInteractiveCommunication extends TerminalCommand {
 	@Override
 	protected final void execute() throws CommandException {
 		double duration = realField("duration");
-		_display.popup(Message.communicationCost(_receiver.endInteractiveCommunication(duration)));
+		try {
+			_display.popup(Message.communicationCost(_receiver.endInteractiveCommunication(duration)));
+		} catch (InvalidDurationException e) {
+			//do nothing
+		}
 	}
 }

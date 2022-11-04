@@ -19,6 +19,7 @@ class DoTurnOnTerminal extends TerminalCommand {
 	protected final void execute() throws CommandException {
 		try {
 			_receiver.turnOn();
+
 		} catch (AlreadyOnTerminalException e) {
 			_display.popup(Message.alreadyOn());
 		}

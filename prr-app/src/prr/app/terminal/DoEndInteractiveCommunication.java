@@ -18,7 +18,6 @@ class DoEndInteractiveCommunication extends TerminalCommand {
 
 	@Override
 	protected final void execute() throws CommandException {
-                //FIXME try catch??
 		double duration = realField("duration");
 		_display.popup(Message.communicationCost(_receiver.endInteractiveCommunication(duration)));
 	}

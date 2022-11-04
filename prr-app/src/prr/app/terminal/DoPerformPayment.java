@@ -1,7 +1,7 @@
 package prr.app.terminal;
 
 import prr.Network;
-import prr.exceptions.CommunicationNotFoundTerminalException;
+import prr.exceptions.InvalidCommunicationException;
 import prr.terminals.Terminal;
 import pt.tecnico.uilib.menus.CommandException;
 // Add more imports if needed
@@ -21,7 +21,8 @@ class DoPerformPayment extends TerminalCommand {
 		int communicationKey = integerField("communicationKey");
 		try {
 			_receiver.performPayment(communicationKey);
-		} catch (CommunicationNotFoundTerminalException e) {
+
+		} catch (InvalidCommunicationException e) {
 			_display.popup(Message.invalidCommunication());
 		}
 

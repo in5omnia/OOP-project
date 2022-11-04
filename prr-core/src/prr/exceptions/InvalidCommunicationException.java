@@ -1,6 +1,6 @@
 package prr.exceptions;
 
-public class CommunicationNotFoundTerminalException extends Exception {
+public class InvalidCommunicationException extends Exception {
     /**
      * Serial number for serialization.
      */

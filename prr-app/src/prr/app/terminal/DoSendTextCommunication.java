@@ -23,18 +23,20 @@ class DoSendTextCommunication extends TerminalCommand {
 
         @Override
         protected final void execute() throws CommandException {
+
                 String destinationTerminalKey = stringField("destinationTerminalKey");
                 String message = stringField("message");
                 try {
                         _receiver.sendTextCommunication(_network, destinationTerminalKey, message);
+
                 } catch (DestinationTerminalOffException e){
                         _display.popup(Message.destinationIsOff(destinationTerminalKey));
+
                 } catch (UnknownTerminalException e) {
                         throw new UnknownTerminalKeyException(e.getKey());
-                } catch (CannotCommunicateException e){
-                        //do nothing FIXME
-                }
 
-                //FIXME implement command
+                } catch (CannotCommunicateException e){
+                        //do nothing
+                }
         }
 } 

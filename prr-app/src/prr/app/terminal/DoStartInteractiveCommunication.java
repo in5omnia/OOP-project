@@ -26,11 +26,11 @@ class DoStartInteractiveCommunication extends TerminalCommand {
 		super(Label.START_INTERACTIVE_COMMUNICATION, context, terminal, receiver -> receiver.canStartCommunication());
 		addStringField("destinationTerminal", Prompt.terminalKey());
 		addOptionField("communicationType", Prompt.commType(), "VOICE", "VIDEO");
-
 	}
 
 	@Override
 	protected final void execute() throws CommandException {
+
 		String destinationTerminalKey = stringField("destinationTerminal");
 		String communicationType = stringField("communicationType");
 		try {

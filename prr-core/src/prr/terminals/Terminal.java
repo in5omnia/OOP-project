@@ -15,7 +15,7 @@ import prr.exceptions.NoOngoingCommunicationException;
 import prr.exceptions.DestinationTerminalBusyException;
 import prr.exceptions.UnsupportedAtDestinationException;
 import prr.exceptions.DestinationTerminalSilentException;
-import prr.exceptions.CommunicationNotFoundTerminalException;
+import prr.exceptions.InvalidCommunicationException;
 
 import prr.Network;
 import prr.clients.Client;
@@ -152,20 +152,20 @@ abstract public class Terminal implements Serializable {
         return _state.canReceiveTextCommunication();
     }
 
-    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {    //FIXME tf is this
+    public boolean canReceiveInteractiveCommunication() {    //FIXME tf is this
         return _state.canReceiveInteractiveCommunication();
     }
 
     public void sendTextCommunication(Network network, String destinationTerminalKey, String message)
             throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
 
-        if (!canStartCommunication())
+        if (!canStartCommunication() || !canMessage())   //state knows if it's off
             throw new CannotCommunicateException();
 
         Terminal destination = network.findTerminal(destinationTerminalKey);
 
         if (!(destination.canReceiveTextCommunication())){
-            //method for this? FIXME
+
             if (_owner.notificationsEnabled())
                 destination.registerTextNotificationToSend(_owner);
 
@@ -194,12 +194,12 @@ abstract public class Terminal implements Serializable {
             DestinationTerminalBusyException, DestinationTerminalSilentException {
 
         Terminal destination = network.findTerminal(destinationTerminalKey);
-        //Communication communication = null; //FIXME
 
         switch (communicationType) {
             case "VOICE" -> {
                 if (!canVoiceCommunicate())
                     throw new UnsupportedAtOriginException(_key, communicationType);
+
                 if (!destination.canVoiceCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
@@ -209,15 +209,14 @@ abstract public class Terminal implements Serializable {
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
-                destination._ongoingCommunication = communication;
                 network.addCommunication(communication);
-                ///
                 _owner.getLevel().detectCommunication(communication);
 
             }
             case "VIDEO" -> {
                 if (!canVideoCommunicate())
                     throw new UnsupportedAtOriginException(_key, communicationType);
+
                 if (!destination.canVideoCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
@@ -227,12 +226,14 @@ abstract public class Terminal implements Serializable {
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
-                destination._ongoingCommunication = communication;
                 network.addCommunication(communication);
-                ///
                 _owner.getLevel().detectCommunication(communication);
             }
         }
+    }
+
+    private void setOngoingCommunication(Communication communication){
+        _ongoingCommunication = communication;
     }
 
     public void receiveCommunication(Text communication){
@@ -240,27 +241,28 @@ abstract public class Terminal implements Serializable {
     }
 
     public void receiveCommunication(InteractiveCommunication communication){
-        _communicationsReceived.add(communication);
+        _communicationsReceived.add(communication); //adds immediately to received (while it's still ongoing)
         getState().startInteractiveCommunication();
+        setOngoingCommunication(communication);
     }
 
     private void validateStartInteractiveCommunication(String destinationTerminalKey, Terminal destination)
             throws CannotCommunicateException, DestinationTerminalBusyException, DestinationTerminalOffException,
             DestinationTerminalSilentException {
 
-        if (!canStartCommunication())
+        if (!canStartCommunication())       //state knows if it's off or busy
             throw new CannotCommunicateException();
 
-        if (destinationTerminalKey.equals(_key)) {
-            throw new DestinationTerminalBusyException();   //Presents the same message as a busy terminal
+        if (destinationTerminalKey.equals(_key)) {          // Attempting to communicate with itself
+            throw new DestinationTerminalBusyException();   // Presents the same message as a busy terminal
         }
 
-        if (!(destination.canReceiveInteractiveCommunication())){
-            //method for this? FIXME
+        if (!(destination.canReceiveInteractiveCommunication())) {  // Silent can't receive but can start
+
             if (_owner.notificationsEnabled())
                 destination.registerInteractiveNotificationToSend(_owner);
-            //throws DestinationTerminalOffException, DestinationTerminalBusyException, DestinationTerminalSilentException
-            //with Visitor
+            // throws DestinationTerminalOffException, DestinationTerminalBusyException,
+            // DestinationTerminalSilentException, with Visitor
             destination.getStateException();
         }
     }
@@ -268,7 +270,7 @@ abstract public class Terminal implements Serializable {
 
 
     public long endInteractiveCommunication(double duration) {
-        //FIXME do i have to check if its ongoing -> exceptions?
+
         _ongoingCommunication.defineUnitsAndCost(duration);
         _ongoingCommunication.endCommunication();
         double cost = _ongoingCommunication.getCost();
@@ -281,10 +283,9 @@ abstract public class Terminal implements Serializable {
         level.negativeBalance();
         level.positiveBalanceAnd5Video();
         level.positiveBalanceAnd2Text();
-        _ongoingCommunication.getDestination()._ongoingCommunication = null;
-        _ongoingCommunication = null;
-        //what if it was voice? does this affect?
-
+        //what if it was voice? does this affect? FIXME
+        _ongoingCommunication.getDestination().setOngoingCommunication(null);
+        setOngoingCommunication(null);
         return Math.round(cost);
     }
 
@@ -346,6 +347,7 @@ abstract public class Terminal implements Serializable {
             throw new UnknownTerminalException(friendKey);
         try {
             removeFriend(friendKey);
+
         } catch (NoSuchFriendException e){
             //do nothing
         }
@@ -401,17 +403,19 @@ abstract public class Terminal implements Serializable {
         _textNotificationsToSend.clear();
     }
 
-    public Communication findCommunication(int communicationKey) throws CommunicationNotFoundTerminalException {
+    public Communication findCommunication(int communicationKey) throws InvalidCommunicationException {
         Communication communication = _pastCommunications.get(communicationKey);
         if (communication == null)
-            throw new CommunicationNotFoundTerminalException();
+            throw new InvalidCommunicationException();
         return communication;
     }
 
-    public void performPayment(int communicationKey) throws CommunicationNotFoundTerminalException {
+    public void performPayment(int communicationKey) throws InvalidCommunicationException {
+
         Communication communication = findCommunication(communicationKey);
         if (communication.hasBeenPaid() || communication.ongoing())
-            throw new CommunicationNotFoundTerminalException();
+            throw new InvalidCommunicationException();
+
         double cost = communication.getCost();
         addTerminalPayment(cost);
         _owner.addClientPayment(cost);

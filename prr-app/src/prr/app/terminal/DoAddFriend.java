@@ -15,7 +15,6 @@ class DoAddFriend extends TerminalCommand {
 	DoAddFriend(Network context, Terminal terminal) {
 		super(Label.ADD_FRIEND, context, terminal);
 		addStringField("friendTerminalKey", Prompt.terminalKey());
-
 	}
 
 	@Override
@@ -23,9 +22,9 @@ class DoAddFriend extends TerminalCommand {
 		String friend = stringField("friendTerminalKey");
 		try {
 			_receiver.addFriendToTerminal(_network, friend);
+
 		} catch (UnknownTerminalException e) {
 			throw new UnknownTerminalKeyException(e.getKey());
 		}
-		//FIXME
 	}
 }

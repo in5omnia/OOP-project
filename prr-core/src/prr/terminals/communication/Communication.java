@@ -48,7 +48,7 @@ public abstract class Communication implements Serializable {
 
     protected abstract double calculateCost(double units);
 
-    protected Terminal getSource(){
+    public Terminal getSource(){
         return _source;
     }
 

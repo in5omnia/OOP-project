@@ -22,8 +22,10 @@ class DoEnableClientNotifications extends Command<Network> {
 	protected final void execute() throws CommandException {
 		try {
 			_receiver.enableClientNotifications(stringField("clientId"));
+
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
+
 		}  catch (AlreadyOnNotificationException e) {
 			_display.popup(Message.clientNotificationsAlreadyEnabled());
 		}

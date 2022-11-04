@@ -24,6 +24,7 @@ class DoShowClientPaymentsAndDebts extends Command<Network> {
 			long data[] = _receiver.retrievePaymentsAndDebts(key);
 
 			_display.popup(Message.clientPaymentsAndDebts(key, data[0], data[1]));
+
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
 		}

@@ -21,14 +21,10 @@ class DoRegisterTerminal extends Command<Network> {
         addStringField("terminalKey", Prompt.terminalKey());
         addOptionField("terminalType", Prompt.terminalType(), "BASIC", "FANCY");
         addStringField("clientKey", Prompt.clientKey());
-        //FIXME add command fields
     }
 
     @Override
     protected final void execute() throws CommandException {
-
-        String terminalKey = stringField("terminalKey");
-        String terminalType = stringField("terminalType");
 
         String fields[] = {
                 stringField("terminalType"),

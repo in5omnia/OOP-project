@@ -126,7 +126,7 @@ abstract public class Terminal implements Serializable {
      * it was the originator of this communication.
      **/
     public boolean canEndCurrentCommunication() {
-        return  _ongoingCommunication != null;
+        return  _ongoingCommunication != null && _ongoingCommunication.getSource().getKey().equals(_key);
     }
 
     /**
@@ -209,6 +209,7 @@ abstract public class Terminal implements Serializable {
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
+                destination._ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///
                 _owner.getLevel().detectCommunication(communication);
@@ -226,6 +227,7 @@ abstract public class Terminal implements Serializable {
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);
                 _ongoingCommunication = communication;
+                destination._ongoingCommunication = communication;
                 network.addCommunication(communication);
                 ///
                 _owner.getLevel().detectCommunication(communication);
@@ -279,6 +281,7 @@ abstract public class Terminal implements Serializable {
         level.negativeBalance();
         level.positiveBalanceAnd5Video();
         level.positiveBalanceAnd2Text();
+        _ongoingCommunication.getDestination()._ongoingCommunication = null;
         _ongoingCommunication = null;
         //what if it was voice? does this affect?
 

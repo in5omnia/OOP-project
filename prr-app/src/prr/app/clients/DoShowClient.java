@@ -23,6 +23,7 @@ class DoShowClient extends Command<Network> {
 		String clientKey = stringField("clientKey");
 		try {
 			_display.popup(_receiver.showClient(clientKey));
+
 		} catch (UnknownClientException e) {
 			throw new UnknownClientKeyException(e.getKey());
 		}

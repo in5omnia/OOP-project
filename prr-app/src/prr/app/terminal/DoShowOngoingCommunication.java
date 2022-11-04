@@ -19,6 +19,7 @@ class DoShowOngoingCommunication extends TerminalCommand {
 	protected final void execute() throws CommandException {
 		try {
 			_display.popup(_receiver.showOngoingCommunication());
+
 		} catch (NoOngoingCommunicationException e) {
 			_display.popup(Message.noOngoingCommunication());
 		}

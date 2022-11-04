@@ -56,11 +56,13 @@ public class Network implements Serializable {
      */
     private Map<String, Terminal> _terminals = new TreeMap<>();
 
-    /* List of communications */
+    /**
+     *  List of communications
+     *  */
     private Collection<Communication> _communications = new LinkedList<>();
 
     /**
-     * CommunicationId number
+     * CommunicationID number
      */
     private int _communicationId = 1;
 
@@ -115,10 +117,10 @@ public class Network implements Serializable {
     /**
      * Registers the Clients
      *
-     * @param clientId - the ID the client will be registered with
-     * @param name     - the name the client will be registered with
-     * @param taxId    - the taxId the client will be registered with
-     * @throws DuplicateClientException - if the clientId being registered already exists
+     * @param clientId  the ID the client will be registered with
+     * @param name      the name the client will be registered with
+     * @param taxId     the taxId the client will be registered with
+     * @throws DuplicateClientException if the clientId being registered already exists
      */
     public void registerClient(String clientId, String name, int taxId) throws DuplicateClientException {
 
@@ -132,12 +134,12 @@ public class Network implements Serializable {
     /**
      * Registers the Terminals
      *
-     * @param fields - information about the terminal being registered (type, terminalID, clientID and state[optional,
+     * @param fields  information about the terminal being registered (type, terminalID, clientID and state[optional,
      *               when registry happens through the Terminal Management Menu])
-     * @throws InvalidTerminalIdException - if the given terminalID is invalid
-     * @throws DuplicateTerminalException - if the given terminalID already exists
-     * @throws UnknownClientException     - if the terminal is being registered to a client that doesn't exist
-     * @throws UnrecognizedEntryException - if the state or type of terminal given is invalid
+     * @throws InvalidTerminalIdException  if the given terminalID is invalid
+     * @throws DuplicateTerminalException  if the given terminalID already exists
+     * @throws UnknownClientException      if the terminal is being registered to a client that doesn't exist
+     * @throws UnrecognizedEntryException  if the state or type of terminal given is invalid
      */
     public void registerTerminal(String[] fields) throws InvalidTerminalIdException, DuplicateTerminalException,
             UnrecognizedEntryException, UnknownClientException {
@@ -204,12 +206,13 @@ public class Network implements Serializable {
     /**
      * Adds a terminal to the network.
      *
-     * @param terminalKey the terminal's ID
-     * @param terminal   the terminal to be added
+     * @param terminalKey  terminal's ID
+     * @param terminal    terminal to be added
      */
     private void addTerminalToNetwork(String terminalKey, Terminal terminal) {
         _terminals.put(terminalKey, terminal);
     }
+
 
     /**
      * Checks if a terminal with the given ID exists in the network.
@@ -219,7 +222,8 @@ public class Network implements Serializable {
      */
     public boolean terminalExists(String terminalKey) {
         return _terminals.get(terminalKey) != null;
-    }   //FIXME public?
+    }
+
 
     /**
      * Finds a terminal with the given ID in the network.
@@ -235,6 +239,7 @@ public class Network implements Serializable {
         return terminal;
     }
 
+
     /**
      * Checks if a client with the given ID exists in network.
      *
@@ -244,6 +249,7 @@ public class Network implements Serializable {
     private boolean clientExists(String clientKey) {
         return _clients.get(clientKey) != null;
     }
+
 
     /**
      * Finds a client with the given ID in the network.
@@ -259,6 +265,7 @@ public class Network implements Serializable {
         return client;
     }
 
+
     /**
      * Shows the client with the given ID.
      *
@@ -272,10 +279,10 @@ public class Network implements Serializable {
     }
 
 
-    /**
+     /**
      * Shows all the clients in the network.
      *
-     * @return a String that represents all the clients.
+     * @return a Collection of String that represents all the clients.
      */
     public Collection<String> showAllClients() {
         Collection<String> allClients = new LinkedList<>();
@@ -285,10 +292,11 @@ public class Network implements Serializable {
         return allClients;
     }
 
+
     /**
-     * Shows all the Communications on the network.
+     * Shows all the Communications in the network.
      *
-     * @return a String that represents all the Communications.
+     * @return a Collection of String that represents all the Communications.
      */
     public Collection<String> showAllCommunications() {
         Collection<String> allCommunications = new LinkedList<>();
@@ -299,6 +307,7 @@ public class Network implements Serializable {
 
         return allCommunications;
     }
+
 
     /**
      * Shows all the terminals in the network.
@@ -313,10 +322,11 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
+
     /**
      * Shows all the terminals that haven't had communications.
      *
-     * @return a String that represents all the unused terminals
+     * @return a collection of String that represents all the unused terminals
      */
     public Collection<String> showAllUnusedTerminals() {
         Collection<String> allTerminals = new LinkedList<>();
@@ -327,10 +337,12 @@ public class Network implements Serializable {
         return allTerminals;
     }
 
+
     /**
      * Gets the ammount of payments and debts from a given client.
      * @param clientKey client's ID
-     * @return a String that represents all the clients with debts
+     * @return an Array with the payments and debts of a given client.
+     * @throws UnknownClientException - if there isn't a client with the given key in the network.
      */
     public long[] retrievePaymentsAndDebts(String clientKey) throws UnknownClientException {
         Client client = findClient(clientKey);
@@ -338,11 +350,9 @@ public class Network implements Serializable {
     }
 
 
-    // TODO: Exception and Documentation
     /**
-     * Enables Notifications of a given client a given client.
+     * Enables Notifications of a given client.
      * @param clientKey client's ID
-     * @return a String that represents all the clients with debts
      * @throws UnknownClientException if there isn't a client with the given key in the network
      * @throws AlreadyOnNotificationException if the client's Notifications were already on
      */
@@ -351,11 +361,10 @@ public class Network implements Serializable {
         client.enableNotifications();
     }
 
-    // TODO: Exception and Documentation
+
     /**
-     * Enables Notifications of a given client a given client.
+     * Disables Notifications of a given client.
      * @param clientKey client's ID
-     * @return a String that represents all the clients with debts
      * @throws UnknownClientException if there isn't a client with the given key in the network
      * @throws AlreadyOffNotificationException if the client's Notifications were already off
      */
@@ -364,11 +373,11 @@ public class Network implements Serializable {
         client.disableNotifications();
     }
 
-    // TODO: Documentation
+
     /**
-     * Returns a communicationId and generates a new one.
+     * Returns a communicationID and generates a new one.
      *
-     * @return  a communicationId
+     * @return  a communicationID
      */
     public int retrieveCommunicationId(){  //FIXME not sure this should be public
         return _communicationId++;
@@ -378,7 +387,7 @@ public class Network implements Serializable {
     /**
      * Shows all the clients that have debts.
      *
-     * @return a String that represents all the clients with debts
+     * @return a Collection of String that represents all the clients with debts
      */
     public Collection<String> showClientsWithDebts() {
 
@@ -391,11 +400,10 @@ public class Network implements Serializable {
     }
 
 
-
     /**
      * Shows all the clients that don't have debts.
      *
-     * @return a String that represents all the clients without debts
+     * @return a Collection of String that represents all the clients without debts
      */
     public Collection<String> showClientsWithoutDebts() {
         Collection<String> allClients = new LinkedList<>();
@@ -406,10 +414,11 @@ public class Network implements Serializable {
         return allClients;
     }
 
+
     /**
      * Shows all the terminals with a positive balance.
      *
-     * @return a String that represents all the terminals with a positive balance
+     * @return a Collection of String that represents all the terminals with a positive balance
      */
     public Collection<String> showTerminalsWithPositiveBalance() {
         Collection<String> allTerminals = new LinkedList<>();
@@ -430,16 +439,29 @@ public class Network implements Serializable {
     }
 
 
-
+    /**
+     * Shows communications from client.
+     * @param clientKey client's ID
+     * @throws UnknownClientException if there isn't a client with the given key in the network
+     */
     public Collection<String> showCommunicationsFromClient(String clientKey) throws UnknownClientException {
         return findClient(clientKey).showClientCommunications();
     }
 
+
+    /**
+     * Shows communications to client.
+     * @param clientKey client's ID
+     * @throws UnknownClientException if there isn't a client with the given key in the network
+     */
     public Collection<String> showCommunicationsToClient(String clientKey) throws UnknownClientException {
         return findClient(clientKey).showCommunicationsReceived();
     }
 
 
+    /**
+     * Shows Global Payments and Debts.
+     */
     public long[] retrieveGlobalPaymentsAndDebts() {
         double globalPayments=0, globalDebts=0;
         for (Client client : _clients.values()) {

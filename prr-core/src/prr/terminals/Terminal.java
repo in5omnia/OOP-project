@@ -1,7 +1,24 @@
 package prr.terminals;
 
 import prr.clients.DetectCommunicationVisitor;
-import prr.exceptions.*;
+import prr.exceptions.DuplicateFriendException;
+import prr.exceptions.InvalidTerminalIdException;
+import prr.exceptions.OwnFriendException;
+import prr.exceptions.UnknownTerminalException;
+import prr.exceptions.DestinationTerminalOffException;
+import prr.exceptions.NoSuchFriendException;
+import prr.exceptions.CannotCommunicateException;
+import prr.exceptions.UnsupportedAtOriginException;
+import prr.exceptions.UnsupportedAtDestinationException;
+import prr.exceptions.DestinationTerminalBusyException;
+import prr.exceptions.DestinationTerminalSilentException;
+import prr.exceptions.InvalidDurationException;
+import prr.exceptions.NoOngoingCommunicationException;
+import prr.exceptions.AlreadyOnTerminalException;
+import prr.exceptions.AlreadyOffTerminalException;
+import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.InvalidCommunicationException;
+
 
 import prr.Network;
 import prr.clients.Client;
@@ -112,7 +129,7 @@ abstract public class Terminal implements Serializable {
      * it was the originator of this communication.
      **/
     public boolean canEndCurrentCommunication() {
-        return _ongoingCommunication != null && _ongoingCommunication.getSource().getKey().equals(_key);
+        return _ongoingCommunication != null && _ongoingCommunication.getSource().equals(this);
     }
 
     /**

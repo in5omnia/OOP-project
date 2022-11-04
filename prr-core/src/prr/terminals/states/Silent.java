@@ -1,7 +1,8 @@
 package prr.terminals.states;
 
-import prr.exceptions.*;
-import prr.notifications.O2I;
+
+import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.DestinationTerminalSilentException;
 import prr.notifications.S2I;
 import prr.terminals.Terminal;
 
@@ -39,16 +40,16 @@ public class Silent extends State implements Serializable {
     }
 
     @Override
-    public void turnOff() {
-        Terminal terminal = getTerminal();
-        terminal.setState(new Off(terminal));
-    }
-
-    @Override
     public void turnOn() {
         Terminal terminal = getTerminal();
         terminal.setState(new Idle(terminal));
         terminal.sendAllNotifications(new S2I());
+    }
+
+    @Override
+    public void turnOff() {
+        Terminal terminal = getTerminal();
+        terminal.setState(new Off(terminal));
     }
 
     @Override

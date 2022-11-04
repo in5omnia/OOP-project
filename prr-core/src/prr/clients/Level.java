@@ -1,7 +1,6 @@
 package prr.clients;
 
 import prr.plans.Plan;
-import prr.terminals.communication.Communication;
 import prr.terminals.communication.Text;
 import prr.terminals.communication.Video;
 import prr.terminals.communication.Voice;
@@ -21,13 +20,13 @@ public abstract class Level implements Serializable {
 
     private Client _client;
 
-    //private List<Communication> _consecutiveCommunications = new ArrayList<>();
+    //private List<Communication> _consecutiveCommunications = new ArrayList<>(); FIXME
     private List<Text> _textCommunications = new ArrayList<>();
     private List<Video> _videoCommunications = new ArrayList<>();
 
-    //private int _textCommunicationCounter = 0;  //what about different terminals - like doing 5 video but the 5th is
-    // ongoing when a voice/text starts and resets the counters, not allowing level to change
-    //private int _videoCommunicationCounter = 0;
+    //private int _textCommunicationCounter = 0;  //what about different terminals - like doing 5 video but the 5th is FIXME
+    // ongoing when a voice/text starts and resets the counters, not allowing level to change FIXME
+    //private int _videoCommunicationCounter = 0; FIXME
 
     public Level(Client client, Plan plan) {
         _client = client;

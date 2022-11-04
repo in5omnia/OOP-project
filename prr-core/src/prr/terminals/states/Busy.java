@@ -2,7 +2,6 @@ package prr.terminals.states;
 
 import prr.exceptions.DestinationTerminalBusyException;
 import prr.notifications.B2I;
-import prr.notifications.O2I;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -15,10 +14,6 @@ public class Busy extends State implements Serializable {
     private static final long serialVersionUID = 202208091754L;
 
     private boolean _previousStateSilenced;
-
-    /*public Busy(Terminal terminal) {
-        super(terminal);
-    }*/
 
     public Busy(Terminal terminal, Idle previousState) {
         super(terminal);

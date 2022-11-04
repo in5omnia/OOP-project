@@ -37,15 +37,17 @@ public class Idle extends State implements Serializable {
         getTerminal().setState(new Busy(getTerminal(), this));
     }
 
-    @Override
-    public void turnOff() {
-        Terminal terminal = getTerminal();
-        terminal.setState(new Off(terminal));
-    }
+
 
     @Override
     public void turnOn() throws AlreadyOnTerminalException {
         throw new AlreadyOnTerminalException();
+    }
+
+    @Override
+    public void turnOff() {
+        Terminal terminal = getTerminal();
+        terminal.setState(new Off(terminal));
     }
 
     @Override

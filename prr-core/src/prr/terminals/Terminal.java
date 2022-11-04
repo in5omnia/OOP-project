@@ -9,13 +9,13 @@ import prr.exceptions.CannotCommunicateException;
 import prr.exceptions.InvalidTerminalIdException;
 import prr.exceptions.AlreadyOffTerminalException;
 import prr.exceptions.UnsupportedAtOriginException;
-import prr.exceptions.DestinationTerminalOffException;
+import prr.exceptions.InvalidCommunicationException;
 import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.DestinationTerminalOffException;
 import prr.exceptions.NoOngoingCommunicationException;
 import prr.exceptions.DestinationTerminalBusyException;
 import prr.exceptions.UnsupportedAtDestinationException;
 import prr.exceptions.DestinationTerminalSilentException;
-import prr.exceptions.InvalidCommunicationException;
 
 import prr.Network;
 import prr.clients.Client;
@@ -68,9 +68,9 @@ abstract public class Terminal implements Serializable {
     private List<Communication> _communicationsReceived = new ArrayList<>();
 
     // these store notifications to send when the terminal becomes available
-    private List<Client> _textNotificationsToSend = new ArrayList<>();
+    private Set<Client> _textNotificationsToSend = new TreeSet<>();
 
-    private List<Client> _interactiveNotificationsToSend = new ArrayList<>();
+    private Set<Client> _interactiveNotificationsToSend = new TreeSet<>();
 
     private double _payments = 0;
 
@@ -88,8 +88,8 @@ abstract public class Terminal implements Serializable {
         return _key;
     }
 
-    //FIXME
-    public Client getOwner(){
+
+    public Client getOwner() {
         return _owner;
     }
 
@@ -126,7 +126,7 @@ abstract public class Terminal implements Serializable {
      * it was the originator of this communication.
      **/
     public boolean canEndCurrentCommunication() {
-        return  _ongoingCommunication != null && _ongoingCommunication.getSource().getKey().equals(_key);
+        return _ongoingCommunication != null && _ongoingCommunication.getSource().getKey().equals(_key);
     }
 
     /**
@@ -148,23 +148,24 @@ abstract public class Terminal implements Serializable {
 
     public abstract boolean canVideoCommunicate();
 
-    private boolean canReceiveTextCommunication(){
+    private boolean canReceiveTextCommunication() {
         return _state.canReceiveTextCommunication();
     }
 
-    public boolean canReceiveInteractiveCommunication() {    //FIXME tf is this
+    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {    //FIXME tf is this
         return _state.canReceiveInteractiveCommunication();
     }
 
     public void sendTextCommunication(Network network, String destinationTerminalKey, String message)
             throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
 
+        // If this terminal is unable to start a communication
         if (!canStartCommunication() || !canMessage())   //state knows if it's off
             throw new CannotCommunicateException();
 
         Terminal destination = network.findTerminal(destinationTerminalKey);
 
-        if (!(destination.canReceiveTextCommunication())){
+        if (!(destination.canReceiveTextCommunication())) {
 
             if (_owner.notificationsEnabled())
                 destination.registerTextNotificationToSend(_owner);
@@ -174,19 +175,24 @@ abstract public class Terminal implements Serializable {
 
         int communicationId = network.retrieveCommunicationId();
         Text communication = new Text(this, destination, communicationId, message);
+
         _pastCommunications.put(communicationId, communication);
         destination.receiveCommunication(communication);    //so that we know if it's unused or not
+
         double cost = communication.getCost();
-        _debts += cost;  //FIXME
-        _owner.addClientDebt(cost);
+        updateDebts(cost);
+
         network.addCommunication(communication);
         Level level = _owner.getLevel();
         level.negativeBalance();
         level.detectCommunication(communication);
-        _owner.getLevel().positiveBalanceAnd2Text();
+        level.positiveBalanceAnd2Text();
     }
 
-
+    private void updateDebts(double debt) {
+        _debts += debt;
+        _owner.addClientDebt(debt);
+    }
 
     public void startInteractiveCommunication(Network network, String destinationTerminalKey, String communicationType)
             throws CannotCommunicateException, UnknownTerminalException,
@@ -203,13 +209,11 @@ abstract public class Terminal implements Serializable {
                 if (!destination.canVoiceCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
-                validateStartInteractiveCommunication(destinationTerminalKey, destination);
+                validateStartInteractiveCommunication(destination);
                 Voice communication = new Voice(this, destination, network.retrieveCommunicationId());
 
-                _state.startInteractiveCommunication();
+                initiateCommunication(communication, network);
                 destination.receiveCommunication(communication);
-                _ongoingCommunication = communication;
-                network.addCommunication(communication);
                 _owner.getLevel().detectCommunication(communication);
 
             }
@@ -220,40 +224,44 @@ abstract public class Terminal implements Serializable {
                 if (!destination.canVideoCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
-                validateStartInteractiveCommunication(destinationTerminalKey, destination);
+                validateStartInteractiveCommunication(destination);
                 Video communication = new Video(this, destination, network.retrieveCommunicationId());
 
-                _state.startInteractiveCommunication();
+                initiateCommunication(communication, network);
                 destination.receiveCommunication(communication);
-                _ongoingCommunication = communication;
-                network.addCommunication(communication);
                 _owner.getLevel().detectCommunication(communication);
             }
         }
     }
 
-    private void setOngoingCommunication(Communication communication){
+    private void initiateCommunication(Communication communication, Network network) {
+        _state.startInteractiveCommunication();
+        _ongoingCommunication = communication;
+        network.addCommunication(communication);
+    }
+
+    private void setOngoingCommunication(Communication communication) {
         _ongoingCommunication = communication;
     }
 
-    public void receiveCommunication(Text communication){
+    public void receiveCommunication(Text communication) {
         _communicationsReceived.add(communication);
     }
 
-    public void receiveCommunication(InteractiveCommunication communication){
+    public void receiveCommunication(InteractiveCommunication communication) {
         _communicationsReceived.add(communication); //adds immediately to received (while it's still ongoing)
         getState().startInteractiveCommunication();
         setOngoingCommunication(communication);
     }
 
-    private void validateStartInteractiveCommunication(String destinationTerminalKey, Terminal destination)
+    private void validateStartInteractiveCommunication(Terminal destination)
             throws CannotCommunicateException, DestinationTerminalBusyException, DestinationTerminalOffException,
             DestinationTerminalSilentException {
 
         if (!canStartCommunication())       //state knows if it's off or busy
             throw new CannotCommunicateException();
 
-        if (destinationTerminalKey.equals(_key)) {          // Attempting to communicate with itself
+        if (destination.equals(this)) {          // Attempting to communicate with itself
             throw new DestinationTerminalBusyException();   // Presents the same message as a busy terminal
         }
 
@@ -261,12 +269,10 @@ abstract public class Terminal implements Serializable {
 
             if (_owner.notificationsEnabled())
                 destination.registerInteractiveNotificationToSend(_owner);
-            // throws DestinationTerminalOffException, DestinationTerminalBusyException,
-            // DestinationTerminalSilentException, with Visitor
-            destination.getStateException();
+
+            destination.getStateException();        // throws Exceptions with Visitor
         }
     }
-
 
 
     public long endInteractiveCommunication(double duration) {
@@ -296,11 +302,11 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public void registerTextNotificationToSend(Client origin){
+    public void registerTextNotificationToSend(Client origin) {
         _textNotificationsToSend.add(origin);
     }
 
-    public void registerInteractiveNotificationToSend(Client origin){
+    public void registerInteractiveNotificationToSend(Client origin) {
         _interactiveNotificationsToSend.add(origin);
     }
 
@@ -337,7 +343,7 @@ abstract public class Terminal implements Serializable {
         Terminal friend = network.findTerminal(friendKey);
         try {
             addFriend(friendKey, friend);
-        } catch (DuplicateFriendException | OwnFriendException e){
+        } catch (DuplicateFriendException | OwnFriendException e) {
             //do nothing
         }
     }
@@ -348,7 +354,7 @@ abstract public class Terminal implements Serializable {
         try {
             removeFriend(friendKey);
 
-        } catch (NoSuchFriendException e){
+        } catch (NoSuchFriendException e) {
             //do nothing
         }
     }
@@ -377,7 +383,7 @@ abstract public class Terminal implements Serializable {
 
     public void sendTextNotifications(NotificationType type) {
         for (Client client : _textNotificationsToSend) {
-            Notification notification = new Notification(this, client, type) ;
+            Notification notification = new Notification(this, client, type);
             client.getDeliveryMethod().deliver(notification);
         }
         _textNotificationsToSend.clear();
@@ -396,7 +402,7 @@ abstract public class Terminal implements Serializable {
         toNotify.addAll(_textNotificationsToSend);
         toNotify.addAll(_interactiveNotificationsToSend);
         for (Client client : toNotify) {
-            Notification notification = new Notification(this, client, type) ;
+            Notification notification = new Notification(this, client, type);
             client.getDeliveryMethod().deliver(notification);
         }
         _interactiveNotificationsToSend.clear();
@@ -423,7 +429,7 @@ abstract public class Terminal implements Serializable {
         _owner.getLevel().clientBalanceOver500();
     }
 
-    public Collection<String> showTerminalCommunications(){
+    public Collection<String> showTerminalCommunications() {
         Collection<String> allCommunications = new LinkedList<>();
         if (_ongoingCommunication != null)
             allCommunications.add(_ongoingCommunication.toString());
@@ -434,7 +440,7 @@ abstract public class Terminal implements Serializable {
     }
 
 
-    public Collection<String> showCommunicationsReceived(){
+    public Collection<String> showCommunicationsReceived() {
         Collection<String> received = new LinkedList<>();
         for (Communication communication : _communicationsReceived)
             received.add(communication.toString());
@@ -446,10 +452,20 @@ abstract public class Terminal implements Serializable {
         _debts -= cost;
     }
 
-    public long retrievePayments(){
+    public long retrievePayments() {
         return Math.round(getPayments());
     }
-    public long retrieveDebts(){
+
+    public long retrieveDebts() {
         return Math.round(getDebts());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Terminal) {
+            Terminal other = (Terminal) o;
+            return getKey().equals(other.getKey());
+        }
+        return false;
     }
 }

@@ -15,6 +15,7 @@ public class Video extends InteractiveCommunication implements Serializable{
         super(source, destination, communicationId);
     }
 
+    @Override
     protected double calculateCost(double units){
         Terminal source = getSource();
         boolean isFriend = source.isFriend(getDestination().getKey());

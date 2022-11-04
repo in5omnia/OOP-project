@@ -18,6 +18,7 @@ public class Text extends Communication implements Serializable {
         _message = message;
     }
 
+    @Override
     protected double calculateCost(double units){
         return getSource().getOwner().getPlan().calculateMessageCost(units);
     }

@@ -46,16 +46,6 @@ public abstract class Level implements Serializable {
         return _textCommunications.size();
     }
 
-    protected boolean anyTextOngoing(){
-        boolean ongoing = false;
-        for (Text text : _textCommunications){
-            if (text.isOngoing()){
-                ongoing = false;
-                break;
-            }
-        }
-        return ongoing;
-    }
 
     protected boolean anyVideoOngoing(){
         boolean ongoing = false;

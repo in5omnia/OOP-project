@@ -17,7 +17,7 @@ public class Platinum extends Level {
     public void positiveBalanceAnd2Text(){
         //FIXME BALANCE is POSITIVE
         Client client = getClient();
-        if (getNumberOfConsecutiveTexts()==2 && !anyTextOngoing()){
+        if (getNumberOfConsecutiveTexts()==2){
             client.setLevel(new Gold(client));
             resetConsecutiveTexts();
         }

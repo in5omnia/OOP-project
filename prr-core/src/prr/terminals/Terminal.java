@@ -203,8 +203,8 @@ abstract public class Terminal implements Serializable {
                 if (!destination.canVoiceCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
-                Voice communication = new Voice(this, destination, network.retrieveCommunicationId());
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
+                Voice communication = new Voice(this, destination, network.retrieveCommunicationId());
 
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);
@@ -220,8 +220,8 @@ abstract public class Terminal implements Serializable {
                 if (!destination.canVideoCommunicate())
                     throw new UnsupportedAtDestinationException(destinationTerminalKey, communicationType);
 
-                Video communication = new Video(this, destination, network.retrieveCommunicationId());
                 validateStartInteractiveCommunication(destinationTerminalKey, destination);
+                Video communication = new Video(this, destination, network.retrieveCommunicationId());
 
                 _state.startInteractiveCommunication();
                 destination.receiveCommunication(communication);

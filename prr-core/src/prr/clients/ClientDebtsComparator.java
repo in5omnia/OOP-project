@@ -1,8 +1,14 @@
 package prr.clients;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class ClientDebtsComparator implements Comparator<Client> {  //FIXME static?
+public class ClientDebtsComparator implements Comparator<Client>, Serializable {
+
+    /**
+     * Serial number for serialization.
+     */
+    private static final long serialVersionUID = 202208091754L;
 
     @Override
     public int compare(Client c1, Client c2){

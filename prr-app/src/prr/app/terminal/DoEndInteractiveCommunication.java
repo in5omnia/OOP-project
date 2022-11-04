@@ -4,7 +4,7 @@ import prr.Network;
 import prr.exceptions.InvalidDurationException;
 import prr.terminals.Terminal;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME add more imports if needed
+
 
 /**
  * Command for ending communication.

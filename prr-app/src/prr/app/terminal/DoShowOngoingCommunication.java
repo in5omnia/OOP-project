@@ -4,7 +4,7 @@ import prr.Network;
 import prr.exceptions.NoOngoingCommunicationException;
 import prr.terminals.Terminal;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME add more imports if needed
+
 
 /**
  * Command for showing the ongoing communication.

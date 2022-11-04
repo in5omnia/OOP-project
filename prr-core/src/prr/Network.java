@@ -379,7 +379,7 @@ public class Network implements Serializable {
      *
      * @return  a communicationID
      */
-    public int retrieveCommunicationId(){  //FIXME not sure this should be public
+    public int retrieveCommunicationId() {
         return _communicationId++;
     }
 

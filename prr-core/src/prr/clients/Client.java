@@ -58,11 +58,11 @@ public class Client implements Serializable, Comparable<Client> {
         return _deliveryMethod;
     }
 
-    public Plan getPlan(){  //FIXME
+    public Plan getPlan(){
         return _level.getPlan();
     }
 
-    public Level getLevel(){  //FIXME
+    public Level getLevel(){
         return _level;
     }
 
@@ -102,7 +102,7 @@ public class Client implements Serializable, Comparable<Client> {
         _notificationsEnabled = false;
     }
 
-    public boolean notificationsEnabled(){  //FIXME replace in disable/enable?
+    public boolean notificationsEnabled(){
         return _notificationsEnabled;
     }
 

@@ -53,7 +53,7 @@ public class Off extends State implements Serializable {
         terminal.sendTextNotifications(new O2S());
     }
 
-    //FIXME
+
     @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalOffException {
         s.visit(this);

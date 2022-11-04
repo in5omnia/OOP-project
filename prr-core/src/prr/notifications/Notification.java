@@ -26,10 +26,6 @@ public class Notification implements Serializable {
     private NotificationType _type;
 
 
-    public Notification(Terminal destination, Client caller) {
-        _destination = destination;
-        _caller = caller;
-    }
     public Notification(Terminal destination, Client caller, NotificationType type) {
         _destination = destination;
         _caller = caller;
@@ -41,11 +37,6 @@ public class Notification implements Serializable {
         return _caller;
     }
 
-    public void setNotificationType(NotificationType type){
-        _type = type;
-    }
-
-    //FIXME should busy have this?
 
     @Override
     public String toString(){

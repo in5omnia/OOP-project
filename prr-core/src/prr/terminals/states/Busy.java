@@ -52,7 +52,6 @@ public class Busy extends State implements Serializable {
     }
 
 
-    //FIXME
     @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalBusyException {
         s.visit(this);

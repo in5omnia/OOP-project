@@ -57,7 +57,7 @@ public class Silent extends State implements Serializable {
         throw new AlreadySilentTerminalException();
     }
 
-    //FIXME
+
     @Override
     public void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException {
         s.visit(this);

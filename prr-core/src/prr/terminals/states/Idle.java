@@ -56,7 +56,7 @@ public class Idle extends State implements Serializable {
         terminal.setState(new Silent(terminal));
     }
 
-    //FIXME
+
     @Override
     public void accept(StateExceptionVisitor s) {}
 

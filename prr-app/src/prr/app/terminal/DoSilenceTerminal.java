@@ -4,7 +4,7 @@ import prr.Network;
 import prr.exceptions.AlreadySilentTerminalException;
 import prr.terminals.Terminal;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME add more imports if needed
+
 
 /**
  * Silence the terminal.

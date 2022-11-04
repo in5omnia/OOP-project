@@ -117,10 +117,11 @@ abstract public class Terminal implements Serializable {
         _friends.remove(friendKey);
     }
 
-    //FIXME
+
     public boolean isFriend(String terminalKey) {
         return _friends.containsKey(terminalKey);
     }
+
 
     /**
      * Checks if this terminal can end the current interactive communication.
@@ -132,6 +133,7 @@ abstract public class Terminal implements Serializable {
         return _ongoingCommunication != null && _ongoingCommunication.getSource().equals(this);
     }
 
+
     /**
      * Checks if this terminal can start a new communication.
      *
@@ -141,9 +143,11 @@ abstract public class Terminal implements Serializable {
         return _state.canStartCommunication();
     }
 
+
     public State getState() {
         return _state;
     }
+
 
     public abstract boolean canMessage();
 
@@ -151,13 +155,16 @@ abstract public class Terminal implements Serializable {
 
     public abstract boolean canVideoCommunicate();
 
+
     private boolean canReceiveTextCommunication() {
         return _state.canReceiveTextCommunication();
     }
 
-    public boolean canReceiveInteractiveCommunication() throws DestinationTerminalOffException {    //FIXME tf is this
+
+    public boolean canReceiveInteractiveCommunication() {
         return _state.canReceiveInteractiveCommunication();
     }
+
 
     public void sendTextCommunication(Network network, String destinationTerminalKey, String message)
             throws DestinationTerminalOffException, CannotCommunicateException, UnknownTerminalException {
@@ -191,10 +198,12 @@ abstract public class Terminal implements Serializable {
         level.updateAfterCommunication(_owner.calculateBalance());
     }
 
+
     private void updateDebts(double debt) {
         _debts += debt;
         _owner.addClientDebt(debt);
     }
+
 
     public void startInteractiveCommunication(Network network, String destinationTerminalKey, String communicationType)
             throws CannotCommunicateException, UnknownTerminalException,
@@ -236,25 +245,30 @@ abstract public class Terminal implements Serializable {
         }
     }
 
+
     private void initiateCommunicationAtOrigin(Communication communication, Network network) {
         _state.startInteractiveCommunication();
         _ongoingCommunication = communication;
         network.addCommunication(communication);
     }
 
+
     private void setOngoingCommunication(Communication communication) {
         _ongoingCommunication = communication;
     }
 
+
     public void receiveCommunication(Text communication) {
         _communicationsReceived.add(communication);
     }
+
 
     public void receiveCommunication(InteractiveCommunication communication) {
         _communicationsReceived.add(communication); //adds immediately to received (while it's still ongoing)
         getState().startInteractiveCommunication();
         setOngoingCommunication(communication);
     }
+
 
     private void validateStartInteractiveCommunication(Terminal destination)
             throws CannotCommunicateException, DestinationTerminalBusyException, DestinationTerminalOffException,
@@ -314,6 +328,7 @@ abstract public class Terminal implements Serializable {
         _textNotificationsToSend.add(origin);
     }
 
+
     public void registerInteractiveNotificationToSend(Client origin) {
         _interactiveNotificationsToSend.add(origin);
     }
@@ -323,21 +338,26 @@ abstract public class Terminal implements Serializable {
         return _payments;
     }
 
+
     public double getDebts() {
         return _debts;
     }
+
 
     public double calculateBalance() {
         return _payments - _debts;
     }
 
+
     public boolean isUnused() {
         return _pastCommunications.isEmpty() && _ongoingCommunication == null && _communicationsReceived.isEmpty();
     }
 
+
     private String listFriends() {
         return String.join(",", _friends.keySet());
     }
+
 
     @Override
     public String toString() {
@@ -356,6 +376,7 @@ abstract public class Terminal implements Serializable {
         }
     }
 
+
     public void removeFriendFromTerminal(Network network, String friendKey) throws UnknownTerminalException {
         if (!network.terminalExists(friendKey))
             throw new UnknownTerminalException(friendKey);
@@ -367,27 +388,33 @@ abstract public class Terminal implements Serializable {
         }
     }
 
+
     public String showOngoingCommunication() throws NoOngoingCommunicationException {
         if (_ongoingCommunication == null)
             throw new NoOngoingCommunicationException();
         return _ongoingCommunication.toString();
     }
 
+
     public void setState(State state) {
         _state = state;
     }
+
 
     public void turnOn() throws AlreadyOnTerminalException {
         _state.turnOn();
     }
 
+
     public void turnOff() throws AlreadyOffTerminalException {
         _state.turnOff();
     }
 
+
     public void toSilent() throws AlreadySilentTerminalException {
         _state.toSilent();
     }
+
 
     public void sendTextNotifications(NotificationType type) {
         for (Client client : _textNotificationsToSend) {
@@ -417,12 +444,14 @@ abstract public class Terminal implements Serializable {
         _textNotificationsToSend.clear();
     }
 
+
     public Communication findCommunication(int communicationKey) throws InvalidCommunicationException {
         Communication communication = _pastCommunications.get(communicationKey);
         if (communication == null)
             throw new InvalidCommunicationException();
         return communication;
     }
+
 
     public void performPayment(int communicationKey) throws InvalidCommunicationException {
 
@@ -436,6 +465,7 @@ abstract public class Terminal implements Serializable {
         communication.pay();
         _owner.getLevel().updateAfterPayment(_owner.calculateBalance());
     }
+
 
     public Collection<String> showTerminalCommunications() {
         Collection<String> allCommunications = new LinkedList<>();
@@ -455,18 +485,22 @@ abstract public class Terminal implements Serializable {
         return received;
     }
 
+
     public void addTerminalPayment(double cost) {
         _payments += cost;
         _debts -= cost;
     }
 
+
     public long retrievePayments() {
         return Math.round(getPayments());
     }
 
+
     public long retrieveDebts() {
         return Math.round(getDebts());
     }
+
 
     @Override
     public boolean equals(Object o) {

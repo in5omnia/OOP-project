@@ -5,7 +5,7 @@ import prr.app.exceptions.UnknownClientKeyException;
 import prr.exceptions.UnknownClientException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME add more imports if needed
+
 
 /**
  * Show communications to a client.

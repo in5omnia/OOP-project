@@ -35,9 +35,6 @@ public class Normal extends Level {
     public void detectCommunication(Video communication) {} //do nothing
 
     @Override
-    public void negativeBalance(){}
-
-    @Override
     public void updateAfterCommunication(double balance) {} //do nothing
 
     @Override

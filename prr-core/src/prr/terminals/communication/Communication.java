@@ -84,7 +84,6 @@ public abstract class Communication implements Serializable {
 
     public abstract void accept(DetectCommunicationVisitor v, Level level);
 
-
     @Override
     public String toString() {
         String status = _ongoing ? "ONGOING" : "FINISHED";

@@ -1,7 +1,6 @@
 package prr.terminals.states;
 
 import prr.exceptions.AlreadyOnTerminalException;
-import prr.exceptions.DestinationTerminalSilentException;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;

@@ -4,10 +4,6 @@ import java.io.Serializable;
 
 import prr.clients.Client;
 import prr.terminals.Terminal;
-import prr.terminals.states.Busy;
-import prr.terminals.states.Idle;
-import prr.terminals.states.Off;
-import prr.terminals.states.Silent;
 
 public class Notification implements Serializable {
 

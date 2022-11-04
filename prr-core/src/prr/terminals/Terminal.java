@@ -424,13 +424,6 @@ abstract public class Terminal implements Serializable {
         _textNotificationsToSend.clear();
     }
 
-    /*public void sendInteractiveNotifications(NotificationType type) {
-        for (Client client : _interactiveNotificationsToSend) {
-            Notification notification = new Notification(this, client, type) ;
-            client.getDeliveryMethod().deliver(notification);
-        }
-        _interactiveNotificationsToSend.clear();
-    }*/
 
     public void sendAllNotifications(NotificationType type) {
         Set<Client> toNotify = new TreeSet<>();

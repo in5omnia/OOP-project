@@ -5,9 +5,8 @@ import prr.exceptions.MissingFileAssociationException;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-//FIXME add more imports if needed
+
 
 /**
  * Command to save a file.

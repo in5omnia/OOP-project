@@ -20,9 +20,8 @@ public abstract class Level implements Serializable {
 
     private Client _client;
 
-    //private List<Communication> _consecutiveCommunications = new ArrayList<>(); FIXME
-    private List<Text> _textCommunications = new ArrayList<>();
-    private List<Video> _videoCommunications = new ArrayList<>();
+    //private List<Text> _textCommunications = new ArrayList<>();
+    //private List<Video> _videoCommunications = new ArrayList<>();
 
     //private int _textCommunicationCounter = 0;  //what about different terminals - like doing 5 video but the 5th is FIXME
     // ongoing when a voice/text starts and resets the counters, not allowing level to change FIXME
@@ -41,34 +40,6 @@ public abstract class Level implements Serializable {
         return _plan;
     }
 
-
-    protected int getNumberOfConsecutiveTexts(){
-        return _textCommunications.size();
-    }
-
-
-    protected boolean anyVideoOngoing(){
-        boolean ongoing = false;
-        for (Video video : _videoCommunications){
-            if (video.isOngoing()){
-                ongoing = false;
-                break;
-            }
-        }
-        return ongoing;
-    }
-
-    protected int getNumberOfConsecutiveVideos(){
-        return _videoCommunications.size();
-    }
-
-    protected void resetConsecutiveVideos(){
-        _videoCommunications.subList(0, 4).clear(); //FIXME does this work
-    }
-
-    protected void resetConsecutiveTexts(){
-        _textCommunications.subList(0, 1).clear(); //FIXME does this work
-    }
 
 
     /*public int getTextCommunicationCounter() {
@@ -89,32 +60,36 @@ public abstract class Level implements Serializable {
         _videoCommunicationCounter = 0;
     }*/
 
-    public void detectCommunication(Text communication){
+    public abstract void detectCommunication(Text communication);/*{
         if (getNumberOfConsecutiveVideos() < 5)
             _videoCommunications.clear();
         _textCommunications.add(communication);
+    } */
 
-    }
-
-    public void detectCommunication(Voice communication){
+    public abstract void detectCommunication(Voice communication); /*{
         if (getNumberOfConsecutiveTexts() < 2)
             _textCommunications.clear();
         if (getNumberOfConsecutiveVideos() < 5)
             _videoCommunications.clear();
         //addVoice?
-    }
+    } */
 
-    public void detectCommunication(Video communication){
+    public abstract void detectCommunication(Video communication); /*{
         if (getNumberOfConsecutiveTexts() < 2)
             _textCommunications.clear();
         _videoCommunications.add(communication);
-    }
+    }*/
 
     public void negativeBalance() {
         Client client = getClient();
         if (client.calculateBalance() < 0)
             client.setLevel(new Normal(client));
     }
+
+    public abstract void updateAfterCommunication(double balance);
+
+    public void updateAfterPayment(double balance) {}
+
 
     public void clientBalanceOver500(){}
 

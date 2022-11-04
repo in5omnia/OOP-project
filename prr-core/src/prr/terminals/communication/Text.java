@@ -1,5 +1,7 @@
 package prr.terminals.communication;
 
+import prr.clients.Level;
+import prr.clients.DetectCommunicationVisitor;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -21,6 +23,11 @@ public class Text extends Communication implements Serializable {
     @Override
     protected double calculateCost(double units){
         return getSource().getOwner().getPlan().calculateMessageCost(units);
+    }
+
+    @Override
+    public void accept(DetectCommunicationVisitor v, Level level) {
+        v.visit(this, level);
     }
 
     @Override

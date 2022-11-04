@@ -1,5 +1,6 @@
 package prr.terminals;
 
+import prr.clients.DetectCommunicationVisitor;
 import prr.exceptions.*;
 
 import prr.Network;
@@ -169,9 +170,8 @@ abstract public class Terminal implements Serializable {
 
         network.addCommunication(communication);
         Level level = _owner.getLevel();
-        level.negativeBalance();
-        level.detectCommunication(communication);
-        level.positiveBalanceAnd2Text();
+        communication.accept(new DetectCommunicationVisitor(), level);
+        level.updateAfterCommunication(_owner.calculateBalance());
     }
 
     private void updateDebts(double debt) {
@@ -199,7 +199,7 @@ abstract public class Terminal implements Serializable {
 
                 initiateCommunicationAtOrigin(communication, network);
                 destination.receiveCommunication(communication);
-                _owner.getLevel().detectCommunication(communication);
+               // _owner.getLevel().detectCommunication(communication);
 
             }
             case "VIDEO" -> {
@@ -214,7 +214,7 @@ abstract public class Terminal implements Serializable {
 
                 initiateCommunicationAtOrigin(communication, network);
                 destination.receiveCommunication(communication);
-                _owner.getLevel().detectCommunication(communication);
+               // _owner.getLevel().detectCommunication(communication);
             }
         }
     }
@@ -278,9 +278,8 @@ abstract public class Terminal implements Serializable {
         updateDebts(cost);
 
         Level level = _owner.getLevel();
-        level.negativeBalance();
-        level.positiveBalanceAnd5Video();
-        level.positiveBalanceAnd2Text();
+        _ongoingCommunication.accept(new DetectCommunicationVisitor(), level);
+        level.updateAfterCommunication(_owner.calculateBalance());
 
         _ongoingCommunication.getDestination().setOngoingCommunication(null);
         setOngoingCommunication(null);
@@ -418,7 +417,7 @@ abstract public class Terminal implements Serializable {
         addTerminalPayment(cost);
         _owner.addClientPayment(cost);
         communication.pay();
-        _owner.getLevel().clientBalanceOver500();
+        _owner.getLevel().updateAfterPayment(_owner.calculateBalance());
     }
 
     public Collection<String> showTerminalCommunications() {

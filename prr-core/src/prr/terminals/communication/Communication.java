@@ -1,5 +1,7 @@
 package prr.terminals.communication;
 
+import prr.clients.Level;
+import prr.clients.DetectCommunicationVisitor;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -83,6 +85,9 @@ public abstract class Communication implements Serializable {
     public boolean ongoing(){
         return _ongoing;
     }
+
+    public abstract void accept(DetectCommunicationVisitor v, Level level);
+
 
     @Override
     public String toString() {

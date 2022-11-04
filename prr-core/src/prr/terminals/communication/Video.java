@@ -1,5 +1,7 @@
 package prr.terminals.communication;
 
+import prr.clients.Level;
+import prr.clients.DetectCommunicationVisitor;
 import prr.terminals.Terminal;
 
 import java.io.Serializable;
@@ -20,6 +22,11 @@ public class Video extends InteractiveCommunication implements Serializable{
         Terminal source = getSource();
         boolean isFriend = source.isFriend(getDestination().getKey());
         return source.getOwner().getPlan().calculateVideoCommunicationCost(units, isFriend);
+    }
+
+    @Override
+    public void accept(DetectCommunicationVisitor v, Level level) {
+        v.visit(this, level);
     }
 
     @Override

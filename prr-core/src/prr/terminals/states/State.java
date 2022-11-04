@@ -1,8 +1,12 @@
 package prr.terminals.states;
 
-import prr.exceptions.*;
+import prr.exceptions.AlreadyOffTerminalException;
+import prr.exceptions.AlreadyOnTerminalException;
+import prr.exceptions.AlreadySilentTerminalException;
+import prr.exceptions.DestinationTerminalSilentException;
+import prr.exceptions.DestinationTerminalBusyException;
+import prr.exceptions.DestinationTerminalOffException;
 import prr.terminals.Terminal;
-import prr.terminals.communication.Communication;
 
 import java.io.Serializable;
 
@@ -40,6 +44,7 @@ abstract public class State implements Serializable {
 
     public void toSilent() throws AlreadySilentTerminalException {}
 
-    public abstract void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException, DestinationTerminalBusyException, DestinationTerminalOffException;
+    public abstract void accept(StateExceptionVisitor s) throws DestinationTerminalSilentException,
+            DestinationTerminalBusyException, DestinationTerminalOffException;
 
 }

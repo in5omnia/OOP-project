@@ -4,7 +4,7 @@ import prr.exceptions.DestinationTerminalBusyException;
 import prr.exceptions.DestinationTerminalOffException;
 import prr.exceptions.DestinationTerminalSilentException;
 
-public class StateExceptionVisitor {   //visitor class
+public class StateExceptionVisitor {
     public void visit(Off state) throws DestinationTerminalOffException {
         throw new DestinationTerminalOffException();
     }

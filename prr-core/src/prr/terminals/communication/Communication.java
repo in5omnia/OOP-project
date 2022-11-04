@@ -39,7 +39,7 @@ public abstract class Communication implements Serializable {
         defineUnitsAndCost(units);
     }
 
-    public void defineUnitsAndCost(double units){    //could be protected and called by a "setDuration" in interactiveCom
+    public void defineUnitsAndCost(double units){
         _units = units;
         _cost = calculateCost(units);
     }

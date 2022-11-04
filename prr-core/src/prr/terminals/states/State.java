@@ -10,7 +10,6 @@ import prr.terminals.Terminal;
 
 import java.io.Serializable;
 
-// should be abstract class instead?
 abstract public class State implements Serializable {
 
     /**
